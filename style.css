@@ -137,6 +137,24 @@ button {
 }
 
 
+.toolbar-awg {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #344054;
+    background: #151b25;
+    color: #dce3ec;
+    padding: 11px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    text-decoration: none;
+}
+
+.toolbar-awg:hover {
+    filter: brightness(1.15);
+}
+
 button:hover {
 
     filter:
@@ -1942,6 +1960,12 @@ body.theme-white .wave-toolbar button {
     background: currentColor;
 }
 
+.value-fraction {
+    font-size: 1em;
+    min-width: 2.8em;
+    margin-inline: .05em;
+}
+
 .math-fraction-wide {
     min-width: 9em;
 }
@@ -2804,4 +2828,538 @@ body.theme-white .wave-toolbar button {
 @media(max-width:520px){
   .advanced-wave-link-card{display:grid;grid-template-columns:1fr}
   .advanced-wave-link-card a{text-align:center}
+}
+
+
+/* =====================================================
+   TRIG VALUE CARDS — polished function/value display
+   ===================================================== */
+
+.ratio-box,
+.free-ratio-box {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.ratio,
+.free-ratio-box > div {
+    position: relative;
+    min-height: 68px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 1px solid #293548;
+    border-left: 4px solid #61dafb;
+    background:
+        linear-gradient(135deg, rgba(255,255,255,.055), rgba(255,255,255,.018)),
+        #0d131c;
+    box-shadow: 0 5px 16px rgba(0,0,0,.16);
+    transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+.ratio:hover,
+.free-ratio-box > div:hover {
+    transform: translateY(-2px);
+    border-color: #53657c;
+    box-shadow: 0 9px 22px rgba(0,0,0,.24);
+}
+
+.ratio::after,
+.free-ratio-box > div::after {
+    content: "";
+    position: absolute;
+    right: -22px;
+    bottom: -30px;
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: rgba(97,218,251,.07);
+    pointer-events: none;
+}
+
+.ratio > span,
+.free-ratio-box > div > span {
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: .2px;
+    align-self: center;
+}
+
+.ratio strong,
+.free-ratio-box strong {
+    position: relative;
+    z-index: 1;
+    max-width: 58%;
+    overflow-wrap: anywhere;
+    text-align: right;
+    font-size: 17px;
+    line-height: 1.15;
+    color: #f5f8fc;
+}
+
+/* Function-specific accents */
+.ratio.red,
+.free-ratio-box > div:nth-child(1) { border-left-color: #ff5b67; }
+.ratio.blue,
+.free-ratio-box > div:nth-child(2) { border-left-color: #61a8ff; }
+.ratio.green,
+.free-ratio-box > div:nth-child(3) { border-left-color: #54d68a; }
+.ratio.orange,
+.free-ratio-box > div:nth-child(4) { border-left-color: #ffb454; }
+.ratio.purple,
+.free-ratio-box > div:nth-child(5) { border-left-color: #b98cff; }
+.ratio.pink,
+.free-ratio-box > div:nth-child(6) { border-left-color: #ff75bd; }
+
+.ratio.red > span,
+.free-ratio-box > div:nth-child(1) > span { color: #ff7b85; }
+.ratio.blue > span,
+.free-ratio-box > div:nth-child(2) > span { color: #78b9ff; }
+.ratio.green > span,
+.free-ratio-box > div:nth-child(3) > span { color: #70e59f; }
+.ratio.orange > span,
+.free-ratio-box > div:nth-child(4) > span { color: #ffc674; }
+.ratio.purple > span,
+.free-ratio-box > div:nth-child(5) > span { color: #c9a7ff; }
+.ratio.pink > span,
+.free-ratio-box > div:nth-child(6) > span { color: #ff91c9; }
+
+/* Make the cards feel lighter in the white theme. */
+body.theme-white .ratio,
+body.theme-white .free-ratio-box > div {
+    background: linear-gradient(135deg, #ffffff, #f4f6f8);
+    border-color: #d7dce3;
+    box-shadow: 0 5px 14px rgba(20,30,40,.08);
+}
+
+body.theme-white .ratio strong,
+body.theme-white .free-ratio-box strong {
+    color: #111827;
+}
+
+/* Black theme keeps the same visual hierarchy without losing contrast. */
+body.theme-black .ratio,
+body.theme-black .free-ratio-box > div {
+    background: #000;
+    border-color: #333;
+}
+
+@media (max-width: 800px) {
+    .ratio-box,
+    .free-ratio-box {
+        grid-template-columns: 1fr;
+    }
+
+    .ratio,
+    .free-ratio-box > div {
+        min-height: 62px;
+    }
+}
+
+
+/* =========================================================
+   VALUE LAB — SCHOOL / OTHER VALUES
+   Distinct, high-clarity trig reference tables.
+   ========================================================= */
+
+#values .table-card {
+    position: relative;
+    overflow-x: auto;
+    padding: 20px;
+    border: 1px solid rgba(97, 218, 251, 0.16);
+    box-shadow: 0 12px 34px rgba(0,0,0,.16);
+}
+
+#values .table-card h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px;
+    color: #61dafb;
+    font-size: 1.18rem;
+    letter-spacing: .35px;
+}
+
+#values .table-card h3::before {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #61dafb;
+    box-shadow: 0 0 14px rgba(97,218,251,.8);
+}
+
+#values .table-card:nth-of-type(2) h3 {
+    color: #9aa7ff;
+}
+
+#values .table-card:nth-of-type(2) h3::before {
+    background: #9aa7ff;
+    box-shadow: 0 0 14px rgba(154,167,255,.8);
+}
+
+#values table {
+    border-collapse: separate;
+    border-spacing: 0 6px;
+    min-width: 900px;
+}
+
+#values th {
+    padding: 12px 14px;
+    border: 0;
+    background: rgba(97,218,251,.09);
+    color: #8fe7ff;
+    font-weight: 800;
+    letter-spacing: .45px;
+    text-transform: none;
+}
+
+#values th:first-child {
+    border-radius: 10px 0 0 10px;
+}
+
+#values th:last-child {
+    border-radius: 0 10px 10px 0;
+}
+
+#values td {
+    padding: 12px 14px;
+    border: 0;
+    border-top: 1px solid rgba(255,255,255,.035);
+    border-bottom: 1px solid rgba(255,255,255,.035);
+    background: rgba(10,16,25,.72);
+    transition: transform .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+#values tbody tr:hover td {
+    background: rgba(97,218,251,.075);
+    transform: translateY(-1px);
+}
+
+#values td:first-child {
+    border-left: 3px solid #61dafb;
+    border-radius: 10px 0 0 10px;
+    color: #f4f8ff;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+#values td:last-child {
+    border-radius: 0 10px 10px 0;
+}
+
+#values td:not(:first-child) {
+    color: #eef5ff;
+    font-family: "Cambria Math", "Times New Roman", serif;
+    font-size: 1.08rem;
+}
+
+/* Every trig function gets a recognizable visual identity. */
+#values th:nth-child(2), #values td:nth-child(2) { --value-accent: #ff6b6b; }
+#values th:nth-child(3), #values td:nth-child(3) { --value-accent: #61dafb; }
+#values th:nth-child(4), #values td:nth-child(4) { --value-accent: #63e6be; }
+#values th:nth-child(5), #values td:nth-child(5) { --value-accent: #ffb86b; }
+#values th:nth-child(6), #values td:nth-child(6) { --value-accent: #b197fc; }
+#values th:nth-child(7), #values td:nth-child(7) { --value-accent: #f783ac; }
+
+#values th:nth-child(n+2) {
+    color: var(--value-accent);
+}
+
+#values td:nth-child(n+2) {
+    position: relative;
+}
+
+#values td:nth-child(n+2)::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 24%;
+    bottom: 24%;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--value-accent);
+    opacity: .7;
+}
+
+/* Vertical fractions in the value tables: clearer numerator/bar/denominator. */
+#values .value-fraction {
+    min-width: 2.9em;
+    margin: 0 auto;
+    line-height: 1.02;
+    font-size: 1.08em;
+    color: #ffffff;
+    filter: drop-shadow(0 1px 4px rgba(0,0,0,.22));
+}
+
+#values .value-fraction .math-fraction-top,
+#values .value-fraction .math-fraction-bottom {
+    padding: 2px 7px;
+}
+
+#values .value-fraction .math-fraction-bar {
+    height: 1.5px;
+    background: currentColor;
+    opacity: .9;
+}
+
+/* Radical/exact values should read like mathematics, not plain text. */
+#values td:not(:first-child) {
+    font-variant-numeric: tabular-nums;
+}
+
+/* Undefined values get a quieter but intentional treatment. */
+#values td:not(:first-child) {
+    position: relative;
+}
+
+#values .table-card:nth-of-type(2) {
+    margin-top: 8px;
+}
+
+/* White theme */
+body.theme-white #values .table-card {
+    border-color: rgba(0,0,0,.10);
+    box-shadow: 0 10px 28px rgba(0,0,0,.08);
+}
+
+body.theme-white #values td {
+    background: #fafafa;
+    border-color: rgba(0,0,0,.07);
+}
+
+body.theme-white #values th {
+    background: rgba(0,130,180,.08);
+    color: #006b8f;
+}
+
+body.theme-white #values td:not(:first-child) {
+    color: #15191f;
+}
+
+body.theme-white #values .table-card:nth-of-type(2) h3 {
+    color: #4f5fc2;
+}
+
+/* Black theme */
+body.theme-black #values .table-card {
+    background: #030303;
+    border-color: rgba(255,255,255,.13);
+}
+
+body.theme-black #values td {
+    background: #080808;
+}
+
+body.theme-black #values tbody tr:hover td {
+    background: rgba(255,255,255,.06);
+}
+
+/* =========================================================
+   GLOBAL BLUE ACCENT — make the existing blue educational
+   labels look intentional rather than default browser blue.
+   ========================================================= */
+
+.logo span,
+.control-card h3,
+#values .table-card h3,
+.section-title h2 {
+    text-shadow: 0 0 18px rgba(97,218,251,.14);
+}
+
+.section-title h2 {
+    color: #61dafb;
+}
+
+.control-card h3 {
+    letter-spacing: .25px;
+}
+
+/* Keep the existing AWG design; only correct its destination above. */
+
+
+/* =========================================================
+   POLISHED TYPOGRAPHY — SECTION / SUBSECTION HIERARCHY
+   ========================================================= */
+
+:root {
+    --ui-white: #f5f7fb;
+    --ui-muted: #b8c1cf;
+    --ui-soft: #8f9bad;
+    --ui-blue: #61dafb;
+    --ui-blue-soft: #9ee9ff;
+}
+
+body {
+    color: var(--ui-white);
+    letter-spacing: .08px;
+}
+
+/* Main section titles */
+.section-title h2 {
+    color: #f7fbff;
+    font-weight: 850;
+    letter-spacing: .15px;
+    line-height: 1.15;
+}
+
+.section-title p {
+    color: var(--ui-muted);
+    line-height: 1.6;
+}
+
+/* Main navigation / toolbar labels */
+.toolbar button,
+.toolbar a {
+    font-weight: 750;
+    letter-spacing: .15px;
+}
+
+/* Make the named major sections visually distinct. */
+#combined .section-title h2::before,
+#freecircle .section-title h2::before,
+#values .section-title h2::before,
+#formulas .section-title h2::before,
+#pythagoras .section-title h2::before,
+#radDerivation .section-title h2::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 1.05em;
+    margin-right: 11px;
+    vertical-align: -0.13em;
+    border-radius: 5px;
+    background: linear-gradient(180deg, #61dafb, #7c83ff);
+    box-shadow: 0 0 16px rgba(97,218,251,.28);
+}
+
+/* Card headings */
+.control-card h3,
+.card h3,
+.formula-card h3,
+.info-card h3 {
+    color: #eef7ff;
+    font-weight: 800;
+    letter-spacing: .2px;
+}
+
+/* Secondary labels: white, but softer than titles. */
+label,
+.control-label,
+.helper-text,
+.description,
+.muted,
+.small-text {
+    color: var(--ui-muted);
+}
+
+/* Formula subsection headings */
+#formulas h3,
+#formulas h4 {
+    color: #eaf8ff;
+}
+
+#formulas h3::after,
+#formulas h4::after {
+    content: "";
+    display: block;
+    width: 42px;
+    height: 2px;
+    margin-top: 7px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, #61dafb, transparent);
+}
+
+/* Pythagoras and radian sub-headings */
+#pythagoras h3,
+#radDerivation h3,
+#radDerivation h4 {
+    color: #eaf8ff;
+    font-weight: 800;
+}
+
+/* Radian converter labels */
+#radDerivation .converter-title,
+#radDerivation .input-title {
+    color: #f4f8ff;
+    font-weight: 750;
+}
+
+/* Table section labels */
+#values .table-card h3 {
+    font-weight: 850;
+    letter-spacing: .25px;
+}
+
+/* Keep mathematical content visually stronger than prose. */
+.math,
+.math-display,
+.formula,
+.formula-box,
+.equation {
+    color: #ffffff;
+}
+
+/* Links should look like intentional UI, not browser-default links. */
+a:not(.awg-button) {
+    color: #8fe7ff;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+
+a:not(.awg-button):hover {
+    color: #ffffff;
+}
+
+/* White theme keeps hierarchy without becoming washed out. */
+body.theme-white {
+    color: #17202b;
+}
+
+body.theme-white .section-title h2,
+body.theme-white .control-card h3,
+body.theme-white .card h3,
+body.theme-white .formula-card h3,
+body.theme-white .info-card h3,
+body.theme-white #formulas h3,
+body.theme-white #formulas h4,
+body.theme-white #pythagoras h3,
+body.theme-white #radDerivation h3,
+body.theme-white #radDerivation h4 {
+    color: #182331;
+}
+
+body.theme-white .section-title p,
+body.theme-white label,
+body.theme-white .control-label,
+body.theme-white .helper-text,
+body.theme-white .description,
+body.theme-white .muted,
+body.theme-white .small-text {
+    color: #586575;
+}
+
+/* Black theme: crisp, high-contrast hierarchy. */
+body.theme-black .section-title h2,
+body.theme-black .control-card h3,
+body.theme-black .card h3,
+body.theme-black .formula-card h3,
+body.theme-black .info-card h3 {
+    color: #ffffff;
+}
+
+/* Responsive typography */
+@media (max-width: 700px) {
+    .section-title h2 {
+        letter-spacing: 0;
+        line-height: 1.22;
+    }
+
+    .section-title h2::before {
+        margin-right: 8px;
+    }
+
+    .toolbar button,
+    .toolbar a {
+        letter-spacing: 0;
+    }
 }

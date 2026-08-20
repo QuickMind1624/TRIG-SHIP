@@ -2207,6 +2207,35 @@ if (waveInfiniteToggle) {
    TABLES
    ===================================================== */
 
+function renderValueFraction(value) {
+    const text = String(value ?? "").trim();
+
+    if (
+        !text ||
+        text === "undefined" ||
+        !text.includes("/")
+    ) {
+        return text;
+    }
+
+    const slashIndex = text.indexOf("/");
+
+    if (slashIndex <= 0 || slashIndex >= text.length - 1) {
+        return text;
+    }
+
+    const numerator = text.slice(0, slashIndex).trim();
+    const denominator = text.slice(slashIndex + 1).trim();
+
+    return `
+        <span class="math-fraction value-fraction">
+            <span class="math-fraction-top">${numerator}</span>
+            <span class="math-fraction-bar"></span>
+            <span class="math-fraction-bottom">${denominator}</span>
+        </span>`;
+}
+
+
 function buildValueTables() {
 
     const schoolTable =
@@ -2247,17 +2276,17 @@ function buildValueTables() {
 
                     <td>${angle}°</td>
 
-                    <td>${v.sin}</td>
+                    <td>${renderValueFraction(v.sin)}</td>
 
-                    <td>${v.cos}</td>
+                    <td>${renderValueFraction(v.cos)}</td>
 
-                    <td>${v.tan}</td>
+                    <td>${renderValueFraction(v.tan)}</td>
 
-                    <td>${v.cot}</td>
+                    <td>${renderValueFraction(v.cot)}</td>
 
-                    <td>${v.sec}</td>
+                    <td>${renderValueFraction(v.sec)}</td>
 
-                    <td>${v.cosec}</td>
+                    <td>${renderValueFraction(v.cosec)}</td>
 
                 </tr>
 
@@ -2285,17 +2314,17 @@ function buildValueTables() {
 
                     <td>${angle}°</td>
 
-                    <td>${v.sin}</td>
+                    <td>${renderValueFraction(v.sin)}</td>
 
-                    <td>${v.cos}</td>
+                    <td>${renderValueFraction(v.cos)}</td>
 
-                    <td>${v.tan}</td>
+                    <td>${renderValueFraction(v.tan)}</td>
 
-                    <td>${v.cot}</td>
+                    <td>${renderValueFraction(v.cot)}</td>
 
-                    <td>${v.sec}</td>
+                    <td>${renderValueFraction(v.sec)}</td>
 
-                    <td>${v.cosec}</td>
+                    <td>${renderValueFraction(v.cosec)}</td>
 
                 </tr>
 
