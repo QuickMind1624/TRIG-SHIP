@@ -1,0 +1,2807 @@
+* {
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at top,
+            #182438,
+            #080b11 65%
+        );
+
+    color: #f5f7fa;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    overflow-x: hidden;
+
+}
+
+
+header {
+
+    text-align: center;
+
+    padding:
+        30px
+        20px
+        25px;
+
+}
+
+
+.logo {
+
+    font-size: 42px;
+
+    font-weight: 800;
+
+    letter-spacing: 4px;
+
+}
+
+
+.logo span {
+
+    color: #61dafb;
+
+}
+
+
+.subtitle {
+
+    margin-top: 10px;
+
+    color: #9da7b5;
+
+}
+
+
+.theme-buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-top: 18px;
+
+}
+
+
+main {
+
+    width: 94%;
+
+    max-width: 1300px;
+
+    margin: auto;
+
+    padding-bottom: 180px;
+
+}
+
+
+.toolbar {
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+
+    margin-bottom: 25px;
+
+}
+
+
+button {
+
+    border:
+        1px solid
+        #344054;
+
+    background:
+        #151b25;
+
+    color:
+        #dce3ec;
+
+    padding:
+        11px
+        18px;
+
+    border-radius:
+        8px;
+
+    cursor: pointer;
+
+    font-size: 15px;
+
+}
+
+
+button:hover {
+
+    filter:
+        brightness(1.15);
+
+}
+
+
+button.active {
+
+    background:
+        #61dafb;
+
+    color:
+        #081018;
+
+}
+
+
+.page-section {
+
+    display: none;
+
+}
+
+
+.active-section {
+
+    display: block;
+
+}
+
+
+.section-title {
+
+    margin-bottom: 20px;
+
+}
+
+
+.section-title h2 {
+
+    margin-bottom: 5px;
+
+}
+
+
+.section-title p {
+
+    color:
+        #9da7b5;
+
+}
+
+
+.workspace {
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 2fr)
+        minmax(300px, 1fr);
+
+    gap: 20px;
+
+}
+
+
+.card {
+
+    background:
+        rgba(
+            20,
+            27,
+            38,
+            .94
+        );
+
+    border:
+        1px solid
+        #293548;
+
+    border-radius:
+        14px;
+
+    padding:
+        20px;
+
+}
+
+
+.graph-card {
+
+    min-height:
+        620px;
+
+}
+
+
+canvas {
+
+    display: block;
+
+    width: 100%;
+
+    height: 570px;
+
+    background:
+        white;
+
+    border-radius:
+        10px;
+
+}
+
+
+.control-card {
+
+    min-height:
+        520px;
+
+}
+
+
+.control-card h3 {
+
+    color:
+        #61dafb;
+
+}
+
+
+.angle-display {
+
+    text-align:
+        center;
+
+    margin:
+        25px 0;
+
+}
+
+
+.angle-display span {
+
+    font-size:
+        42px;
+
+    font-weight:
+        bold;
+
+}
+
+
+input[type="range"] {
+
+    width:
+        100%;
+
+    cursor:
+        pointer;
+
+}
+
+
+.angle-input {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        10px;
+
+    margin-top:
+        20px;
+
+}
+
+
+.angle-input input {
+
+    width:
+        130px;
+
+    padding:
+        10px;
+
+    border-radius:
+        7px;
+
+    border:
+        1px solid
+        #344054;
+
+    background:
+        #0c1119;
+
+    color:
+        white;
+
+    font-size:
+        16px;
+
+}
+
+
+.ratio-box {
+
+    margin-top:
+        30px;
+
+    display:
+        grid;
+
+    gap:
+        8px;
+
+}
+
+
+.ratio {
+
+    padding:
+        12px;
+
+    border-radius:
+        8px;
+
+    background:
+        #0d131c;
+
+    display:
+        flex;
+
+    justify-content:
+        space-between;
+
+}
+
+
+.ratio strong {
+
+    font-family:
+        monospace;
+
+}
+
+
+.red {
+    border-left:
+        4px solid red;
+}
+
+
+.blue {
+    border-left:
+        4px solid blue;
+}
+
+
+.green {
+    border-left:
+        4px solid green;
+}
+
+
+.orange {
+    border-left:
+        4px solid orange;
+}
+
+
+.purple {
+    border-left:
+        4px solid purple;
+}
+
+
+.pink {
+    border-left:
+        4px solid deeppink;
+}
+
+
+/* =====================================================
+   FRACTIONS
+   ===================================================== */
+
+.fraction-panel {
+
+    margin-top:
+        25px;
+
+    padding:
+        15px;
+
+    background:
+        #0b1018;
+
+    border-radius:
+        10px;
+
+    display:
+        grid;
+
+    gap:
+        15px;
+
+}
+
+
+.function-name {
+
+    display:
+        inline-block;
+
+    min-width:
+        70px;
+
+    font-weight:
+        bold;
+
+}
+
+
+.fraction {
+
+    display:
+        inline-flex;
+
+    flex-direction:
+        column;
+
+    vertical-align:
+        middle;
+
+    text-align:
+        center;
+
+    font-family:
+        "Times New Roman",
+        serif;
+
+    font-size:
+        16px;
+
+    margin-left:
+        10px;
+
+}
+
+
+.fraction span:first-child {
+
+    border-bottom:
+        1px solid
+        currentColor;
+
+    padding:
+        0 5px 3px;
+
+}
+
+
+.fraction span:last-child {
+
+    padding-top:
+        3px;
+
+}
+
+
+/* =====================================================
+   FUNCTION GRAPH
+   ===================================================== */
+
+.function-buttons {
+
+    display:
+        flex;
+
+    gap:
+        8px;
+
+    flex-wrap:
+        wrap;
+
+    margin-bottom:
+        20px;
+
+}
+
+
+.big-value {
+
+    font-size:
+        42px;
+
+    font-family:
+        monospace;
+
+    margin:
+        30px 0;
+
+}
+
+
+.info-box {
+
+    margin-top:
+        25px;
+
+    padding:
+        15px;
+
+    background:
+        #0d131c;
+
+    border-radius:
+        8px;
+
+    line-height:
+        1.8;
+
+    color:
+        #cbd5e1;
+
+}
+
+
+.principal-box {
+
+    margin-top:
+        15px;
+
+    padding:
+        15px;
+
+    background:
+        #101823;
+
+    border:
+        1px solid
+        #334155;
+
+    border-radius:
+        8px;
+
+    line-height:
+        1.8;
+
+}
+
+
+.principal-box u {
+
+    text-decoration-thickness:
+        2px;
+
+    text-underline-offset:
+        4px;
+
+}
+
+
+/* =====================================================
+   TABLE
+   ===================================================== */
+
+.table-card {
+
+    overflow-x:
+        auto;
+
+}
+
+
+table {
+
+    width:
+        100%;
+
+    min-width:
+        850px;
+
+    border-collapse:
+        collapse;
+
+}
+
+
+th,
+td {
+
+    padding:
+        15px;
+
+    border-bottom:
+        1px solid
+        #293548;
+
+    text-align:
+        center;
+
+}
+
+
+th {
+
+    color:
+        #61dafb;
+
+}
+
+
+td {
+
+    font-family:
+        "Times New Roman",
+        serif;
+
+    font-size:
+        19px;
+
+}
+
+
+tr:hover {
+
+    background:
+        #151d29;
+
+}
+
+
+/* =====================================================
+   FORMULAS
+   ===================================================== */
+
+.formula-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(
+                300px,
+                1fr
+            )
+        );
+
+    gap:
+        18px;
+
+}
+
+
+.formula-card {
+
+    background:
+        rgba(
+            20,
+            27,
+            38,
+            .92
+        );
+
+    border:
+        1px solid
+        #293548;
+
+    border-radius:
+        14px;
+
+    padding:
+        22px;
+
+}
+
+
+.formula-card h3 {
+
+    color:
+        #61dafb;
+
+}
+
+
+.formula-line {
+
+    font-family:
+        "Times New Roman",
+        serif;
+
+    font-size:
+        19px;
+
+    line-height:
+        1.7;
+
+    padding:
+        8px 0;
+
+    border-bottom:
+        1px solid
+        #293548;
+
+}
+
+
+footer {
+
+    text-align:
+        center;
+
+    padding:
+        40px;
+
+    color:
+        #687386;
+
+}
+
+
+/* =====================================================
+   BLACK THEME
+   ===================================================== */
+
+body.theme-black {
+
+    background:
+        #000;
+
+    color:
+        #fff;
+
+}
+
+
+body.theme-black .card,
+body.theme-black .formula-card {
+
+    background:
+        #000;
+
+    border-color:
+        #fff;
+
+}
+
+
+body.theme-black canvas {
+
+    background:
+        #000;
+
+}
+
+
+body.theme-black .toolbar button,
+body.theme-black button {
+
+    background:
+        #000;
+
+    color:
+        #fff;
+
+    border-color:
+        #fff;
+
+}
+
+
+/* =====================================================
+   WHITE THEME
+   ===================================================== */
+
+body.theme-white {
+
+    background:
+        #fff;
+
+    color:
+        #111;
+
+}
+
+
+body.theme-white .card,
+body.theme-white .formula-card {
+
+    background:
+        #fff;
+
+    border-color:
+        #222;
+
+}
+
+
+body.theme-white .toolbar button,
+body.theme-white button {
+
+    background:
+        #fff;
+
+    color:
+        #111;
+
+    border-color:
+        #222;
+
+}
+
+
+body.theme-white .ratio,
+body.theme-white .info-box,
+body.theme-white .principal-box,
+body.theme-white .fraction-panel {
+
+    background:
+        #f5f5f5;
+
+    color:
+        #111;
+
+}
+
+
+body.theme-white .section-title p {
+
+    color:
+        #444;
+
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 800px) {
+
+    main {
+
+        width:
+            96%;
+
+    }
+
+
+    .workspace {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .logo {
+
+        font-size:
+            30px;
+
+    }
+
+
+    .toolbar {
+
+        flex-wrap:
+            nowrap;
+
+        overflow-x:
+            auto;
+
+        padding-bottom:
+            8px;
+
+    }
+
+
+    .toolbar button {
+
+        flex-shrink:
+            0;
+
+    }
+
+
+    .function-buttons {
+
+        flex-wrap:
+            nowrap;
+
+        overflow-x:
+            auto;
+
+        padding-bottom:
+            8px;
+
+    }
+
+
+    .function-buttons button {
+
+        flex-shrink:
+            0;
+
+    }
+
+
+    .graph-card {
+
+        min-height:
+            520px;
+
+    }
+
+
+    canvas {
+
+        height:
+            470px;
+
+    }
+
+
+    .control-card {
+
+        min-height:
+            auto;
+
+    }
+
+
+    .angle-display span {
+
+        font-size:
+            34px;
+
+    }
+
+
+    .formula-grid {
+
+        grid-template-columns:
+            1fr;
+
+    }
+
+
+    .card {
+
+        padding:
+            14px;
+
+    }
+
+}
+/* =====================================================
+   ANY-ANGLE CIRCLE
+   ===================================================== */
+
+.free-angle-info {
+    margin-top: 22px;
+    padding: 15px;
+    background: #0d131c;
+    border-radius: 8px;
+    line-height: 1.8;
+}
+
+.triangle-legend {
+    margin-top: 20px;
+    padding: 15px;
+    background: #0b1018;
+    border-radius: 10px;
+    display: grid;
+    gap: 12px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: bold;
+}
+
+.legend-line {
+    width: 42px;
+    height: 5px;
+    display: inline-block;
+    border-radius: 5px;
+}
+
+.legend-line.hypotenuse {
+    background: blue;
+}
+
+.legend-line.perpendicular {
+    background: green;
+}
+
+.legend-line.base {
+    background: magenta;
+}
+
+.free-ratio-box {
+    margin-top: 20px;
+    display: grid;
+    gap: 8px;
+}
+
+.free-ratio-box > div {
+    padding: 11px 12px;
+    background: #0d131c;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.free-ratio-box strong {
+    font-family: monospace;
+}
+
+/* Light-blue underline for principal-value range */
+.principal-box {
+    border-bottom: 3px solid #9bdcff;
+    text-decoration-color: #9bdcff;
+    text-underline-offset: 5px;
+}
+
+/* Keep the underline subtle and blue specifically on the principal range */
+.principal-box u {
+    text-decoration-color: #9bdcff;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 5px;
+}
+
+@media (max-width: 800px) {
+    #freecircle .graph-card {
+        min-height: 520px;
+    }
+
+    #freecircle canvas {
+        height: 1800px;
+    }
+}
+
+
+/* =====================================================
+   INFINITE / HORIZONTAL WAVE GRAPH
+   ===================================================== */
+
+.wave-scroll {
+    width: 100%;
+    height: 520px;
+    max-height: 520px;
+    min-height: 520px;
+    overflow-x: scroll;
+    overflow-y: scroll;
+    border-radius: 10px;
+    cursor: grab;
+    overscroll-behavior: contain;
+    scrollbar-width: auto;
+    scrollbar-gutter: stable both-edges;
+    position: relative;
+}
+
+.wave-scroll::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+
+ .wave-scroll canvas {
+    display: block;
+    width: 2600px;
+    min-width: 2600px;
+    height: 100%;
+    min-height: 100%;
+}
+
+.wave-scroll:active {
+    cursor: grabbing;
+}
+
+@media (max-width: 800px) {
+    .wave-scroll {
+        max-width: 100%;
+    }
+
+    .wave-scroll canvas {
+        height: 100%;
+        min-height: 100%;
+        max-width: none !important;
+    }
+}
+
+
+/* =====================================================
+   ANY-ANGLE CONTROL
+   ===================================================== */
+
+.angle-control {
+    margin-top: 18px;
+}
+
+.angle-control input[type="range"] {
+    width: 100%;
+}
+
+.angle-control-label {
+    display: flex;
+    justify-content: space-between;
+    color: #9da7b5;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Make the wave viewport unmistakably horizontally scrollable */
+#waveScroll {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    scrollbar-width: auto;
+    scrollbar-gutter: stable;
+    border: 1px solid #293548;
+}
+
+#waveScroll::-webkit-scrollbar {
+    height: 14px;
+}
+
+#waveScroll::-webkit-scrollbar-thumb {
+    background: #64748b;
+    border-radius: 10px;
+}
+
+#waveScroll::-webkit-scrollbar-track {
+    background: #111827;
+}
+
+#waveScroll canvas {
+    flex: 0 0 auto;
+}
+
+/* =====================================================
+   WAVE GRAPH CONTROLS / ZOOM
+   ===================================================== */
+
+.wave-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.wave-toolbar button {
+    padding: 7px 12px;
+}
+
+.wave-zoom-label {
+    font-weight: bold;
+    margin-right: 4px;
+}
+
+#waveZoomValue {
+    min-width: 52px;
+    font-family: monospace;
+    font-weight: bold;
+}
+
+.wave-scroll {
+    scroll-behavior: auto;
+    touch-action: pan-x pan-y;
+}
+
+body.theme-black .wave-toolbar button {
+    background: #000;
+    color: #fff;
+    border-color: #fff;
+}
+
+body.theme-white .wave-toolbar button {
+    background: #fff;
+    color: #111;
+    border-color: #222;
+}
+
+
+/* v9: keep wave labels readable while zooming */
+.wave-graph .axis-label,
+.wave-graph .tick-label {
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+
+/* =====================================================
+   v14 — RADIANS LEARNING MODES
+   ===================================================== */
+
+.rad-mode-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 18px 0 10px;
+}
+
+.rad-mode-bar button {
+    min-width: 145px;
+}
+
+.rad-mode-description {
+    color: #9da7b5;
+    margin: 8px 0 18px;
+}
+
+.rad-history-button {
+    opacity: .72;
+}
+
+.rad-topic-button {
+    width: 100%;
+    text-align: left;
+    min-height: 64px;
+    transition: transform .12s ease, border-color .12s ease;
+}
+
+.rad-topic-button:hover {
+    transform: translateY(-1px);
+}
+
+.active-rad-topic {
+    border-color: #61dafb !important;
+}
+
+.rad-content-card {
+    margin: 12px 0;
+}
+
+.rad-content-card p,
+.rad-content-card li {
+    line-height: 1.7;
+}
+
+@media (max-width: 700px) {
+    .rad-mode-bar {
+        flex-direction: column;
+    }
+
+    .rad-mode-bar button {
+        width: 100%;
+    }
+
+    .rad-topic-button {
+        min-height: 56px;
+    }
+}
+
+
+/* Radians learning modes */
+.rad-mode-bar { display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 10px; }
+.rad-mode-bar button { cursor:pointer; }
+.rad-mode-description { margin:8px 0 18px; opacity:.85; }
+.rad-topic-button { cursor:pointer; text-align:left; min-height:72px; }
+.active-rad-topic { outline:2px solid currentColor; }
+.rad-content-card { margin:12px 0; }
+.rad-content-card p, .rad-content-card li { line-height:1.65; }
+.rad-content-card .formula { font-size:1.2rem; margin-top:10px; }
+
+/* Radians derivation visual */
+.rad-unit-visual {
+    margin: 16px 0;
+    padding: 16px;
+    border: 1px solid rgba(127,127,127,.25);
+    border-radius: 12px;
+}
+.rad-unit-visual svg {
+    display: block;
+    width: min(100%, 560px);
+    height: auto;
+    margin: 0 auto;
+}
+.rad-unit-visual p { line-height: 1.6; }
+
+
+/* Golden-white radians visual */
+.golden-radian-visual {
+    background: #050505;
+    border-color: rgba(255,216,77,.55);
+    box-shadow: 0 0 26px rgba(255,216,77,.08), inset 0 0 0 1px rgba(255,255,255,.025);
+    overflow: hidden;
+}
+.golden-radian-head {
+    display:flex; justify-content:space-between; align-items:baseline; gap:12px;
+    padding:12px 15px; border-bottom:1px solid rgba(255,216,77,.24);
+}
+.golden-radian-head strong { color:#ffd84d; letter-spacing:.07em; }
+.golden-radian-head span { color:rgba(255,253,242,.7); font-size:.9rem; }
+.golden-radian-visual svg { width:100%; max-width:none; }
+.golden-radian-note {
+    margin:0; padding:12px 15px; border-top:1px solid rgba(255,216,77,.20);
+    color:#fffdf2; line-height:1.55; background:rgba(255,216,77,.025);
+}
+.golden-radian-note strong { color:#ffd84d; }
+@media (max-width:560px) {
+    .golden-radian-head { flex-direction:column; gap:4px; }
+    .golden-radian-head span { font-size:.8rem; }
+    .golden-radian-note { font-size:.92rem; }
+}
+
+/* =====================================================
+   PYTHAGORAS → TRIGONOMETRIC IDENTITIES
+   ===================================================== */
+.pythagoras-layout,
+.pythagoras-route-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(320px, .85fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.pythagoras-visual-card,
+.pythagoras-steps-card,
+.pythagoras-route-grid .card,
+.pythagoras-chain-card {
+    min-height: 0;
+}
+
+.pythagoras-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: 12px;
+    background: #050505;
+    border-radius: 14px;
+}
+
+.pythagoras-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 22px;
+    margin-top: 14px;
+    color: #fffdf2;
+    font-size: 14px;
+}
+
+.pythagoras-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.py-line {
+    width: 30px;
+    height: 5px;
+    border-radius: 10px;
+    display: inline-block;
+}
+
+.py-line.hyp { background: dodgerblue; }
+.py-line.perp { background: green; }
+.py-line.base { background: magenta; }
+
+.py-equation {
+    margin: 18px 0;
+    padding: 16px 18px;
+    border-radius: 12px;
+    background: #090d14;
+    border: 1px solid #2d3b50;
+    font-size: clamp(1.25rem, 3vw, 2rem);
+    font-weight: 800;
+    text-align: center;
+    color: #ffd84d;
+}
+
+.py-step-list {
+    margin: 0;
+    padding-left: 24px;
+}
+
+.py-step-list li {
+    margin: 12px 0;
+    line-height: 1.65;
+}
+
+.math-inline {
+    font-family: "Times New Roman", serif;
+    font-size: 1.12em;
+}
+
+.py-result {
+    font-weight: 800;
+    color: #ffd84d;
+    font-size: 1.12em;
+}
+
+.identity-derivation {
+    padding: 14px;
+    margin: 12px 0;
+    border-left: 3px solid #61dafb;
+    background: rgba(97, 218, 251, .04);
+    border-radius: 8px;
+}
+
+.identity-derivation p {
+    margin: 8px 0;
+    line-height: 1.6;
+}
+
+.py-chain {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    line-height: 1.6;
+}
+
+.py-chain span {
+    padding: 10px 13px;
+    border: 1px solid #35445a;
+    border-radius: 9px;
+    background: #0a1019;
+    color: #fffdf2;
+    font-family: "Times New Roman", serif;
+    font-size: 1.05rem;
+}
+
+.py-chain b {
+    color: #61dafb;
+    font-size: .9rem;
+}
+
+@media (max-width: 900px) {
+    .pythagoras-layout,
+    .pythagoras-route-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 560px) {
+    .pythagoras-legend {
+        flex-direction: column;
+        gap: 9px;
+    }
+    .py-chain {
+        flex-direction: column;
+    }
+    .py-chain b {
+        transform: rotate(90deg);
+    }
+}
+
+
+/* =====================================================
+   RADIAN DEEP LEARNING + CONVERTER
+   ===================================================== */
+.rad-mode-bar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:18px 0;
+}
+.rad-mode-description{
+    padding:14px 16px;
+    border-left:4px solid #ffd84d;
+    background:rgba(255,216,77,.08);
+    border-radius:10px;
+    color:#dce3ec;
+}
+.rad-topic-button{
+    min-height:72px;
+    text-align:left;
+}
+.active-rad-topic{
+    border-color:#ffd84d !important;
+    box-shadow:0 0 0 1px rgba(255,216,77,.25);
+}
+.rad-content-card{
+    margin-top:18px;
+    padding:18px;
+    background:rgba(9,15,24,.72);
+    border:1px solid #293548;
+    border-radius:14px;
+    line-height:1.75;
+}
+.rad-unit-visual{
+    margin:0 0 18px;
+    padding:12px;
+    border:1px solid rgba(255,216,77,.28);
+    border-radius:14px;
+    overflow:hidden;
+}
+.rad-unit-visual svg{
+    width:100%;
+    height:auto;
+    display:block;
+}
+.rad-rich-step{
+    display:grid;
+    grid-template-columns:42px minmax(0,1fr);
+    gap:12px;
+    align-items:start;
+    padding:16px 0;
+    border-bottom:1px solid #293548;
+}
+.rad-rich-step:last-child{border-bottom:0}
+.rad-step-number{
+    width:34px;height:34px;
+    display:grid;place-items:center;
+    border-radius:50%;
+    background:#155e75;
+    color:#fff;
+    font-weight:800;
+}
+.rad-step-title{font-weight:800;margin-bottom:7px;color:#ffd84d}
+.rad-eq{
+    font-family:"Times New Roman",serif;
+    font-size:1.35rem;
+    padding:10px 0;
+    overflow-x:auto;
+}
+.rad-frac{
+    display:inline-flex;
+    flex-direction:column;
+    vertical-align:middle;
+    text-align:center;
+    line-height:1.05;
+    margin:0 .16em;
+}
+.rad-frac span:first-child{
+    border-bottom:1px solid currentColor;
+    padding:0 .18em .16em;
+}
+.rad-frac span:last-child{padding:.16em .18em 0}
+.rad-final{
+    font-size:1.7rem;
+    font-weight:900;
+    color:#ffd84d;
+}
+.rad-pi-check{
+    padding:13px 0;
+    border-bottom:1px solid #293548;
+}
+.rad-pi-check:last-child{border-bottom:0}
+
+.rad-converter-card{
+    margin-top:24px;
+    padding:20px;
+    border:1px solid rgba(97,218,251,.32);
+    border-radius:16px;
+    background:linear-gradient(145deg,rgba(13,25,39,.96),rgba(12,17,25,.96));
+}
+.rad-converter-heading h2{margin:0 0 6px}
+.rad-converter-heading p{margin:0;color:#9da7b5;line-height:1.6}
+.rad-converter-grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px;
+    margin-top:18px;
+}
+.rad-converter-panel{
+    padding:18px;
+    border:1px solid #293548;
+    border-radius:13px;
+    background:#0b1018;
+}
+.rad-converter-panel h3{margin-top:0;color:#61dafb}
+.rad-converter-panel label{display:block;margin:10px 0 7px;color:#cbd5e1}
+.rad-converter-panel input{
+    width:100%;
+    padding:12px;
+    border-radius:8px;
+    border:1px solid #344054;
+    background:#060a10;
+    color:#fff;
+    font-size:17px;
+}
+.rad-converter-panel button{margin-top:12px}
+.rad-converter-result{
+    margin-top:16px;
+    display:grid;
+    gap:8px;
+}
+.rad-converter-result div{
+    display:flex;
+    justify-content:space-between;
+    gap:12px;
+    padding:10px 12px;
+    background:#101823;
+    border-radius:8px;
+}
+.rad-converter-result strong{
+    font-family:"Times New Roman",serif;
+    font-size:1.1rem;
+}
+.rad-converter-note{
+    margin-top:16px;
+    padding:13px 15px;
+    border-radius:9px;
+    background:rgba(255,216,77,.08);
+    color:#dce3ec;
+    line-height:1.65;
+}
+@media(max-width:800px){
+    .rad-converter-grid{grid-template-columns:1fr}
+    .rad-eq{font-size:1.15rem}
+    .rad-rich-step{grid-template-columns:34px minmax(0,1fr)}
+    .rad-step-number{width:30px;height:30px}
+}
+
+
+/* v7: portable trig symbol keyboard */
+.rad-symbol-keyboard{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin:10px 0 12px;
+}
+.rad-symbol-keyboard button{
+  min-width:42px;
+  min-height:38px;
+  padding:6px 10px;
+  border:1px solid rgba(255,216,77,.35);
+  border-radius:9px;
+  background:rgba(255,216,77,.08);
+  color:inherit;
+  font-weight:700;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+.rad-symbol-keyboard button:hover{
+  background:rgba(255,216,77,.18);
+}
+.rad-symbol-keyboard button:active{
+  transform:translateY(1px);
+}
+
+
+/* v8: floating Rules of Rad guide, scoped to the converter only */
+.rad-converter-card{
+  position:relative;
+}
+.rad-rules-float{
+  position:absolute;
+  top:22px;
+  right:-1px;
+  z-index:20;
+}
+.rad-rules-toggle{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:9px 13px;
+  border:1px solid rgba(255,216,77,.45);
+  border-radius:12px 0 0 12px;
+  background:rgba(8,16,27,.97);
+  color:#ffd84d;
+  font-weight:800;
+  cursor:pointer;
+  box-shadow:0 8px 24px rgba(0,0,0,.28);
+  touch-action:manipulation;
+}
+.rad-rules-toggle:hover,.rad-rules-toggle.is-open{
+  background:#101b2a;
+}
+.rad-rules-panel{
+  position:absolute;
+  top:48px;
+  right:0;
+  width:min(390px,calc(100vw - 32px));
+  max-height:min(620px,70vh);
+  overflow:auto;
+  border:1px solid rgba(255,216,77,.35);
+  border-radius:14px;
+  background:rgba(7,13,22,.985);
+  box-shadow:0 18px 50px rgba(0,0,0,.45);
+  color:#dce3ec;
+}
+.rad-rules-header{
+  position:sticky;
+  top:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-bottom:1px solid #293548;
+  background:#0b1522;
+  color:#ffd84d;
+}
+.rad-rules-header button{
+  border:0;
+  background:transparent;
+  color:#dce3ec;
+  font-size:24px;
+  line-height:1;
+  cursor:pointer;
+}
+.rad-rules-body{
+  padding:15px 16px 18px;
+  line-height:1.55;
+}
+.rad-rules-body h4{
+  margin:13px 0 6px;
+  color:#61dafb;
+  font-size:.98rem;
+}
+.rad-rules-body h4:first-child{margin-top:0}
+.rad-rules-body p{margin:6px 0 9px}
+.rad-rules-body ul{margin:7px 0 10px; padding-left:20px}
+.rad-rules-body li{margin:5px 0}
+.rad-rule-equation,.rad-rule-code{
+  margin:7px 0;
+  padding:9px 11px;
+  border-radius:8px;
+  background:#101823;
+  border:1px solid #293548;
+}
+.rad-rule-equation{font-family:"Times New Roman",serif; color:#fff}
+.rad-rule-code{font-family:Consolas,monospace; color:#ffd84d; overflow-wrap:anywhere}
+@media(max-width:800px){
+  .rad-rules-float{
+    position:relative;
+    top:auto;
+    right:auto;
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:8px;
+  }
+  .rad-rules-toggle{border-radius:10px}
+  .rad-rules-panel{
+    position:fixed;
+    top:78px;
+    right:10px;
+    left:10px;
+    width:auto;
+    max-height:72vh;
+  }
+}
+
+
+/* =====================================================
+   RADIAN VISUAL — RESPONSIVE GOLDEN/WHITE
+   ===================================================== */
+.golden-radian-visual {
+    width: 100%;
+    margin: 14px 0 20px;
+    border: 1px solid rgba(255,216,77,.25);
+    border-radius: 16px;
+    padding: 12px;
+    background: rgba(255,255,255,.035);
+    overflow: hidden;
+}
+.golden-radian-visual svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    min-height: 240px;
+}
+.golden-radian-note {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(255,216,77,.07);
+    line-height: 1.65;
+}
+
+
+/* =====================================================
+   WAVE GRAPH — RESTORED VERTICAL SCROLL RANGE
+   ===================================================== */
+.wave-scroll {
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    touch-action: pan-x pan-y;
+}
+.wave-scroll canvas {
+    width: 2600px;
+    min-width: 2600px;
+    height: 900px !important;
+    min-height: 900px !important;
+    max-width: none !important;
+}
+@media (max-width: 800px) {
+    .wave-scroll {
+        height: 480px;
+        max-height: 480px;
+        min-height: 480px;
+        overflow-x: auto !important;
+        overflow-y: auto !important;
+    }
+    .wave-scroll canvas {
+        height: 760px !important;
+        min-height: 760px !important;
+        width: 2200px;
+        min-width: 2200px;
+    }
+}
+
+
+/* =========================================================
+   TRIG-SHIP TAN VERTICAL FRACTION
+   Proper school-book style numerator / denominator.
+   ========================================================= */
+
+.tan-formula {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.tan-label {
+    white-space: nowrap;
+}
+
+.vertical-fraction {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    text-align: center;
+    min-width: 150px;
+    line-height: 1.12;
+    vertical-align: middle;
+}
+
+.fraction-top {
+    padding: 0 10px 6px;
+    white-space: nowrap;
+}
+
+.fraction-line {
+    width: 100%;
+    height: 2px;
+    background: currentColor;
+}
+
+.fraction-bottom {
+    padding: 6px 10px 0;
+    white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+
+    .tan-formula {
+        font-size: 0.95em;
+        gap: 7px;
+    }
+
+    .vertical-fraction {
+        min-width: 130px;
+    }
+
+    .fraction-top,
+    .fraction-bottom {
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+}
+
+/* =========================================================
+   GLOBAL SCHOOL-STYLE VERTICAL FRACTIONS
+   Used by Formula Library, relations, principal ranges,
+   radian lessons and other educational math displays.
+   ========================================================= */
+.math-fraction {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    vertical-align: middle;
+    text-align: center;
+    min-width: 2.7em;
+    margin: 0 .16em;
+    line-height: 1.05;
+    white-space: nowrap;
+}
+
+.math-fraction-top,
+.math-fraction-bottom {
+    display: block;
+    padding: .10em .30em;
+    white-space: nowrap;
+}
+
+.math-fraction-bar {
+    display: block;
+    width: 100%;
+    min-width: 100%;
+    height: 1.5px;
+    background: currentColor;
+}
+
+.math-fraction-wide {
+    min-width: 9em;
+}
+
+.formula-line .math-fraction {
+    font-family: "Times New Roman", Georgia, serif;
+    font-size: 1.08em;
+}
+
+.py-step-list .math-fraction,
+.identity-derivation .math-fraction,
+.py-chain .math-fraction,
+.rad-content-card .math-fraction,
+.rad-rule-equation .math-fraction {
+    font-family: "Times New Roman", Georgia, serif;
+    font-size: 1.05em;
+}
+
+@media (max-width: 600px) {
+    .math-fraction {
+        margin-inline: .08em;
+        min-width: 2.35em;
+    }
+
+    .math-fraction-wide {
+        min-width: 7.2em;
+    }
+
+    .formula-line .math-fraction,
+    .py-step-list .math-fraction,
+    .identity-derivation .math-fraction,
+    .py-chain .math-fraction,
+    .rad-content-card .math-fraction,
+    .rad-rule-equation .math-fraction {
+        font-size: .98em;
+    }
+}
+
+/* =====================================================
+   CIRCLE ZOOM + MOBILE LABEL SAFETY
+   ===================================================== */
+.circle-zoom-toolbar {
+    display:flex;
+    align-items:center;
+    gap:7px;
+    flex-wrap:wrap;
+    margin-bottom:8px;
+    font-size:.85rem;
+}
+.circle-zoom-toolbar button {
+    min-width:34px;
+    min-height:32px;
+}
+.circle-zoom-toolbar span:first-child {
+    font-weight:700;
+    margin-right:2px;
+}
+
+/* =====================================================
+   WAVE INFINITE-ANGLE OPTION
+   ===================================================== */
+.wave-infinite-option {
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    margin-left:8px;
+    padding:5px 8px;
+    border:1px solid #64748b;
+    border-radius:8px;
+    font-size:.85rem;
+    cursor:pointer;
+}
+.wave-infinite-option input { accent-color:#2563eb; }
+.infinite-angle-hint {
+    display:block;
+    width:100%;
+    font-size:.75rem;
+    opacity:.72;
+    margin-bottom:4px;
+}
+
+/* The old mobile rule made Any Angle 1800px tall. */
+@media (max-width:800px) {
+    #freecircle .graph-card { min-height:0 !important; }
+    #freecircle canvas {
+        height:min(82vw, 430px) !important;
+        min-height:280px !important;
+        max-height:430px !important;
+    }
+    .wave-infinite-option { margin-left:0; }
+}
+
+
+/* Exact principal-value fractions */
+.pv-frac {
+    display:inline-flex;
+    flex-direction:column;
+    vertical-align:middle;
+    text-align:center;
+    line-height:1;
+    min-width:1.15em;
+    margin:0 .08em;
+}
+.pv-frac span:first-child { border-bottom:1.5px solid currentColor; padding:0 .12em 2px; }
+.pv-frac span:last-child { padding-top:2px; }
+
+/* Infinite-angle detail graph */
+.wave-infinite-detail {
+    margin-top:14px;
+    border:1px solid #293548;
+    border-radius:10px;
+    padding:12px;
+    background:#fafafa;
+}
+.wave-infinite-detail-head { display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:8px; }
+.wave-infinite-detail-head span { color:#667085; font-size:13px; }
+#waveInfiniteDetailCanvas { width:100%; height:320px; display:block; background:#fff; border:1px solid #d7dde5; border-radius:8px; }
+.wave-infinite-info { margin-top:10px; line-height:1.65; font-family:Arial,sans-serif; }
+@media(max-width:800px){
+  #waveInfiniteDetailCanvas { height:260px; }
+  .wave-infinite-detail { padding:9px; }
+}
+
+
+/* Infinite-angle feature: a clickable sub-mode inside the function graph. */
+.wave-infinite-option {
+    border: 1px solid #5c718a;
+    border-radius: 8px;
+    padding: 7px 11px;
+    background: #102033;
+    color: #fff;
+    cursor: pointer;
+    font-weight: 700;
+}
+.wave-infinite-option.active {
+    background: #173b55;
+    border-color: #65c7ff;
+}
+.wave-infinite-detail-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+.wave-infinite-detail-controls input {
+    width: 150px;
+    padding: 7px 9px;
+    border: 1px solid #b8c4d1;
+    border-radius: 7px;
+}
+@media (max-width: 700px) {
+    .wave-infinite-detail-controls input { width: 120px; }
+}
+
+/* =====================================================
+   FINAL WAVE MOBILE CONTROLS / PI AXIS OVERRIDES
+   ===================================================== */
+.wave-mobile-controller{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  margin:10px auto 0;
+  padding:8px 10px;
+}
+.wave-pad{
+  display:grid;
+  grid-template-columns:44px 44px 44px;
+  grid-template-rows:40px 40px 40px;
+  gap:5px;
+}
+.wave-pad button{
+  width:44px;height:40px;
+  border:1px solid #49617d;
+  border-radius:8px;
+  background:#102033;
+  color:#fff;
+  font-size:18px;
+  font-weight:700;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action:none;
+}
+.wave-pad button:active{transform:scale(.94)}
+.wave-pad button:nth-child(1){grid-column:2;grid-row:1}
+.wave-pad button:nth-child(2){grid-column:1;grid-row:2}
+.wave-pad button:nth-child(3){grid-column:3;grid-row:2}
+.wave-pad button:nth-child(4){grid-column:2;grid-row:3}
+.wave-speed{
+  min-width:150px;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  font-size:12px;
+}
+.wave-speed input{width:150px;accent-color:#2563eb}
+.wave-infinite-viewport{
+  width:100%;
+  overflow:hidden;
+  border-radius:8px;
+}
+.wave-infinite-viewport canvas{touch-action:none}
+@media(min-width:801px){
+  .wave-mobile-controller{display:flex}
+}
+@media(max-width:800px){
+  .wave-mobile-controller{display:flex;flex-wrap:wrap;gap:10px}
+  .wave-scroll{height:480px!important;min-height:480px!important;max-height:480px!important;overflow:auto!important}
+  .wave-scroll canvas{height:900px!important;min-height:900px!important;width:2600px!important;min-width:2600px!important}
+}
+/* Keep Any Angle compact on mobile; this wins over older 1800px rules. */
+@media(max-width:800px){
+  #freecircle .graph-card{min-height:0!important}
+  #freecircle canvas{height:min(82vw,430px)!important;min-height:280px!important;max-height:430px!important}
+}
+/* Controllers are an assistive touch UI; desktop keeps the normal mouse/scroll controls. */
+.wave-mobile-controller{display:none}
+@media(max-width:800px){.wave-mobile-controller{display:flex}}
+
+
+/* =====================================================
+   INFINITE ANGLE — FLOATING FOLDER WINDOW
+   ===================================================== */
+
+.infinite-angle-window[hidden] { display:none !important; }
+
+.infinite-angle-window {
+    position: fixed;
+    z-index: 10000;
+    width: min(760px, calc(100vw - 28px));
+    height: min(700px, calc(100vh - 28px));
+    right: 24px;
+    bottom: 24px;
+    background: #ffffff;
+    border: 1px solid #cfd7e3;
+    border-radius: 14px;
+    box-shadow: 0 18px 55px rgba(0,0,0,.22);
+    overflow: hidden;
+}
+
+.infinite-window-bar {
+    height: 46px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:0 12px 0 16px;
+    background:#f6f8fb;
+    border-bottom:1px solid #dce3ec;
+    cursor:move;
+    user-select:none;
+    touch-action:none;
+}
+
+.infinite-window-bar button {
+    width:32px;
+    height:32px;
+    border:0;
+    border-radius:8px;
+    background:#e9eef5;
+    font-size:22px;
+    line-height:1;
+    cursor:pointer;
+}
+
+.infinite-window-body {
+    height:calc(100% - 46px);
+    overflow:auto;
+    padding:12px;
+    box-sizing:border-box;
+}
+
+.infinite-window-input {
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-bottom:10px;
+    flex-wrap:wrap;
+}
+
+.infinite-window-input input {
+    width:150px;
+    max-width:55vw;
+    padding:7px 9px;
+    border:1px solid #c8d1de;
+    border-radius:7px;
+}
+
+.infinite-window-graph {
+    width:100%;
+    height:360px;
+    min-height:260px;
+    border:1px solid #dce3ec;
+    border-radius:10px;
+    overflow:hidden;
+    background:#fff;
+}
+
+#infiniteWindowCanvas {
+    width:100%;
+    height:100%;
+    display:block;
+}
+
+.infinite-angle-window .wave-mobile-controller {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    flex-wrap:wrap;
+    margin:10px 0;
+}
+
+.infinite-angle-window .wave-pad {
+    display:grid;
+}
+
+.infinite-angle-window .wave-infinite-info {
+    margin-top:8px;
+    padding:10px 12px;
+    border:1px solid #dce3ec;
+    border-radius:9px;
+    background:#f8fafc;
+    line-height:1.55;
+}
+
+@media (max-width:800px) {
+    .infinite-angle-window {
+        width:calc(100vw - 14px);
+        height:calc(100vh - 14px);
+        left:7px !important;
+        top:7px !important;
+        right:auto !important;
+        bottom:auto !important;
+        border-radius:10px;
+    }
+
+    .infinite-window-graph {
+        height:min(50vh,390px);
+        min-height:260px;
+    }
+
+    .infinite-window-bar {
+        cursor:default;
+    }
+}
+
+/* The old inline infinite detail is intentionally not used anymore. */
+#waveInfiniteDetail {
+    display:none !important;
+}
+
+
+/* V5 — Infinite angle floating window: zoom, fullscreen, escape */
+.infinite-window-actions{
+    display:flex;
+    gap:6px;
+    align-items:center;
+}
+.infinite-window-actions button{
+    width:34px;
+    height:32px;
+    border:1px solid #cbd5e1;
+    border-radius:7px;
+    background:#fff;
+    cursor:pointer;
+    font-size:18px;
+}
+.infinite-window-tools{
+    display:flex;
+    align-items:center;
+    gap:7px;
+    padding:7px 10px;
+    border-bottom:1px solid #e5e7eb;
+    background:#f8fafc;
+}
+.infinite-window-tools button{
+    border:1px solid #cbd5e1;
+    background:#fff;
+    border-radius:7px;
+    padding:6px 10px;
+    cursor:pointer;
+}
+#infiniteZoomValue{
+    min-width:48px;
+    text-align:center;
+    font-weight:600;
+}
+.infinite-angle-window.infinite-window-fullscreen{
+    left:0!important;
+    top:0!important;
+    right:0!important;
+    bottom:0!important;
+    width:100vw!important;
+    height:100vh!important;
+    border-radius:0!important;
+}
+.infinite-angle-window.infinite-window-fullscreen .infinite-window-graph{
+    height:calc(100vh - 190px);
+}
+@media(max-width:800px){
+    .infinite-angle-window{
+        width:calc(100vw - 12px)!important;
+        height:calc(100vh - 12px)!important;
+        left:6px!important;
+        top:6px!important;
+        right:auto!important;
+        bottom:auto!important;
+    }
+    .infinite-angle-window .infinite-window-graph{
+        height:min(52vh,430px);
+    }
+}
+
+
+/* =========================================================
+   FINAL DEVELOPMENT BUILD — GRAPH NAVIGATION / PRESENTATION
+   ========================================================= */
+#waveScroll{
+  overflow-x:auto !important;
+  overflow-y:auto !important;
+  touch-action:pan-x pan-y !important;
+  min-height:420px;
+  max-height:70vh;
+}
+#waveScroll #functionCanvas{
+  max-width:none !important;
+  display:block;
+}
+
+/* Main graph controller must remain available on touch devices. */
+.wave-mobile-controller{
+  position:relative;
+  z-index:5;
+  display:flex !important;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  flex-wrap:wrap;
+}
+
+/* Keep all six function buttons visible. */
+.function-buttons{
+  display:flex !important;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+/* Infinite graph is an independent scrollable coordinate world. */
+.infinite-window-graph{
+  overflow:auto !important;
+  min-height:320px;
+  max-height:calc(100vh - 230px);
+  touch-action:pan-x pan-y !important;
+}
+#infiniteWindowCanvas{
+  display:block;
+  width:4200px !important;
+  height:1800px !important;
+  max-width:none !important;
+}
+
+/* Separate X/Y coordinate presentation. */
+.wave-infinite-info{
+  display:block;
+  line-height:1.75;
+}
+.wave-infinite-info b{
+  display:inline-block;
+  margin-right:8px;
+}
+.infinite-window-actions button{
+  cursor:pointer;
+  pointer-events:auto !important;
+}
+
+/* Fullscreen must be above everything and actually fill the viewport. */
+.infinite-angle-window.infinite-window-fullscreen{
+  position:fixed !important;
+  inset:0 !important;
+  left:0 !important;
+  top:0 !important;
+  right:0 !important;
+  bottom:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  max-width:none !important;
+  max-height:none !important;
+  z-index:999999 !important;
+  border-radius:0 !important;
+}
+.infinite-angle-window.infinite-window-fullscreen .infinite-window-body{
+  height:calc(100vh - 46px) !important;
+}
+.infinite-angle-window.infinite-window-fullscreen .infinite-window-graph{
+  height:calc(100vh - 260px) !important;
+  max-height:none !important;
+}
+
+/* Do not let an old desktop/mobile media rule hide the controller. */
+@media(max-width:800px){
+  #waveScroll{
+    min-height:330px;
+    max-height:58vh;
+  }
+  .wave-mobile-controller{
+    display:flex !important;
+  }
+  .infinite-window-graph{
+    height:52vh !important;
+    max-height:none !important;
+  }
+}
+
+/* FINAL V10 OVERRIDES */
+#waveScroll{
+  overflow-x:auto !important;
+  overflow-y:auto !important;
+  max-height:68vh !important;
+  min-height:380px !important;
+  touch-action:pan-x pan-y !important;
+}
+#waveScroll #functionCanvas{
+  max-width:none !important;
+}
+.function-buttons{
+  display:flex !important;
+  flex-wrap:wrap !important;
+}
+.wave-mobile-controller{
+  display:flex !important;
+}
+.infinite-window-graph{
+  overflow:auto !important;
+  touch-action:pan-x pan-y !important;
+  min-height:320px !important;
+}
+#infiniteWindowCanvas{
+  max-width:none !important;
+}
+.coord-block{
+  padding:9px 10px;
+  margin:6px 0;
+  border:1px solid #d9e0e8;
+  border-radius:8px;
+  background:#f8fafc;
+}
+.coord-block > b{
+  display:block;
+  margin-bottom:3px;
+}
+.xy-block{
+  display:inline-block;
+  width:calc(50% - 7px);
+  vertical-align:top;
+  box-sizing:border-box;
+}
+.trig-values-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:6px;
+}
+.trig-values-grid span{
+  padding:5px 7px;
+  border-radius:6px;
+  background:#fff;
+  border:1px solid #e2e8f0;
+}
+.infinite-angle-window.infinite-window-fullscreen{
+  position:fixed !important;
+  inset:0 !important;
+  width:100vw !important;
+  height:100vh !important;
+  right:auto !important;
+  bottom:auto !important;
+  z-index:999999 !important;
+}
+.infinite-angle-window.infinite-window-fullscreen .infinite-window-graph{
+  height:calc(100vh - 250px) !important;
+  max-height:none !important;
+}
+@media(max-width:800px){
+  #waveScroll{max-height:56vh !important;min-height:320px !important;}
+  .wave-mobile-controller{display:flex !important;}
+  .xy-block{width:100%;}
+  .trig-values-grid{grid-template-columns:1fr;}
+}
+
+
+/* =========================================================
+   V11 — CENTERED GRAPH VIEWPORTS + RELIABLE INFINITE CLOSE
+   ========================================================= */
+
+/* Main graph: keep the graph world centered in its viewport on startup/reset.
+   Scrolling remains fully available in both axes. */
+#waveScroll{
+  overflow-x:auto !important;
+  overflow-y:auto !important;
+  scroll-behavior:auto !important;
+  overscroll-behavior:contain;
+}
+
+/* Infinite window is centered, not parked in the bottom-right corner. */
+.infinite-angle-window{
+  left:50% !important;
+  top:50% !important;
+  right:auto !important;
+  bottom:auto !important;
+  transform:translate(-50%,-50%) !important;
+}
+
+/* Its internal graph is independently scrollable. */
+.infinite-angle-window .infinite-window-graph{
+  overflow:auto !important;
+  touch-action:pan-x pan-y !important;
+}
+
+/* Make the close control unambiguously clickable. */
+#closeInfiniteAngle{
+  position:relative;
+  z-index:1000001 !important;
+  pointer-events:auto !important;
+  cursor:pointer !important;
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+}
+
+/* Fullscreen deliberately overrides centering. */
+.infinite-angle-window.infinite-window-fullscreen{
+  transform:none !important;
+  left:0 !important;
+  top:0 !important;
+}
+
+/* A visible close affordance on touch screens too. */
+@media(max-width:800px){
+  .infinite-window-actions button{
+    min-width:40px !important;
+    min-height:38px !important;
+    touch-action:manipulation !important;
+  }
+}
+
+
+/* =========================================================
+   FINAL V12 — STABLE CENTERED GRAPH SYSTEM
+   ========================================================= */
+
+/* Main graph is a scrollable coordinate WORLD, not a viewport-sized canvas. */
+#waveScroll{
+  overflow-x:auto !important;
+  overflow-y:auto !important;
+  width:100% !important;
+  box-sizing:border-box !important;
+  scroll-behavior:auto !important;
+  overscroll-behavior:contain !important;
+  touch-action:pan-x pan-y !important;
+}
+#functionCanvas{
+  display:block !important;
+  width:7200px !important;
+  min-width:7200px !important;
+  height:1300px !important;
+  min-height:1300px !important;
+  max-width:none !important;
+}
+
+/* Keep the main graph visually central without moving the whole page. */
+.workspace{
+  align-items:start !important;
+}
+.graph-card{
+  align-self:start !important;
+}
+
+/* Infinite folder: centered, independently scrollable, and actually fullscreen. */
+.infinite-angle-window{
+  position:fixed !important;
+  left:50% !important;
+  top:50% !important;
+  right:auto !important;
+  bottom:auto !important;
+  transform:translate(-50%,-50%) !important;
+  width:min(1000px,94vw) !important;
+  height:min(820px,90vh) !important;
+  z-index:999999 !important;
+  overflow:hidden !important;
+}
+.infinite-window-body{
+  height:calc(100% - 46px) !important;
+  overflow:auto !important;
+}
+.infinite-window-graph{
+  width:100% !important;
+  height:520px !important;
+  min-height:300px !important;
+  overflow:auto !important;
+  overscroll-behavior:contain !important;
+  touch-action:pan-x pan-y !important;
+}
+#infiniteWindowCanvas{
+  display:block !important;
+  width:4200px !important;
+  min-width:4200px !important;
+  height:1800px !important;
+  min-height:1800px !important;
+  max-width:none !important;
+}
+.infinite-angle-window.infinite-window-fullscreen{
+  position:fixed !important;
+  inset:0 !important;
+  left:0 !important;
+  top:0 !important;
+  right:auto !important;
+  bottom:auto !important;
+  transform:none !important;
+  width:100vw !important;
+  height:100vh !important;
+  max-width:none !important;
+  max-height:none !important;
+  border-radius:0 !important;
+}
+.infinite-angle-window.infinite-window-fullscreen .infinite-window-body{
+  height:calc(100vh - 46px) !important;
+}
+.infinite-angle-window.infinite-window-fullscreen .infinite-window-graph{
+  height:calc(100vh - 250px) !important;
+  max-height:none !important;
+}
+
+/* Separate coordinate presentation remains visible. */
+.xy-block{
+  width:calc(50% - 7px) !important;
+  display:inline-block !important;
+  vertical-align:top !important;
+  box-sizing:border-box !important;
+}
+@media(max-width:800px){
+  #functionCanvas{
+    width:7200px !important;
+    min-width:7200px !important;
+    height:1200px !important;
+    min-height:1200px !important;
+  }
+  #waveScroll{
+    height:60vh !important;
+    min-height:320px !important;
+    max-height:650px !important;
+  }
+  .infinite-angle-window{
+    width:96vw !important;
+    height:94vh !important;
+  }
+  .infinite-window-graph{
+    height:52vh !important;
+  }
+  .xy-block{width:100% !important;}
+}
+
+
+/* FINAL: CENTER BOTH GRAPHS + GUIDE OVERLAY */
+#waveScroll,.trig-infinite-scroll,#infiniteGraphScroll,[data-infinite-scroll]{
+  overflow:auto !important;
+  overscroll-behavior:contain;
+  scroll-behavior:auto !important;
+}
+#waveScroll canvas,.trig-infinite-scroll canvas,#infiniteGraphScroll canvas,
+[data-infinite-scroll] canvas{
+  max-width:none !important;
+  max-height:none !important;
+}
+.trig-xy-guide-overlay{
+  display:block !important;
+}
+
+/* Default viewport is centered on the actual graph red-dot. */
+#waveScroll,
+.trig-infinite-scroll,
+#infiniteGraphScroll,
+[data-infinite-scroll]{
+  overflow:auto !important;
+  scroll-behavior:auto !important;
+}
+
+/* V14: independent infinite graph viewport + coordinate guide */
+.infinite-window-graph{overflow:auto !important;position:relative !important;}
+#infiniteWindowCanvas{max-width:none !important;max-height:none !important;}
+.infinite-xy-guide-overlay{display:block !important;pointer-events:none !important;}
+
+/* V16: controller buttons must remain directly touchable on mobile */
+.wave-mobile-controller,
+.wave-pad,
+.wave-pad button{
+  pointer-events:auto !important;
+}
+.wave-pad button{
+  touch-action:none !important;
+  -webkit-touch-callout:none;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* Clean build: controller/infinite UI disabled */
+.wave-mobile-controller,
+.wave-pad,
+.infinite-btn,
+.infinite-graph-window,
+.trig-infinite-window,
+#openInfinite,
+#infiniteBtn,
+#infiniteGraphWindow,
+#infiniteGraph {
+  display:none !important;
+}
+
+/* FINAL CLEANUP: infinite-angle UI and wave movement controller disabled */
+.wave-mobile-controller,
+.wave-infinite-option,
+.wave-infinite-detail,
+.wave-infinite-detail-controls,
+.wave-infinite-detail-head,
+.wave-infinite-viewport,
+.wave-infinite-info,
+.infinite-angle-hint {
+  display: none !important;
+}
+
+/* Main graph controller: touch must reach the controller buttons */
+[data-wave-dir], [data-direction] {
+  pointer-events: auto !important;
+  touch-action: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* FINAL WAVE GRAPH REPLACEMENT — presentation only */
+#waveScroll{
+  width:100%;
+  height:clamp(220px,42vw,430px);
+  min-height:220px;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+  touch-action:none;
+  border-radius:14px;
+}
+#functionCanvas{
+  display:block;
+  max-width:none !important;
+  image-rendering:auto;
+}
+@media(max-width:600px){
+  #waveScroll{height:230px;min-height:210px}
+}
+@media(min-width:601px){
+  #waveScroll{height:320px}
+}
+
+@media(max-width:520px){
+  .advanced-wave-link-card{display:grid;grid-template-columns:1fr}
+  .advanced-wave-link-card a{text-align:center}
+}

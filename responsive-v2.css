@@ -1,0 +1,28 @@
+
+/* TRIG-SHIP responsive layer — safe additive stylesheet */
+@media (max-width: 800px) {
+  main { width: 96%; }
+  .workspace { grid-template-columns: 1fr; }
+  .graph-card, .control-card { min-height: auto; }
+  canvas { max-width: 100%; }
+  .toolbar, .function-buttons, .wave-toolbar {
+    gap: 7px;
+  }
+  button { min-height: 42px; }
+  .angle-input input { font-size: 16px; }
+  .table-card { overflow-x: auto; }
+}
+
+@media (max-width: 520px) {
+  header { padding: 18px 10px; }
+  .logo { font-size: 30px; letter-spacing: 2px; }
+  main { width: 98%; }
+  .card { padding: 12px; }
+  .graph-card { min-height: 300px; }
+  canvas { height: min(58vw, 330px); min-height: 230px; }
+  .wave-scroll { max-width: 100%; overflow-x: auto; touch-action: pan-x pan-y; }
+  .function-buttons button { flex: 1 1 28%; }
+  .big-value { font-size: 32px; }
+  .angle-input { flex-wrap: wrap; }
+  .angle-input input { width: 100%; }
+}

@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TrigoLab</title>
+<link href="style.css" rel="stylesheet"/>
+<link href="responsive-v2.css" rel="stylesheet"/>
+</head>
+<body>
+<header>
+<div class="logo">TRIGO<span>LAB</span></div>
+<div class="subtitle">Interactive Trigonometry Visualizer</div>
+<div class="theme-buttons">
+<button onclick="setTheme('color')">Color</button>
+<button onclick="setTheme('black')">Black</button>
+<button onclick="setTheme('white')">White</button>
+
+</div>
+</header>
+<main>
+<div class="toolbar">
+<button class="active" onclick="showSection('combined', this)">Unit Circle</button>
+<button onclick="showSection('freecircle', this)">Any Angle Circle</button>
+<button onclick="showSection('values', this)">Special Values</button>
+<button onclick="showSection('formulas', this)">Formula Library</button>
+<button onclick="showSection('pythagoras', this)">Pythagoras → Identities</button>
+<button onclick="showSection('radDerivation', this)">Radian Converter</button>
+</div>
+<div class="ts-rotate-note" role="note">
+        ↻ Rotate your phone for a better experience
+    </div>
+<section class="page-section active-section" id="combined">
+<div class="section-title">
+<h2>Unit Circle</h2>
+<p>Interactive unit-circle visualization for all six trigonometric functions.</p>
+</div>
+<div class="workspace">
+<div class="card graph-card">
+<div aria-label="Unit circle zoom controls" class="circle-zoom-toolbar">
+<span>Circle Zoom</span>
+<button onclick="changeCircleZoom('combined', -1)" type="button">−</button>
+<button onclick="changeCircleZoom('combined', 1)" type="button">+</button>
+<button onclick="resetCircleZoom('combined')" type="button">Reset</button>
+</div>
+<canvas id="combinedCanvas"></canvas>
+</div>
+<div class="card control-card">
+<h3>Angle Control</h3>
+<div class="angle-display">
+<span id="angleDisplay">0°</span>
+</div>
+<input id="angleSlider" max="360" min="0" step="0.1" type="range" value="0"/>
+<div class="angle-input">
+<input id="angleInput" max="360" min="0" step="0.1" type="number" value="0"/>
+<span>degrees</span>
+</div>
+<div class="ratio-box">
+<div class="ratio red"><span>sin(θ)</span><strong id="sinValue">0</strong></div>
+<div class="ratio blue"><span>cos(θ)</span><strong id="cosValue">1</strong></div>
+<div class="ratio green"><span>tan(θ)</span><strong id="tanValue">0</strong></div>
+<div class="ratio orange"><span>cot(θ)</span><strong id="cotValue">undefined</strong></div>
+<div class="ratio purple"><span>sec(θ)</span><strong id="secValue">1</strong></div>
+<div class="ratio pink"><span>cosec(θ)</span><strong id="cosecValue">undefined</strong></div>
+</div>
+<div class="fraction-panel">
+<div>
+<span class="function-name">sin(θ)</span>
+<div class="fraction">
+<span>perpendicular</span>
+<span>hypotenuse</span>
+</div>
+</div>
+<div>
+<span class="function-name">cos(θ)</span>
+<div class="fraction">
+<span>base</span>
+<span>hypotenuse</span>
+</div>
+</div>
+<div>
+<span class="function-name">tan(θ)</span>
+<div class="fraction">
+<span>perpendicular</span>
+<span>base</span>
+</div>
+</div>
+<div>
+<span class="function-name">cot(θ)</span>
+<div class="fraction">
+<span>base</span>
+<span>perpendicular</span>
+</div>
+</div>
+<div>
+<span class="function-name">sec(θ)</span>
+<div class="fraction">
+<span>hypotenuse</span>
+<span>base</span>
+</div>
+</div>
+<div>
+<span class="function-name">cosec(θ)</span>
+<div class="fraction">
+<span>hypotenuse</span>
+<span>perpendicular</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="page-section" id="freecircle">
+<div class="section-title">
+<h2>Angle Explorer — Any Angle</h2>
+<p>Enter any angle: 2°, 35°, 600°, 3656°, 53267°… the circle uses the equivalent position automatically.</p>
+</div>
+<div class="workspace">
+<div class="card graph-card ts-any-angle-graph-card">
+<div aria-label="Any angle circle zoom controls" class="circle-zoom-toolbar">
+<span>Circle Zoom</span>
+<button onclick="changeCircleZoom('free', -1)" type="button">−</button>
+<button onclick="changeCircleZoom('free', 1)" type="button">+</button>
+<button onclick="resetCircleZoom('free')" type="button">Reset</button>
+</div>
+<canvas id="freeCircleCanvas"></canvas>
+</div>
+<div class="card control-card">
+<h3>Enter Any Angle</h3>
+<div class="angle-display">
+<span id="freeAngleDisplay">0°</span>
+</div>
+<div class="angle-control">
+<input id="freeAngleSlider" max="360" min="0" step="0.1" type="range" value="0"/>
+<div class="angle-control-label">
+<span>0°</span>
+<span>360°</span>
+</div>
+</div>
+<div class="angle-input">
+<input id="freeAngleInput" step="any" type="number" value="0"/>
+<span>degrees — any number allowed</span>
+</div>
+<div class="free-angle-info" id="freeAngleInfo"></div>
+<div class="triangle-legend">
+<div class="legend-item">
+<span class="legend-line hypotenuse"></span>
+<span>Hypotenuse</span>
+</div>
+<div class="legend-item">
+<span class="legend-line perpendicular"></span>
+<span>Perpendicular</span>
+</div>
+<div class="legend-item">
+<span class="legend-line base"></span>
+<span>Base</span>
+</div>
+</div>
+<div class="free-ratio-box">
+<div><span>sin(θ)</span><strong id="freeSin">0</strong></div>
+<div><span>cos(θ)</span><strong id="freeCos">1</strong></div>
+<div><span>tan(θ)</span><strong id="freeTan">0</strong></div>
+<div><span>cot(θ)</span><strong id="freeCot">undefined</strong></div>
+<div><span>sec(θ)</span><strong id="freeSec">1</strong></div>
+<div><span>cosec(θ)</span><strong id="freeCosec">undefined</strong></div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="page-section" id="values">
+<div class="section-title">
+<h2>Special Trigonometric Values</h2>
+<p>School-level values are kept separately from additional values.</p>
+</div>
+<div class="card table-card">
+<h3>School Values</h3>
+<table>
+<thead>
+<tr>
+<th>θ</th>
+<th>sin</th>
+<th>cos</th>
+<th>tan</th>
+<th>cot</th>
+<th>sec</th>
+<th>cosec</th>
+</tr>
+</thead>
+<tbody id="schoolTable"></tbody>
+</table>
+</div>
+<br/>
+<div class="card table-card">
+<h3>Other Values</h3>
+<table>
+<thead>
+<tr>
+<th>θ</th>
+<th>sin</th>
+<th>cos</th>
+<th>tan</th>
+<th>cot</th>
+<th>sec</th>
+<th>cosec</th>
+</tr>
+</thead>
+<tbody id="otherTable"></tbody>
+</table>
+</div>
+</section>
+<section class="page-section" id="pythagoras">
+<div class="section-title">
+<h2>Pythagoras → Trigonometric Identities</h2>
+<p>See exactly how the right-triangle theorem becomes the fundamental identity, then use that identity to derive the other two Pythagorean identities.</p>
+</div>
+<div class="pythagoras-layout">
+<div class="card pythagoras-visual-card">
+<h3>Right triangle: the starting point</h3>
+<svg aria-label="Right triangle showing perpendicular, base, hypotenuse and angle theta" class="pythagoras-svg" role="img" viewbox="0 0 620 430">
+<defs>
+<filter height="160%" id="pyGlow" width="160%" x="-30%" y="-30%">
+<fegaussianblur result="blur" stddeviation="4"></fegaussianblur>
+<femerge><femergenode in="blur"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge>
+</filter>
+</defs>
+<rect fill="#050505" height="430" rx="18" width="620" x="0" y="0"></rect>
+<path d="M120 350 L500 350 L500 95 Z" fill="rgba(255,255,255,.025)" stroke="#ffd84d" stroke-width="2"></path>
+<line filter="url(#pyGlow)" stroke="magenta" stroke-linecap="round" stroke-width="8" x1="120" x2="500" y1="350" y2="350"></line>
+<line filter="url(#pyGlow)" stroke="green" stroke-linecap="round" stroke-width="8" x1="500" x2="500" y1="350" y2="95"></line>
+<line filter="url(#pyGlow)" stroke="dodgerblue" stroke-linecap="round" stroke-width="8" x1="120" x2="500" y1="350" y2="95"></line>
+<path d="M470 350 L470 320 L500 320" fill="none" stroke="green" stroke-width="4"></path>
+<path d="M170 350 A50 50 0 0 0 159 317" fill="none" stroke="#ffd84d" stroke-width="4"></path>
+<text fill="#ffd84d" font-family="Arial" font-size="26" x="145" y="330">θ</text>
+<text fill="magenta" font-family="Arial" font-size="23" font-weight="700" x="280" y="382">Base = B</text>
+<text fill="green" font-family="Arial" font-size="23" font-weight="700" x="515" y="230">Perpendicular = P</text>
+<text fill="dodgerblue" font-family="Arial" font-size="23" font-weight="700" transform="rotate(-34 280 185)" x="280" y="185">Hypotenuse = H</text>
+<text fill="#fffdf2" font-family="Arial" font-size="27" font-weight="700" x="48" y="55">P² + B² = H²</text>
+</svg>
+<div class="pythagoras-legend">
+<span><i class="py-line hyp"></i>Hypotenuse (H)</span>
+<span><i class="py-line perp"></i>Perpendicular (P)</span>
+<span><i class="py-line base"></i>Base (B)</span>
+</div>
+</div>
+<div class="card pythagoras-steps-card">
+<h3>Route A — Pythagoras → sin²θ + cos²θ = 1</h3>
+<div class="py-equation">P² + B² = H²</div>
+<ol class="py-step-list">
+<li>Divide <strong>every term</strong> by H².</li>
+<li><span class="math-inline"><span class="math-fraction"><span class="math-fraction-top">P²</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">H²</span></span> + <span class="math-fraction"><span class="math-fraction-top">B²</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">H²</span></span> = <span class="math-fraction"><span class="math-fraction-top">H²</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">H²</span></span></span></li>
+<li><span class="math-inline">(<span class="math-fraction"><span class="math-fraction-top">P</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">H</span></span>)² + (<span class="math-fraction"><span class="math-fraction-top">B</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">H</span></span>)² = 1</span></li>
+<li>Use <strong>sin θ = <span class="math-fraction"><span class="math-fraction-top">P</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">H</span></span></strong> and <strong>cos θ = <span class="math-fraction"><span class="math-fraction-top">B</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">H</span></span></strong>.</li>
+<li class="py-result">sin²θ + cos²θ = 1</li>
+</ol>
+</div>
+</div>
+<div class="pythagoras-route-grid">
+<div class="card">
+<h3>Route B — Unit circle</h3>
+<p>For a unit circle, the radius is 1. The point at angle θ has coordinates (cos θ, sin θ).</p>
+<div class="py-equation">x² + y² = 1</div>
+<ol class="py-step-list">
+<li>Put <strong>x = cos θ</strong>.</li>
+<li>Put <strong>y = sin θ</strong>.</li>
+<li>Substitute into the unit-circle equation.</li>
+<li class="py-result">cos²θ + sin²θ = 1</li>
+</ol>
+</div>
+<div class="card">
+<h3>Then derive the other identities</h3>
+<div class="identity-derivation">
+<strong>Divide by cos²θ:</strong>
+<p><span class="math-fraction"><span class="math-fraction-top">sin²θ</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">cos²θ</span></span> + 1 = <span class="math-fraction"><span class="math-fraction-top">1</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">cos²θ</span></span></p>
+<p class="py-result">tan²θ + 1 = sec²θ</p>
+</div>
+<div class="identity-derivation">
+<strong>Divide by sin²θ:</strong>
+<p>1 + <span class="math-fraction"><span class="math-fraction-top">cos²θ</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">sin²θ</span></span> = <span class="math-fraction"><span class="math-fraction-top">1</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">sin²θ</span></span></p>
+<p class="py-result">1 + cot²θ = cosec²θ</p>
+</div>
+</div>
+</div>
+<div class="card pythagoras-chain-card">
+<h3>The whole chain</h3>
+<div class="py-chain">
+<span>P² + B² = H²</span>
+<b>÷ H²</b>
+<span>(<span class="math-fraction"><span class="math-fraction-top">P</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">H</span></span>)² + (<span class="math-fraction"><span class="math-fraction-top">B</span><span class="math-fraction-bar"></span><span class="math-fraction-bottom">H</span></span>)² = 1</span>
+<b>definitions</b>
+<span>sin²θ + cos²θ = 1</span>
+<b>÷ cos²θ</b>
+<span>1 + tan²θ = sec²θ</span>
+<b>÷ sin²θ</b>
+<span>1 + cot²θ = cosec²θ</span>
+</div>
+</div>
+<div class="ts-responsive-wrap" id="pythagoras-v2-host" style="margin-block:24px;"></div> </section>
+<section class="page-section" id="formulas">
+<div class="section-title">
+<h2>Formula Library</h2>
+<p>Formula groups are separated so derivations and proofs can be added later.</p>
+</div>
+<div class="formula-grid">
+<div class="formula-card">
+<h3>Basic Ratios</h3>
+<div id="basicFormulas"></div>
+</div>
+<div class="formula-card">
+<h3>Identities</h3>
+<div id="identityFormulas"></div>
+</div>
+<div class="formula-card">
+<h3>Addition &amp; Subtraction</h3>
+<div id="additionFormulas"></div>
+</div>
+<div class="formula-card">
+<h3>Reciprocal Functions</h3>
+<div id="reciprocalFormulas"></div>
+</div>
+<div class="formula-card">
+<h3>Inverse Trigonometric Functions</h3>
+<div id="inverseFormulas"></div>
+</div>
+<div class="formula-card">
+<h3>Principal Values</h3>
+<div id="principalFormulas"></div>
+</div>
+</div>
+</section>
+</main>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  if (window.TRIGShipPythagorasV2) {
+    window.TRIGShipPythagorasV2.render(document.getElementById("pythagoras-v2-host"));
+  }
+});
+</script>
+<section class="page-section" id="radDerivation">
+<div class="section-title">
+<h2>Rad-Derivation</h2>
+<p>Degree ↔ radian conversion tool.</p>
+</div>
+<section aria-label="Degree and radian converter" class="rad-converter-card">
+<div class="rad-converter-heading">
+<div>
+<h2>Degree ↔ Radian Converter</h2>
+<p>Degree → radian keeps the exact π form and also shows a decimal. Radian → degree accepts π-form or decimal radians.</p>
+</div>
+</div>
+<div class="rad-converter-grid">
+<div class="rad-converter-panel">
+<h3>Degrees → Radians</h3>
+<label for="radDegreeInput">Degree value</label>
+<input aria-label="Degree value" id="radDegreeInput" inputmode="decimal" type="text" value="180"/>
+<div aria-label="Trigonometry symbol keyboard" class="rad-symbol-keyboard">
+<button data-symbol="π" type="button">π</button>
+<button data-symbol="°" type="button">°</button>
+<button data-symbol="θ" type="button">θ</button>
+<button data-symbol="∠" type="button">∠</button>
+<button data-symbol="rad" type="button">rad</button>
+<button data-symbol="π/2" type="button">π/2</button>
+<button data-symbol="π/3" type="button">π/3</button>
+<button data-symbol="π/4" type="button">π/4</button>
+<button data-symbol="π/6" type="button">π/6</button>
+<button data-symbol="2π" type="button">2π</button>
+</div>
+<button id="radDegreeConvert" type="button">Convert</button>
+<div class="rad-converter-result">
+<div><span>Exact π form</span><strong id="radDegreeExact">π</strong></div>
+<div><span>Decimal radians</span><strong id="radDegreeDecimal">3.141592654</strong></div>
+</div>
+</div>
+<div class="rad-converter-panel">
+<h3>Radians → Degrees</h3>
+<label for="radRadianInput">Radian value</label>
+<input id="radRadianInput" placeholder="π/2 or 1.5707963268" type="text" value="π/2"/>
+<div aria-label="Radian symbol keyboard" class="rad-symbol-keyboard">
+<button data-symbol="π" type="button">π</button>
+<button data-symbol="°" type="button">°</button>
+<button data-symbol="θ" type="button">θ</button>
+<button data-symbol="∠" type="button">∠</button>
+<button data-symbol="rad" type="button">rad</button>
+<button data-symbol="π/2" type="button">π/2</button>
+<button data-symbol="π/3" type="button">π/3</button>
+<button data-symbol="π/4" type="button">π/4</button>
+<button data-symbol="π/6" type="button">π/6</button>
+<button data-symbol="2π" type="button">2π</button>
+</div>
+<button id="radRadianConvert" type="button">Convert</button>
+<div class="rad-converter-result">
+<div><span>Degree value</span><strong id="radRadianDegree">90°</strong></div>
+<div><span>Parsed decimal radians</span><strong id="radRadianDecimal">1.570796327</strong></div>
+</div>
+</div>
+</div>
+<div class="rad-converter-note">
+<strong>Exact π form examples:</strong> 30° → π/6, 45° → π/4, 60° → π/3, 90° → π/2, 180° → π.
+      For other angles the converter keeps the coefficient of π, e.g. 37° → 37π/180.
+    </div>
+</section>
+</section>
+<footer>
+    TrigoLab — Mathematics Visualization
+</footer>
+<script src="data/school-values.js"></script>
+<script src="data/other-values.js"></script>
+<script src="data/formulas.js"></script>
+<script src="data/pythagoras.js"></script>
+<script src="script.js"></script>
+<script>
+(function(){
+  "use strict";
+
+  function gcd(a,b){
+    a=Math.abs(a); b=Math.abs(b);
+    while(b){ var t=a%b; a=b; b=t; }
+    return a || 1;
+  }
+
+  function exactPi(deg){
+    if(!Number.isFinite(deg)) return "undefined";
+    if(Math.abs(deg) < 1e-12) return "0";
+
+    var nearest=Math.round(deg);
+    if(Math.abs(deg-nearest) < 1e-10){
+      var n=nearest, d=180, g=gcd(n,d);
+      n/=g; d/=g;
+      if(d===1) return n===1 ? "π" : n===-1 ? "−π" : n+"π";
+      var sign=n<0 ? "−" : "";
+      n=Math.abs(n);
+      if(n===1) return sign+"π/"+d;
+      return sign+n+"π/"+d;
+    }
+
+    var coeff=deg/180;
+    return coeff.toFixed(10).replace(/0+$/,"").replace(/\.$/,"")+"π";
+  }
+
+  function parseRad(raw){
+    var s=String(raw==null ? "" : raw)
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g,"")
+      .replace(/radians?|rad$/,"")
+      .replace(/π/g,"pi");
+
+    if(!s) return NaN;
+
+    // Decimal number, e.g. 1.5707963268
+    if(/^[+-]?(?:\d+(?:\.\d*)?|\.\d+)$/.test(s))
+      return Number(s);
+
+    // π alone, -π, +π
+    if(s==="pi") return Math.PI;
+    if(s==="+pi") return Math.PI;
+    if(s==="-pi") return -Math.PI;
+
+    // aπ, -aπ, a.pi
+    var m=s.match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+))pi$/);
+    if(m) return Number(m[1])*Math.PI;
+
+    // π/d, aπ/d, -aπ/d
+    var f=s.match(/^([+-]?(?:(?:\d+(?:\.\d*)?|\.\d+))?)pi\/([+-]?(?:\d+(?:\.\d*)?|\.\d+))$/);
+    if(f){
+      var coeff=(f[1]===""||f[1]==="+") ? 1 : (f[1]==="-" ? -1 : Number(f[1]));
+      var den=Number(f[2]);
+      return den===0 ? NaN : coeff*Math.PI/den;
+    }
+
+    // Also accept pi*3/4 and 3/4*pi
+    var m2=s.match(/^pi\*([+-]?(?:\d+(?:\.\d*)?|\.\d+))\/([+-]?(?:\d+(?:\.\d*)?|\.\d+))$/);
+    if(m2) return Number(m2[1])*Math.PI/Number(m2[2]);
+
+    var m3=s.match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+))\/([+-]?(?:\d+(?:\.\d*)?|\.\d+))\*?pi$/);
+    if(m3) return Number(m3[1])*Math.PI/Number(m3[2]);
+
+    return NaN;
+  }
+
+  function fmt(n){
+    return Number.isFinite(n)
+      ? n.toFixed(9).replace(/0+$/,"").replace(/\.$/,"")
+      : "undefined";
+  }
+
+  function convertDegree(){
+    var el=document.getElementById("radDegreeInput");
+    if(!el) return;
+    var raw=String(el.value).trim().replace(/°/g,"");
+    var d=Number(raw);
+    var exact=document.getElementById("radDegreeExact");
+    var decimal=document.getElementById("radDegreeDecimal");
+    if(!Number.isFinite(d)){
+      exact.textContent="Invalid";
+      decimal.textContent="Invalid";
+      return;
+    }
+    exact.innerHTML=typeof renderMathFractions === "function" ? renderMathFractions(exactPi(d)) : exactPi(d);
+    decimal.textContent=fmt(d*Math.PI/180);
+  }
+
+  function convertRadian(){
+    var el=document.getElementById("radRadianInput");
+    if(!el) return;
+    var r=parseRad(el.value);
+    var degree=document.getElementById("radRadianDegree");
+    var decimal=document.getElementById("radRadianDecimal");
+    degree.textContent=Number.isFinite(r) ? fmt(r*180/Math.PI)+"°" : "Invalid";
+    decimal.textContent=Number.isFinite(r) ? fmt(r) : "Invalid";
+  }
+
+  function insertSymbol(input,symbol){
+    if(!input) return;
+    var start=input.selectionStart==null ? input.value.length : input.selectionStart;
+    var end=input.selectionEnd==null ? input.value.length : input.selectionEnd;
+    var before=input.value.slice(0,start);
+    var after=input.value.slice(end);
+    input.value=before+symbol+after;
+    var pos=start+symbol.length;
+    input.focus();
+    try{ input.setSelectionRange(pos,pos); }catch(e){}
+    input.dispatchEvent(new Event("input",{bubbles:true}));
+  }
+
+  function init(){
+    var degreeInput=document.getElementById("radDegreeInput");
+    var radianInput=document.getElementById("radRadianInput");
+    var dc=document.getElementById("radDegreeConvert");
+    var rc=document.getElementById("radRadianConvert");
+    if(!degreeInput || !radianInput || !dc || !rc) return;
+
+    dc.onclick=convertDegree;
+    rc.onclick=convertRadian;
+    degreeInput.addEventListener("input",convertDegree);
+    radianInput.addEventListener("input",convertRadian);
+
+    document.querySelectorAll(".rad-symbol-keyboard [data-symbol]").forEach(function(btn){
+      btn.addEventListener("click",function(){
+        // Keyboard buttons always insert into the currently focused converter input.
+        var active=document.activeElement;
+        var target=(active===degreeInput || active===radianInput) ? active : radianInput;
+        insertSymbol(target,btn.getAttribute("data-symbol"));
+      });
+    });
+
+    convertDegree();
+    convertRadian();
+  }
+
+  if(document.readyState==="loading")
+    document.addEventListener("DOMContentLoaded",init);
+  else
+    init();
+})();
+</script>
+<!-- Rules of Rad: floating guide belongs only to the converter -->
+<script>
+(function(){
+  "use strict";
+  function initRadRules(){
+    var toggle=document.getElementById("radRulesToggle");
+    var panel=document.getElementById("radRulesPanel");
+    var close=document.getElementById("radRulesClose");
+    if(!toggle || !panel || !close) return;
+
+    function setOpen(open){
+      toggle.setAttribute("aria-expanded", String(open));
+      panel.hidden=!open;
+      toggle.classList.toggle("is-open", open);
+    }
+
+    toggle.addEventListener("click", function(){
+      setOpen(panel.hidden);
+    });
+    close.addEventListener("click", function(){ setOpen(false); });
+
+    document.addEventListener("keydown", function(e){
+      if(e.key === "Escape" && !panel.hidden) setOpen(false);
+    });
+  }
+
+  if(document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", initRadRules);
+  else
+    initRadRules();
+})();
+</script>
+<!-- TRIG-SHIP initial canvas render hardening v3 -->
+<script>
+(function(){
+  "use strict";
+  function kickGraphs(){
+    try {
+      if (typeof window.dispatchEvent === "function") {
+        window.dispatchEvent(new Event("resize"));
+      }
+      if (typeof window.renderAllGraphs === "function") window.renderAllGraphs();
+      if (typeof window.renderGraphs === "function") window.renderGraphs();
+      if (typeof window.updateGraphs === "function") window.updateGraphs();
+      if (typeof window.drawGraphs === "function") window.drawGraphs();
+    } catch(e) {}
+  }
+  function start(){
+    requestAnimationFrame(function(){
+      requestAnimationFrame(kickGraphs);
+      setTimeout(kickGraphs, 120);
+      setTimeout(kickGraphs, 400);
+      setTimeout(kickGraphs, 900);
+    });
+  }
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", start);
+  else start();
+  window.addEventListener("load", start);
+  document.addEventListener("visibilitychange", function(){ if(!document.hidden) start(); });
+})();
+</script>
+</body>
+</html>
