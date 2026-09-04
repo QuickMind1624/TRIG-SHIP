@@ -274,6 +274,9 @@ function getFunctionValue(
         case "cosec":
             return 1 / Math.sin(theta);
 
+        default:
+            return NaN;
+
     }
 
 }
@@ -295,28 +298,24 @@ function setupCanvas(
     const width = Math.max(1, rect.width || canvas.parentElement?.clientWidth || 1000);
     const height = Math.max(1, rect.height || parseFloat(getComputedStyle(canvas).height) || 570);
 
-    const rawDpr = window.devicePixelRatio || 1;
+    const rawDpr = Number(window.devicePixelRatio) || 1;
     const area = width * height;
     const dpr = area > 2000000 ? Math.min(rawDpr, 1.5) : Math.min(rawDpr, 2);
 
-    canvas.width = Math.max(1, Math.round(width * dpr));
-    canvas.height = Math.max(1, Math.round(height * dpr));
+    const pixelWidth = Math.max(1, Math.round(width * dpr));
+    const pixelHeight = Math.max(1, Math.round(height * dpr));
 
+    /* Keep the drawing coordinate system in CSS pixels. This is critical
+       on large/high-DPI smartboards: math coordinates must not depend on
+       the backing-store pixel ratio. */
+    if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
+    if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
 
-    const ctx =
-        canvas.getContext(
-            "2d"
-        );
+    const ctx = canvas.getContext("2d", { alpha: true });
+    if (!ctx) return { ctx: null, width, height, dpr };
 
-
-    ctx.setTransform(
-        dpr,
-        0,
-        0,
-        dpr,
-        0,
-        0
-    );
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
 
 
     return {
@@ -542,6 +541,8 @@ function drawCombined() {
         width,
         height
     );
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, width, height);
 
 
     const cx =
@@ -1797,20 +1798,16 @@ function selectFunction(
    SLIDERS
    ===================================================== */
 
-angleSlider.addEventListener(
+if (angleSlider && angleInput) angleSlider.addEventListener(
     "input",
     function () {
-
-        angleInput.value =
-            angleSlider.value;
-
+        angleInput.value = angleSlider.value;
         drawCombined();
-
     }
 );
 
 
-angleInput.addEventListener(
+if (angleInput && angleSlider) angleInput.addEventListener(
     "input",
     function () {
 
@@ -1970,7 +1967,7 @@ function ensureInfiniteAngleWindow() {
         dragging = true;
         sx = e.clientX; sy = e.clientY;
         sl = win.offsetLeft; st = win.offsetTop;
-        handle.setPointerCapture?.(e.pointerId);
+        if (handle.setPointerCapture) handle.setPointerCapture(e.pointerId);
     });
     handle.addEventListener("pointermove", e => {
         if (!dragging) return;
@@ -2538,26 +2535,255 @@ const freeAngleSlider =
 let combinedCircleZoom = 1;
 let freeCircleZoom = 1;
 
+/* Circle zoom is intentionally independent from panel resizing. */
 function changeCircleZoom(which, direction) {
     const step = 0.1;
     if (which === "combined") {
-        combinedCircleZoom = Math.max(0.8, Math.min(1.35, combinedCircleZoom + direction * step));
+        combinedCircleZoom = Math.max(0.55, Math.min(1.35, combinedCircleZoom + direction * step));
         drawCombined();
     } else {
-        freeCircleZoom = Math.max(0.8, Math.min(1.35, freeCircleZoom + direction * step));
+        freeCircleZoom = Math.max(0.55, Math.min(1.35, freeCircleZoom + direction * step));
         drawFreeCircle();
     }
 }
 
 function resetCircleZoom(which) {
-    if (which === "combined") { combinedCircleZoom = 1; drawCombined(); }
-    else { freeCircleZoom = 1; drawFreeCircle(); }
+    if (which === "combined") {
+        combinedCircleZoom = 1;
+        drawCombined();
+    } else {
+        freeCircleZoom = 1;
+        drawFreeCircle();
+    }
 }
+
+
+/* =====================================================
+   LONG-PRESS TRIG VALUE -> SCHOOL-STYLE P/Q
+   Exact library values are preferred. For other angles, show a
+   reduced rational approximation of the displayed decimal value,
+   clearly marked as approximate.
+   ===================================================== */
+(function enableTrigLongPressFractions() {
+    const functionNames = ["sin", "cos", "tan", "cot", "sec", "cosec"];
+    const holdMs = 2000;
+    let popup = null;
+    let timer = null;
+    let activeEl = null;
+
+    function ensurePopup() {
+        if (popup) return popup;
+        popup = document.createElement("div");
+        popup.className = "trig-fraction-popup";
+        popup.setAttribute("role", "dialog");
+        popup.setAttribute("aria-live", "polite");
+        popup.innerHTML = `
+            <button class="trig-fraction-close" type="button" aria-label="Close">×</button>
+            <div class="trig-fraction-title"></div>
+            <div class="trig-fraction-angle"></div>
+            <div class="trig-fraction-value"></div>
+            <div class="trig-fraction-note"></div>`;
+        document.body.appendChild(popup);
+        popup.querySelector(".trig-fraction-close").addEventListener("click", hide);
+        return popup;
+    }
+
+    function gcd(a,b) {
+        a=Math.abs(a); b=Math.abs(b);
+        while (b) [a,b]=[b,a%b];
+        return a || 1;
+    }
+
+    function rationalApprox(value, maxDen=10000) {
+        if (!Number.isFinite(value)) return null;
+        const sign = value < 0 ? -1 : 1;
+        value = Math.abs(value);
+        let bestN=Math.round(value), bestD=1, bestErr=Math.abs(value-bestN);
+        for (let d=1; d<=maxDen; d++) {
+            const n=Math.round(value*d), err=Math.abs(value-n/d);
+            if (err < bestErr) { bestN=n; bestD=d; bestErr=err; }
+            if (bestErr < 1e-10) break;
+        }
+        const g=gcd(bestN,bestD);
+        return {n: sign*(bestN/g), d: bestD/g, error: bestErr};
+    }
+
+    function exactValue(angle, func) {
+        const normalized=normalizeAngle(angle);
+        const candidates=[];
+        const add=(a,v)=>candidates.push([Math.abs(normalizeAngle(a)-normalized),v]);
+        const libraries=[window.SCHOOL_VALUES, window.OTHER_VALUES, typeof SCHOOL_VALUES!="undefined"?SCHOOL_VALUES:null, typeof OTHER_VALUES!="undefined"?OTHER_VALUES:null];
+        for (const lib of libraries) {
+            if (!lib) continue;
+            for (const key of Object.keys(lib)) {
+                const a=Number(key);
+                if (!Number.isFinite(a)) continue;
+                let dist=Math.abs(a-normalized);
+                dist=Math.min(dist,360-dist);
+                if (dist<0.0005 && lib[key]?.[func]) return lib[key][func];
+            }
+        }
+        return null;
+    }
+
+    function renderFraction(text, approximate=false) {
+        if (text === "undefined") return `<div class="trig-undefined">undefined</div>`;
+        if (text && text.includes("/") && !text.includes(" ")) {
+            const parts=text.split("/");
+            if (parts.length===2) return `<div class="trig-pq-fraction"><span>${parts[0]}</span><i></i><span>${parts[1]}</span></div>`;
+        }
+        const match=String(text).match(/^(-?\d+(?:\.\d+)?)$/);
+        if (match) {
+            const r=rationalApprox(Number(text));
+            if (r) return `<div class="trig-pq-fraction"><span>${r.n}</span><i></i><span>${r.d}</span></div>`;
+        }
+        return `<div class="trig-pq-expression">${text}</div>`;
+    }
+
+    function show(el, func, angle) {
+        const p=ensurePopup();
+        const exact=exactValue(angle,func);
+        const numeric=getFunctionValue(func,degToRad(angle));
+        let display=exact;
+        let note="Exact value from the trig value library.";
+        let approximate=false;
+        if (!display) {
+            const r=rationalApprox(numeric);
+            if (!r) display="undefined";
+            else { display=`${r.n}/${r.d}`; approximate=true; note="Approximate p/q for the displayed numerical value (not an exact trig identity)."; }
+        }
+        p.querySelector(".trig-fraction-title").textContent=func+"(θ)";
+        p.querySelector(".trig-fraction-angle").textContent=`θ = ${Number(angle).toFixed(2).replace(/\.00$/,'')}°`;
+        p.querySelector(".trig-fraction-value").innerHTML=renderFraction(display,approximate);
+        p.querySelector(".trig-fraction-note").textContent=note;
+        const rect=el.getBoundingClientRect();
+        p.style.left=Math.min(window.innerWidth-p.offsetWidth-12,Math.max(12,rect.left+rect.width/2-p.offsetWidth/2))+"px";
+        p.style.top=Math.min(window.innerHeight-p.offsetHeight-12,Math.max(12,rect.bottom+10))+"px";
+        p.classList.add("show");
+    }
+    function hide(){ if(popup) popup.classList.remove("show"); }
+    function start(el,func){
+        clearTimeout(timer); activeEl=el;
+        const angle=el.closest("#combined") ? Number(angleInput?.value||0) : Number(freeAngleInput?.value||0);
+        timer=setTimeout(()=>show(el,func,angle),holdMs);
+    }
+    function cancel(){ clearTimeout(timer); timer=null; activeEl=null; }
+
+    document.querySelectorAll(".circle-workspace .ratio, .circle-workspace .free-ratio-box > div").forEach(el=>{
+        const label=el.querySelector("span");
+        const func=label ? label.textContent.trim().replace(/\(θ\)$/i,"") : "";
+        if(!functionNames.includes(func)) return;
+        el.classList.add("trig-longpress-target");
+        el.addEventListener("pointerdown",()=>start(el,func));
+        el.addEventListener("pointerup",cancel);
+        el.addEventListener("pointercancel",cancel);
+        el.addEventListener("pointerleave",cancel);
+        el.addEventListener("contextmenu",e=>e.preventDefault());
+    });
+    document.addEventListener("pointerdown",e=>{ if(popup?.classList.contains("show") && !popup.contains(e.target) && !e.target.closest(".trig-longpress-target")) hide(); });
+})();
+
+/* =====================================================
+   RESIZABLE CIRCLE PANELS
+   ===================================================== */
+(function enableCirclePanelResizing() {
+    const workspaces = document.querySelectorAll(".circle-workspace");
+    if (!workspaces.length) return;
+
+    const MIN_DESKTOP = 280;
+    const MIN_MOBILE = 220;
+
+    function clampSize(size, workspace, card) {
+        const mobile = window.matchMedia("(max-width: 800px)").matches;
+        const min = mobile ? MIN_MOBILE : MIN_DESKTOP;
+        const available = Math.max(min, workspace.clientWidth - (mobile ? 0 : 300));
+        return Math.max(min, Math.min(available, size));
+    }
+
+    function applySize(workspace, card, size) {
+        const finalSize = clampSize(size, workspace, card);
+        const mobile = window.matchMedia("(max-width: 800px)").matches;
+
+        if (mobile) {
+            card.style.width = finalSize + "px";
+            card.style.maxWidth = "100%";
+            card.style.marginInline = "0 auto";
+            workspace.style.gridTemplateColumns = "1fr";
+        } else {
+            card.style.width = "";
+            card.style.maxWidth = "";
+            card.style.marginInline = "";
+            workspace.style.gridTemplateColumns =
+                finalSize + "px minmax(0, 1fr)";
+        }
+
+        card.style.setProperty("--circle-panel-size", finalSize + "px");
+        requestAnimationFrame(() => {
+            if (workspace.id === "combined" || card.dataset.resizableCircle === "combined") drawCombined();
+            else drawFreeCircle();
+        });
+    }
+
+    workspaces.forEach(workspace => {
+        const card = workspace.querySelector(".circle-graph-card");
+        const handle = card && card.querySelector(".circle-resize-handle");
+        if (!card || !handle) return;
+
+        let startX = 0;
+        let startY = 0;
+        let startSize = 0;
+
+        handle.addEventListener("pointerdown", function(e) {
+            e.preventDefault();
+            startX = e.clientX;
+            startY = e.clientY;
+            startSize = card.getBoundingClientRect().width;
+            card.classList.add("is-resizing");
+            handle.setPointerCapture?.(e.pointerId);
+        });
+
+        handle.addEventListener("pointermove", function(e) {
+            if (!card.classList.contains("is-resizing")) return;
+            e.preventDefault();
+
+            const mobile = window.matchMedia("(max-width: 800px)").matches;
+            const delta = mobile
+                ? (e.clientX - startX + e.clientY - startY) / 2
+                : e.clientX - startX;
+
+            applySize(workspace, card, startSize + delta);
+        });
+
+        function stop(e) {
+            if (!card.classList.contains("is-resizing")) return;
+            if (e && e.preventDefault) e.preventDefault();
+            card.classList.remove("is-resizing");
+        }
+
+        handle.addEventListener("pointerup", stop);
+        handle.addEventListener("pointercancel", stop);
+        handle.addEventListener("lostpointercapture", stop);
+
+        /* Start at the responsive layout's natural size. */
+        requestAnimationFrame(() => {
+            applySize(workspace, card, card.getBoundingClientRect().width);
+        });
+    });
+
+    window.addEventListener("resize", () => {
+        workspaces.forEach(workspace => {
+            const card = workspace.querySelector(".circle-graph-card");
+            if (!card) return;
+            const current = card.getBoundingClientRect().width;
+            applySize(workspace, card, current);
+        });
+    });
+})();
 
 function drawDegreeLabel(ctx, cx, cy, radius, degree) {
     const rad = degToRad(degree);
-    const w = ctx.canvas.width;
-    const h = ctx.canvas.height;
+    const w = ctx.canvas.clientWidth || ctx.canvas.width;
+    const h = ctx.canvas.clientHeight || ctx.canvas.height;
     const margin = 34;
     let x = cx + Math.cos(rad) * (radius + 28);
     let y = cy - Math.sin(rad) * (radius + 28);
@@ -2609,6 +2835,30 @@ function normalizeAngle(degrees) {
     return value;
 }
 
+function drawRoundedRect(ctx, x, y, width, height, radius) {
+    const r = Math.max(0, Math.min(radius, width / 2, height / 2));
+
+    if (typeof ctx.roundRect === "function") {
+        ctx.beginPath();
+        ctx.roundRect(x, y, width, height, r);
+        return;
+    }
+
+    /* Canvas roundRect is missing in some older smartboard browsers.
+       Keep a native-path fallback so one unsupported method cannot abort
+       the entire render before the numeric values are updated. */
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.lineTo(x + width - r, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + r);
+    ctx.lineTo(x + width, y + height - r);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+    ctx.lineTo(x + r, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - r);
+    ctx.lineTo(x, y + r);
+    ctx.quadraticCurveTo(x, y, x + r, y);
+}
+
 function drawCircleAngleReadout(ctx, px, py, radius, angle, cx, cy) {
     const label = Number(angle).toFixed(2).replace(/\.00$/, "") + "°";
     const dx = px - cx;
@@ -2630,15 +2880,16 @@ function drawCircleAngleReadout(ctx, px, py, radius, angle, cx, cy) {
 
     if (ux < -0.2) x -= tw;
     if (x < pad) x = pad;
-    if (x + tw > ctx.canvas.width - pad) x = ctx.canvas.width - pad - tw;
+    const canvasWidth = ctx.canvas.clientWidth || ctx.canvas.width;
+    const canvasHeight = ctx.canvas.clientHeight || ctx.canvas.height;
+    if (x + tw > canvasWidth - pad) x = canvasWidth - pad - tw;
     if (y < 24) y = 24;
-    if (y > ctx.canvas.height - 10) y = ctx.canvas.height - 10;
+    if (y > canvasHeight - 10) y = canvasHeight - 10;
 
     const bx = x - 8;
     const by = y - 18;
     const bh = 24;
-    ctx.beginPath();
-    ctx.roundRect(bx, by, tw, bh, 7);
+    drawRoundedRect(ctx, bx, by, tw, bh, 7);
     ctx.fill();
     ctx.stroke();
     ctx.fillStyle = "#123";
@@ -2665,6 +2916,8 @@ function drawFreeCircle() {
         width,
         height
     );
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, width, height);
 
     const cx = width / 2;
     const cy = height / 2;
@@ -3055,7 +3308,7 @@ if (freeAngleSlider) {
     );
 }
 
-freeAngleInput.addEventListener(
+if (freeAngleInput) freeAngleInput.addEventListener(
     "input",
     drawFreeCircle
 );
@@ -3066,18 +3319,18 @@ freeAngleInput.addEventListener(
 (function enableCircleDirectControl() {
     function getCanvasMetrics(canvas, zoom) {
         const rect = canvas.getBoundingClientRect();
-        const scaleX = canvas.width / rect.width;
-        const scaleY = canvas.height / rect.height;
-        const cx = canvas.width / 2;
-        const cy = canvas.height / 2;
-        const radius = Math.min(canvas.width, canvas.height) * .34 * zoom;
-        return { rect, scaleX, scaleY, cx, cy, radius };
+        const width = Math.max(1, rect.width);
+        const height = Math.max(1, rect.height);
+        const cx = width / 2;
+        const cy = height / 2;
+        const radius = Math.min(width, height) * .34 * zoom;
+        return { rect, cx, cy, radius };
     }
 
     function angleFromEvent(canvas, zoom, event) {
         const m = getCanvasMetrics(canvas, zoom);
-        const x = (event.clientX - m.rect.left) * m.scaleX;
-        const y = (event.clientY - m.rect.top) * m.scaleY;
+        const x = event.clientX - m.rect.left;
+        const y = event.clientY - m.rect.top;
         let angle = Math.atan2(m.cy - y, x - m.cx) * 180 / Math.PI;
         if (angle < 0) angle += 360;
         return angle;
@@ -3102,15 +3355,35 @@ freeAngleInput.addEventListener(
         }
 
         canvas.addEventListener("pointerdown", e => {
+            if (e.pointerType === "mouse" && e.button !== 0) return;
+            e.preventDefault();
             active = true;
-            canvas.setPointerCapture?.(e.pointerId);
+            if (canvas.setPointerCapture) canvas.setPointerCapture(e.pointerId);
             update(e);
         });
         canvas.addEventListener("pointermove", e => {
-            if (active) update(e);
+            if (active) {
+                e.preventDefault();
+                update(e);
+            }
         });
         canvas.addEventListener("pointerup", () => active = false);
         canvas.addEventListener("pointercancel", () => active = false);
+
+        /* Older interactive-board browsers may have touch events but no
+           PointerEvent API. Keep a small compatibility path for them. */
+        if (!window.PointerEvent) {
+            const touchEvent = e => {
+                if (!e.touches || !e.touches[0]) return;
+                e.preventDefault();
+                update({
+                    clientX: e.touches[0].clientX,
+                    clientY: e.touches[0].clientY
+                });
+            };
+            canvas.addEventListener("touchstart", touchEvent, { passive: false });
+            canvas.addEventListener("touchmove", touchEvent, { passive: false });
+        }
     }
 
     attach(combinedCanvas, "combined");
@@ -4829,4 +5102,217 @@ window.TrigWave=Object.assign(window.TrigWave||{},{
   }
 });
 
+})();
+
+/* =====================================================
+   WHOLE PROGRAM FIT / RESIZE
+   The bottom-right handle scales the complete application.
+   Drag horizontally OR vertically; either direction changes the fit.
+   Double-click/double-tap resets to 100%.
+   ===================================================== */
+(function enableProgramFit() {
+  'use strict';
+  var shell = document.getElementById('program-shell');
+  var handle = document.getElementById('program-fit-handle');
+  if (!shell || !handle) return;
+
+  var MIN = 0.40, MAX = 1.30;
+  var scale = 1;
+  var startX = 0, startY = 0, startScale = 1;
+  var resizing = false;
+  var lastTap = 0;
+
+  function apply(value) {
+    scale = Math.max(MIN, Math.min(MAX, Number(value) || 1));
+    shell.style.setProperty('--program-scale', String(scale));
+
+    /* CSS zoom is the primary method because it changes the layout footprint,
+       so the page really fits instead of leaving a transformed blank area. */
+    if (window.CSS && CSS.supports && CSS.supports('zoom', '1')) {
+      shell.style.zoom = String(scale);
+      shell.style.transform = 'none';
+      shell.style.width = '';
+      shell.style.marginBottom = '';
+    } else {
+      /* Fallback for older smartboard/browser engines. */
+      shell.style.zoom = '';
+      shell.style.transformOrigin = 'top left';
+      shell.style.transform = 'scale(' + scale + ')';
+      shell.style.width = (100 / scale) + '%';
+      var h = shell.scrollHeight || shell.getBoundingClientRect().height;
+      shell.style.marginBottom = (-h * (1 - scale)) + 'px';
+    }
+
+    handle.setAttribute('aria-valuenow', String(Math.round(scale * 100)));
+    handle.setAttribute('aria-valuetext', Math.round(scale * 100) + '%');
+    handle.title = 'Program fit: ' + Math.round(scale * 100) + '%. Drag ↖/↙ or left/right/up/down. Double-click/tap to reset.';
+  }
+
+  function begin(x, y) {
+    startX = x;
+    startY = y;
+    startScale = scale;
+    resizing = true;
+    document.body.classList.add('program-is-resizing');
+  }
+
+  function move(x, y, e) {
+    if (!resizing) return;
+    if (e && e.cancelable) e.preventDefault();
+
+    var dx = x - startX;
+    var dy = y - startY;
+    /* Use the strongest axis. This makes left/right AND up/down work
+       independently instead of cancelling each other on diagonal movement. */
+    var dominant = Math.abs(dx) >= Math.abs(dy) ? dx : dy;
+    apply(startScale + dominant / 280);
+  }
+
+  function stop(e) {
+    if (!resizing) return;
+    if (e && e.cancelable) e.preventDefault();
+    resizing = false;
+    document.body.classList.remove('program-is-resizing');
+  }
+
+  function reset(e) {
+    if (e) e.preventDefault();
+    apply(1);
+  }
+
+  if (window.PointerEvent) {
+    handle.addEventListener('pointerdown', function(e) {
+      if (e.button !== undefined && e.button !== 0) return;
+      e.preventDefault();
+      begin(e.clientX, e.clientY);
+      try { handle.setPointerCapture(e.pointerId); } catch (_) {}
+    });
+    window.addEventListener('pointermove', function(e) { move(e.clientX, e.clientY, e); }, {passive:false});
+    window.addEventListener('pointerup', stop, {passive:false});
+    window.addEventListener('pointercancel', stop, {passive:false});
+  } else {
+    handle.addEventListener('mousedown', function(e) { e.preventDefault(); begin(e.clientX, e.clientY); });
+    window.addEventListener('mousemove', function(e) { move(e.clientX, e.clientY, e); });
+    window.addEventListener('mouseup', stop);
+    handle.addEventListener('touchstart', function(e) {
+      var t = e.touches[0]; if (!t) return;
+      e.preventDefault(); begin(t.clientX, t.clientY);
+    }, {passive:false});
+    window.addEventListener('touchmove', function(e) {
+      if (!resizing) return;
+      var t = e.touches[0]; if (!t) return;
+      move(t.clientX, t.clientY, e);
+    }, {passive:false});
+    window.addEventListener('touchend', stop, {passive:false});
+    window.addEventListener('touchcancel', stop, {passive:false});
+  }
+
+  handle.addEventListener('dblclick', reset);
+  handle.addEventListener('wheel', function(e) {
+    e.preventDefault();
+    apply(scale + (e.deltaY < 0 ? 0.05 : -0.05));
+  }, {passive:false});
+
+  /* Reliable double-tap for touch devices that do not emit dblclick. */
+  handle.addEventListener('pointerup', function() {
+    var now = Date.now();
+    if (now - lastTap < 330) apply(1);
+    lastTap = now;
+  });
+
+  /* Keyboard accessibility: focus the handle and use arrow keys to fit. */
+  handle.addEventListener('keydown', function(e) {
+    var step = 0.05;
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); apply(scale - step); }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); apply(scale + step); }
+    if (e.key === 'Home' || e.key === '0') { e.preventDefault(); apply(1); }
+  });
+
+  handle.setAttribute('role', 'slider');
+  handle.setAttribute('aria-valuemin', '40');
+  handle.setAttribute('aria-valuemax', '130');
+  handle.setAttribute('aria-valuenow', '100');
+  handle.tabIndex = 0;
+  apply(1);
+})();
+
+/* Learning Hub renderer.
+   Supports PDFs, normal web links, YouTube links and future post links. */
+(function(){
+  'use strict';
+  function escapeHtml(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})}
+  var CLASS_OPTIONS=['Class 9','Class 10','Class 11','Class 12','Other'];
+  var SUBJECT_OPTIONS=['Mathematics (Maths)','Chemistry','Physics','English','Other'];
+
+  function initLearningHub(){
+    var grid=document.getElementById('notesGrid');
+    var classFilter=document.getElementById('notesClassFilter');
+    var subjectFilter=document.getElementById('notesSubjectFilter');
+    var accessFilter=document.getElementById('notesAccessFilter');
+    var support=document.getElementById('supportProjectButton');
+    if(!grid||!classFilter||!subjectFilter||!accessFilter)return;
+
+    var notes=Array.isArray(window.TRIGO_NOTES)?window.TRIGO_NOTES.slice():[];
+    if(!notes.length){
+      var fallback={id:'system-of-quadrants-trigonometry-notes',title:'The System of Quadrants — Trigonometry Notes',classLevel:'All Classes',classLevels:['Class 9','Class 10','Class 11','Class 12','Other'],subject:'Mathematics (Maths)',status:'free',type:'pdf',description:'Handwritten concept notes covering the system of quadrants and coordinate-plane sign ideas used in trigonometry.',tags:['quadrants','trigonometry','free notes'],file:'./pdfs/system-of-quadrants-trigonometry-notes.pdf',actionLabel:'Open PDF'};
+      notes=[fallback];
+    }
+
+    function ensureOptions(select, values, allLabel){
+      var current=select.value;
+      select.innerHTML='<option value="all">'+escapeHtml(allLabel)+'</option>'+values.map(function(v){return '<option value="'+escapeHtml(v)+'">'+escapeHtml(v)+'</option>';}).join('');
+      if(values.indexOf(current)>=0)select.value=current;
+    }
+    ensureOptions(classFilter,CLASS_OPTIONS,'All Classes');
+    ensureOptions(subjectFilter,SUBJECT_OPTIONS,'All Subjects');
+
+    function actionFor(n){
+      var target=n.file||n.url;
+      if(!target)return '';
+      var label=n.actionLabel || (n.type==='pdf'?'Open PDF':'Open Link');
+      return '<a class="note-open-button" href="'+escapeHtml(target)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(label)+'</a>';
+    }
+
+    function typeLabel(n){
+      if(n.type==='pdf')return 'PDF';
+      if(n.type==='youtube')return 'YouTube';
+      if(n.type==='post')return 'Post';
+      return 'Web Link';
+    }
+
+    function render(){
+      var c=classFilter.value,s=subjectFilter.value,a=accessFilter.value;
+      var filtered=notes.filter(function(n){
+        var levels=Array.isArray(n.classLevels)?n.classLevels:(n.classLevel==='All Classes'?['Class 9','Class 10','Class 11','Class 12','Other']:[n.classLevel]);
+        var classMatch=c==='all'||levels.indexOf(c)>=0;
+        var subjectMatch=s==='all'||n.subject===s;
+        var accessMatch=a==='all'||n.status===a;
+        return classMatch&&subjectMatch&&accessMatch;
+      });
+      grid.innerHTML=filtered.length?filtered.map(function(n){
+        var tags=(Array.isArray(n.tags)?n.tags:[]).map(function(t){return '<span class="note-tag">'+escapeHtml(t)+'</span>';}).join('');
+        return '<article class="note-card"><div class="note-card-top"><span class="note-status '+escapeHtml(n.status)+'">'+escapeHtml(n.status)+'</span><span class="note-type">'+escapeHtml(typeLabel(n))+'</span></div><h3>'+escapeHtml(n.title)+'</h3><div class="note-meta">'+escapeHtml(n.classLevel)+(n.classLevel==='All Classes'?'':'')+' · '+escapeHtml(n.subject)+'</div><p>'+escapeHtml(n.description)+'</p><div class="note-tags">'+tags+'</div>'+actionFor(n)+'</article>';
+      }).join(''):'<div class="card notes-empty"><h3>No resource here yet</h3><p>More PDFs and links will be added gradually.</p></div>';
+    }
+
+    [classFilter,subjectFilter,accessFilter].forEach(function(el){el.addEventListener('change',render);});
+    if(support)support.href=window.TRIGO_SUPPORT_URL||'#';
+    render();
+
+    /* On GitHub Pages/any real web server, new manifest entries are merged.
+       The notes.js entry above also guarantees that the PDF opens when the
+       project is opened locally from a folder, where fetch() may be blocked. */
+    fetch('pdfs/manifest.json',{cache:'no-store'})
+      .then(function(r){if(!r.ok)throw new Error('manifest unavailable');return r.json();})
+      .then(function(extra){
+        if(!Array.isArray(extra))return;
+        var byId={};
+        notes.forEach(function(n){byId[n.id]=n;});
+        extra.forEach(function(n){if(n&&n.id)byId[n.id]=Object.assign({},byId[n.id]||{},n);});
+        notes=Object.keys(byId).map(function(k){return byId[k];});
+        render();
+      })
+      .catch(function(){/* Local file mode: notes.js remains the source of truth. */});
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initLearningHub);else initLearningHub();
 })();

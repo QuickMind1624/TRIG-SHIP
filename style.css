@@ -1099,15 +1099,6 @@ body.theme-white .section-title p {
     text-underline-offset: 5px;
 }
 
-@media (max-width: 800px) {
-    #freecircle .graph-card {
-        min-height: 520px;
-    }
-
-    #freecircle canvas {
-        height: 1800px;
-    }
-}
 
 
 /* =====================================================
@@ -2047,16 +2038,6 @@ body.theme-white .wave-toolbar button {
     margin-bottom:4px;
 }
 
-/* The old mobile rule made Any Angle 1800px tall. */
-@media (max-width:800px) {
-    #freecircle .graph-card { min-height:0 !important; }
-    #freecircle canvas {
-        height:min(82vw, 430px) !important;
-        min-height:280px !important;
-        max-height:430px !important;
-    }
-    .wave-infinite-option { margin-left:0; }
-}
 
 
 /* Exact principal-value fractions */
@@ -2176,11 +2157,6 @@ body.theme-white .wave-toolbar button {
   .wave-mobile-controller{display:flex;flex-wrap:wrap;gap:10px}
   .wave-scroll{height:480px!important;min-height:480px!important;max-height:480px!important;overflow:auto!important}
   .wave-scroll canvas{height:900px!important;min-height:900px!important;width:2600px!important;min-width:2600px!important}
-}
-/* Keep Any Angle compact on mobile; this wins over older 1800px rules. */
-@media(max-width:800px){
-  #freecircle .graph-card{min-height:0!important}
-  #freecircle canvas{height:min(82vw,430px)!important;min-height:280px!important;max-height:430px!important}
 }
 /* Controllers are an assistive touch UI; desktop keeps the normal mouse/scroll controls. */
 .wave-mobile-controller{display:none}
@@ -3363,3 +3339,277 @@ body.theme-black .info-card h3 {
         letter-spacing: 0;
     }
 }
+
+
+/* Circle panels must size to their actual square graph instead of inheriting
+   the generic 620px graph-card minimum, which created dead space below the graph. */
+.circle-workspace .graph-card.circle-graph-card {
+    min-height: 0;
+    height: auto;
+}
+
+/* =====================================================
+   ADAPTIVE CIRCLE WORKSPACES + CUSTOM RESIZE HANDLE
+   The graph column can be resized; the control column gets the
+   freed space instead of forcing the user into a cramped layout.
+   ===================================================== */
+.workspace.circle-workspace,
+.circle-workspace {
+    --circle-graph-width: 0px;
+}
+
+.circle-graph-card {
+    position: relative;
+    min-width: 0;
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
+}
+
+.circle-graph-card .circle-canvas {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    min-height: 0;
+    object-fit: fill;
+    touch-action: none;
+}
+
+.circle-resize-handle {
+    position: absolute;
+    right: 7px;
+    bottom: 7px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(0,0,0,.28);
+    border-radius: 8px;
+    background: rgba(255,255,255,.9);
+    color: #222;
+    font-size: 21px;
+    line-height: 1;
+    cursor: nwse-resize;
+    z-index: 5;
+    touch-action: none;
+    user-select: none;
+}
+
+.circle-resize-handle:hover,
+.circle-resize-handle:focus-visible {
+    filter: brightness(1.08);
+    outline: 2px solid #61dafb;
+    outline-offset: 1px;
+}
+
+.circle-graph-card.is-resizing .circle-resize-handle {
+    cursor: nwse-resize;
+}
+
+@media (min-width: 801px) {
+    .circle-graph-card {
+        min-width: 280px;
+    }
+
+    .circle-workspace {
+        grid-template-columns: minmax(280px, 2fr) minmax(300px, 1fr);
+        align-items: start;
+    }
+
+    .circle-graph-card .circle-canvas {
+        display: block;
+    }
+}
+
+@media (max-width: 800px) {
+    .circle-workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .circle-graph-card .circle-canvas {
+        width: 100%;
+        height: auto !important;
+        aspect-ratio: 1 / 1;
+    }
+
+    /* Remove the old giant 1800px Any-Angle canvas rule. */
+    #freecircle .graph-card canvas {
+        height: auto !important;
+    }
+
+    .circle-resize-handle {
+        width: 38px;
+        height: 38px;
+        right: 8px;
+        bottom: 8px;
+        font-size: 23px;
+    }
+}
+
+body.theme-black .circle-resize-handle {
+    background: rgba(0,0,0,.92);
+    color: #fff;
+    border-color: #fff;
+}
+
+body.theme-white .circle-resize-handle {
+    background: rgba(255,255,255,.96);
+    color: #111;
+}
+
+
+
+.circle-workspace .control-card .ratio strong,
+.circle-workspace .control-card .free-ratio-box strong {
+    font-size: clamp(16px, 1.45vw, 24px);
+    line-height: 1.2;
+}
+
+.circle-workspace .control-card .ratio,
+.circle-workspace .control-card .free-ratio-box > div {
+    min-height: 44px;
+    align-items: center;
+}
+
+.circle-workspace .control-card .angle-display span {
+    font-size: clamp(32px, 3vw, 48px);
+}
+
+
+
+/* Long-press trig function cards */
+.trig-longpress-target { cursor: pointer; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.trig-longpress-target:active { transform: scale(.99); }
+.trig-fraction-popup {
+    position: fixed;
+    z-index: 10000;
+    width: min(330px, calc(100vw - 24px));
+    padding: 18px 18px 16px;
+    border: 1px solid #61dafb;
+    border-radius: 14px;
+    background: #fff;
+    color: #111827;
+    box-shadow: 0 18px 50px rgba(0,0,0,.28);
+    opacity: 0;
+    transform: translateY(6px) scale(.98);
+    pointer-events: none;
+    transition: opacity .16s ease, transform .16s ease;
+}
+.trig-fraction-popup.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+.trig-fraction-close { position:absolute; right:8px; top:7px; width:30px; height:30px; padding:0; border:0; background:transparent; color:#555; font-size:24px; }
+.trig-fraction-title { font-size:18px; font-weight:800; }
+.trig-fraction-angle { margin-top:3px; color:#667085; font-size:13px; }
+.trig-fraction-value { display:grid; place-items:center; min-height:86px; margin:10px 0; font-family:"Times New Roman", Georgia, serif; }
+.trig-pq-fraction { display:inline-flex; flex-direction:column; align-items:center; min-width:90px; font-size:31px; line-height:1.05; }
+.trig-pq-fraction i { display:block; width:100%; height:2px; background:currentColor; margin:4px 0; }
+.trig-pq-expression { font-size:29px; }
+.trig-undefined { font-size:24px; font-family:Arial,sans-serif; }
+.trig-fraction-note { font-size:12px; line-height:1.4; color:#667085; }
+body.theme-black .trig-fraction-popup { background:#111; color:#fff; border-color:#fff; }
+body.theme-black .trig-fraction-angle, body.theme-black .trig-fraction-note { color:#c7ced9; }
+body.theme-black .trig-fraction-close { color:#fff; }
+
+/* Learning Hub — high-contrast cards in every theme. */
+.learning-hub-toolbar{display:flex;flex-wrap:wrap;gap:12px;margin:18px 0 22px}
+.learning-hub-toolbar label{display:flex;align-items:center;gap:8px;font-weight:700;color:#f5f7fb}
+.learning-hub-toolbar select{padding:9px 12px;border:1px solid #344054;border-radius:9px;background:#151b25;color:#f5f7fb;font:inherit}
+.notes-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.note-card{padding:18px;border:1px solid #344054;border-radius:14px;background:#151b25;color:#f5f7fb;box-shadow:0 5px 18px rgba(0,0,0,.18)}
+.note-card h3{margin:0 0 7px;color:#f7fbff}.note-meta{font-size:.88rem;color:#b8c1cf;margin-bottom:10px}.note-card p{line-height:1.55;color:#d7deea}.note-tags{display:flex;flex-wrap:wrap;gap:6px}.note-tag{padding:4px 8px;border-radius:999px;background:#273142;color:#dfe7f2;font-size:.78rem}
+.note-status{display:inline-block;margin-bottom:10px;padding:4px 9px;border-radius:999px;font-size:.78rem;font-weight:800;text-transform:uppercase}
+.note-status.free{background:#164b2a;color:#c9f7d5}.note-status.premium{background:#5a4510;color:#ffe9a6}.note-status.planned{background:#373750;color:#dddafa}
+.support-card,.premium-roadmap{margin-top:22px;padding:20px;border:1px solid #344054;border-radius:14px;background:#151b25;color:#f5f7fb}.support-card{display:flex;justify-content:space-between;gap:18px;align-items:center}.support-card h3,.premium-roadmap h3{color:#f7fbff}.support-card p,.premium-roadmap span{color:#c7d0dd}.support-project-button{display:inline-flex;align-items:center;justify-content:center;padding:11px 16px;border-radius:10px;text-decoration:none;font-weight:800;background:#61dafb;color:#081018;white-space:nowrap}.premium-roadmap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.premium-roadmap-grid>div{display:flex;flex-direction:column;gap:6px;padding:14px;border:1px solid #344054;border-radius:10px;background:#101620}.premium-roadmap-grid span{line-height:1.45}
+body.theme-white .learning-hub-toolbar label{color:#17202b}
+body.theme-white .learning-hub-toolbar select{background:#fff;color:#17202b;border-color:#222}
+body.theme-white .note-card,body.theme-white .support-card,body.theme-white .premium-roadmap{background:#f5f7fa;color:#17202b;border-color:#c7ced8}
+body.theme-white .note-card h3,body.theme-white .support-card h3,body.theme-white .premium-roadmap h3{color:#17202b}
+body.theme-white .note-meta,body.theme-white .note-card p,body.theme-white .support-card p,body.theme-white .premium-roadmap span{color:#4b5563}
+body.theme-white .note-tag{background:#e7ebf0;color:#263241}
+body.theme-white .premium-roadmap-grid>div{background:#fff;border-color:#c7ced8}
+@media(max-width:600px){.support-card{flex-direction:column;align-items:stretch}.support-project-button{width:100%}.learning-hub-toolbar label{width:100%}.learning-hub-toolbar select{flex:1}}
+
+
+/* =====================================================
+   WHOLE PROGRAM FIT CONTROL
+   Drag the bottom-right ↘ handle to scale the complete app.
+   This uses CSS zoom so the layout reflows instead of leaving
+   a large transformed blank area.
+   ===================================================== */
+#program-shell {
+    --program-scale: 1;
+    zoom: var(--program-scale);
+}
+
+#program-fit-handle {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(0,0,0,.28);
+    border-radius: 10px;
+    background: rgba(255,255,255,.94);
+    color: #222;
+    font-size: 25px;
+    line-height: 1;
+    cursor: nwse-resize;
+    z-index: 9999;
+    touch-action: none;
+    user-select: none;
+    box-shadow: 0 3px 12px rgba(0,0,0,.18);
+}
+
+#program-fit-handle:hover,
+#program-fit-handle:focus-visible {
+    filter: brightness(1.06);
+    outline: 2px solid #61dafb;
+    outline-offset: 1px;
+}
+
+body.theme-black #program-fit-handle {
+    background: rgba(0,0,0,.94);
+    color: #fff;
+    border-color: #fff;
+}
+
+body.theme-white #program-fit-handle {
+    background: rgba(255,255,255,.96);
+    color: #111;
+}
+
+@media (max-width: 800px) {
+    #program-fit-handle {
+        width: 44px;
+        height: 44px;
+        right: 8px;
+        bottom: 8px;
+        font-size: 23px;
+    }
+}
+
+.note-open-button{display:inline-flex;align-items:center;justify-content:center;margin-top:14px;padding:9px 13px;border-radius:9px;text-decoration:none;font-weight:700;background:#182438;color:#fff;border:1px solid #344054}
+.note-open-button:hover,.note-open-button:focus-visible{filter:brightness(1.08);outline:2px solid #61dafb;outline-offset:1px}
+body.theme-white .note-open-button{background:#17202b;color:#fff}
+
+
+/* FINAL UI FIXES */
+.notes-empty{padding:22px;color:#f5f7fb;background:#151b25;border:1px solid #344054;border-radius:14px}
+.note-card-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.note-type{font-size:.75rem;font-weight:800;letter-spacing:.04em;padding:4px 8px;border-radius:999px;background:#273142;color:#dfe7f2}
+body.theme-white #learningHub{background:#eef2f6;border:1px solid #c7ced8;border-radius:16px;padding:22px}
+body.theme-white #learningHub .notes-empty{background:#fff;color:#17202b;border-color:#c7ced8}
+body.theme-white #learningHub .note-type{background:#e2e7ed;color:#263241}
+body.theme-white #learningHub .learning-hub-toolbar label{color:#17202b}
+body.theme-white #learningHub .section-title h2{color:#17202b}
+body.theme-white #learningHub .section-title p{color:#4b5563}
+body.theme-black #learningHub{background:#080b11;border-radius:16px;padding:22px}
+body:not(.theme-white):not(.theme-black) #learningHub{background:rgba(8,11,17,.42);border-radius:16px;padding:22px}
+body.program-is-resizing{cursor:nwse-resize!important;user-select:none!important}
+body.program-is-resizing *{cursor:nwse-resize!important}
+#program-fit-handle{width:58px;height:58px;font-size:30px;touch-action:none;pointer-events:auto}
+#program-fit-handle::after{content:' FIT';font-size:10px;font-weight:800;letter-spacing:.04em}
+@media(max-width:800px){#program-fit-handle{width:52px;height:52px;font-size:27px}.circle-resize-handle{right:8px;bottom:8px}}

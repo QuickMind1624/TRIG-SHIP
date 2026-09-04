@@ -1,0 +1,14 @@
+TRIG-SHIP responsive/robustness update
+
+1. Added a diagonal ↘ resize handle to both Unit Circle and Any Angle Circle panels.
+2. Resizing the circle panel reduces the graph column and gives the controls the freed horizontal space.
+3. Added a hard minimum panel size so the circle cannot be shrunk into an unusable state.
+4. Removed the old 1800px Any-Angle mobile canvas rule that was creating huge unusable vertical space.
+5. Made the circle canvas square and responsive across desktop, tablet, phone, and large touch displays.
+6. Improved numeric-value readability in the control panels.
+7. Fixed high-DPI canvas coordinate handling so touch/mouse angle control uses CSS-pixel geometry instead of backing-store pixels.
+8. Added a compatibility fallback for Canvas roundRect. Older smartboard browsers could fail there and stop rendering before updating sin/cos/tan/etc values.
+9. Added a touch-event fallback for browsers that expose touch input but do not support PointerEvent.
+10. Hardened angle input listeners against missing elements.
+11. Kept circle zoom separate from panel resizing.
+12. Checked JavaScript syntax for the project files after the changes.

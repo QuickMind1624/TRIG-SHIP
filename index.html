@@ -9,6 +9,7 @@
 <link href="responsive-v2.css" rel="stylesheet"/>
 </head>
 <body>
+<div id="program-shell">
 <header>
 <div class="logo">TRIGO<span>LAB</span></div>
 <div class="subtitle">Interactive Trigonometry Visualizer</div>
@@ -33,6 +34,7 @@
 <button onclick="showSection('formulas', this)">Formula Library</button>
 <button onclick="showSection('pythagoras', this)">Pythagoras → Identities</button>
 <button onclick="showSection('radDerivation', this)">Radian Converter</button>
+<button onclick="showSection('learningHub', this)">Learning Hub</button>
 </div>
 <div class="ts-rotate-note" role="note">
         ↻ Rotate your phone for a better experience
@@ -42,15 +44,16 @@
 <h2>Unit Circle</h2>
 <p>Interactive unit-circle visualization for all six trigonometric functions.</p>
 </div>
-<div class="workspace">
-<div class="card graph-card">
+<div class="workspace circle-workspace">
+<div class="card graph-card circle-graph-card" data-resizable-circle="combined">
 <div aria-label="Unit circle zoom controls" class="circle-zoom-toolbar">
 <span>Circle Zoom</span>
 <button onclick="changeCircleZoom('combined', -1)" type="button">−</button>
 <button onclick="changeCircleZoom('combined', 1)" type="button">+</button>
 <button onclick="resetCircleZoom('combined')" type="button">Reset</button>
 </div>
-<canvas id="combinedCanvas"></canvas>
+<canvas id="combinedCanvas" class="circle-canvas"></canvas>
+<button class="circle-resize-handle" type="button" aria-label="Resize Unit Circle panel" title="Drag to resize the circle panel">↘</button>
 </div>
 <div class="card control-card">
 <h3>Angle Control</h3>
@@ -122,15 +125,16 @@
 <h2>Angle Explorer — Any Angle</h2>
 <p>Enter any angle: 2°, 35°, 600°, 3656°, 53267°… the circle uses the equivalent position automatically.</p>
 </div>
-<div class="workspace">
-<div class="card graph-card ts-any-angle-graph-card">
+<div class="workspace circle-workspace">
+<div class="card graph-card circle-graph-card ts-any-angle-graph-card" data-resizable-circle="free">
 <div aria-label="Any angle circle zoom controls" class="circle-zoom-toolbar">
 <span>Circle Zoom</span>
 <button onclick="changeCircleZoom('free', -1)" type="button">−</button>
 <button onclick="changeCircleZoom('free', 1)" type="button">+</button>
 <button onclick="resetCircleZoom('free')" type="button">Reset</button>
 </div>
-<canvas id="freeCircleCanvas"></canvas>
+<canvas id="freeCircleCanvas" class="circle-canvas"></canvas>
+<button class="circle-resize-handle" type="button" aria-label="Resize Any Angle Circle panel" title="Drag to resize the circle panel">↘</button>
 </div>
 <div class="card control-card">
 <h3>Enter Any Angle</h3>
@@ -335,7 +339,58 @@
 </div>
 </div>
 </section>
+<section class="page-section" id="learningHub">
+<div class="section-title">
+<h2>Learning Hub</h2>
+<p>Organised learning resources — free foundations now, deeper premium paths later.</p>
+</div>
+<div class="learning-hub-toolbar" role="group" aria-label="Learning filters">
+<label>Class <select id="notesClassFilter">
+<option value="all">All Classes</option>
+<option value="Class 9">Class 9</option>
+<option value="Class 10">Class 10</option>
+<option value="Class 11">Class 11</option>
+<option value="Class 12">Class 12</option>
+<option value="Other">Other</option>
+</select></label>
+<label>Subject <select id="notesSubjectFilter">
+<option value="all">All Subjects</option>
+<option value="Mathematics (Maths)">Mathematics (Maths)</option>
+<option value="Chemistry">Chemistry</option>
+<option value="Physics">Physics</option>
+<option value="English">English</option>
+<option value="Other">Other</option>
+</select></label>
+<label>Access <select id="notesAccessFilter"><option value="all">All</option><option value="free">Free</option><option value="premium">Premium</option><option value="planned">Planned</option></select></label>
+</div>
+<div id="notesGrid" class="notes-grid" aria-live="polite">
+<article class="note-card" data-fallback-resource="system-of-quadrants-trigonometry-notes">
+<div class="note-card-top"><span class="note-status free">free</span><span class="note-type">PDF</span></div>
+<h3>The System of Quadrants — Trigonometry Notes</h3>
+<div class="note-meta">All Classes · Mathematics (Maths)</div>
+<p>Handwritten concept notes covering the system of quadrants and coordinate-plane sign ideas used in trigonometry.</p>
+<div class="note-tags"><span class="note-tag">quadrants</span><span class="note-tag">trigonometry</span><span class="note-tag">free notes</span></div>
+<a class="note-open-button" href="./pdfs/system-of-quadrants-trigonometry-notes.pdf" target="_blank" rel="noopener noreferrer">Open PDF</a>
+</article>
+</div>
+<div class="support-card">
+<div><h3>Support the project</h3><p>If this free educational work helps you, you can support future content and hosting.</p></div>
+<a id="supportProjectButton" class="support-project-button" href="#" target="_blank" rel="noopener noreferrer">Support / Sponsor</a>
+</div>
+<div class="premium-roadmap">
+<h3>Future premium structure</h3>
+<div class="premium-roadmap-grid">
+<div><strong>Free</strong><span>Class 10–11 foundations, selected notes and interactive tools.</span></div>
+<div><strong>Premium</strong><span>Deep structured courses, advanced derivations, problem sets and calculus pathway.</span></div>
+<div><strong>Planned</strong><span>Content is listed before release so the library can grow without redesigning the site.</span></div>
+</div>
+</div>
+</section>
 </main>
+</div>
+<button id="program-fit-handle" type="button" aria-label="Resize whole program" title="Drag ↖ to make the whole program smaller, or drag ↘ to make it larger">↘</button>
+<script src="data/site-config.js"></script>
+<script src="data/notes.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function(){
   if (window.TRIGShipPythagorasV2) {

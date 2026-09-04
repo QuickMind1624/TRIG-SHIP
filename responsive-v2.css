@@ -26,3 +26,15 @@
   .angle-input { flex-wrap: wrap; }
   .angle-input input { width: 100%; }
 }
+
+/* Final circle responsiveness: never force a tall canvas on phones/tablets. */
+.circle-graph-card .circle-canvas {
+  width: 100%;
+  height: auto !important;
+  aspect-ratio: 1 / 1;
+}
+#freecircle .graph-card canvas {
+  height: auto !important;
+}
+
+@media(max-width:800px){.notes-grid{grid-template-columns:1fr}.premium-roadmap-grid{grid-template-columns:1fr}}
