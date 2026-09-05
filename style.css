@@ -1995,6 +1995,57 @@ body.theme-white .wave-toolbar button {
     }
 }
 
+
+/* Circle top-right visibility toggle */
+.circle-details-toggle {
+    position:absolute;
+    top:8px;
+    right:8px;
+    width:34px;
+    height:34px;
+    padding:0;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(0,0,0,.28);
+    border-radius:8px;
+    background:rgba(255,255,255,.94);
+    color:#222;
+    font-size:20px;
+    font-weight:800;
+    line-height:1;
+    cursor:pointer;
+    z-index:7;
+    touch-action:manipulation;
+}
+.circle-details-toggle:hover,.circle-details-toggle:focus-visible {
+    filter:brightness(1.08);
+    outline:2px solid #61dafb;
+    outline-offset:1px;
+}
+.circle-graph-card.details-collapsed .circle-zoom-toolbar { display:none; }
+.circle-graph-card.details-collapsed .circle-details-toggle { font-size:22px; }
+body.theme-black .circle-details-toggle { background:rgba(0,0,0,.94); color:#fff; border-color:#fff; }
+body.theme-white .circle-details-toggle { background:rgba(255,255,255,.96); color:#111; }
+
+/* On a phone, shrinking the circle converts the freed horizontal space into
+   a second column for the controls instead of leaving an empty column. */
+@media (max-width:800px) {
+    .circle-workspace.is-compact {
+        grid-template-columns:var(--circle-panel-column) minmax(150px,1fr) !important;
+        gap:10px;
+        align-items:start;
+    }
+    .circle-workspace.is-compact .circle-graph-card {
+        width:var(--circle-panel-column) !important;
+        max-width:none !important;
+        margin:0 !important;
+    }
+    .circle-workspace.is-compact .control-card {
+        min-width:0;
+        width:auto;
+    }
+}
+
 /* =====================================================
    CIRCLE ZOOM + MOBILE LABEL SAFETY
    ===================================================== */
@@ -3613,3 +3664,23 @@ body.program-is-resizing *{cursor:nwse-resize!important}
 #program-fit-handle{width:58px;height:58px;font-size:30px;touch-action:none;pointer-events:auto}
 #program-fit-handle::after{content:' FIT';font-size:10px;font-weight:800;letter-spacing:.04em}
 @media(max-width:800px){#program-fit-handle{width:52px;height:52px;font-size:27px}.circle-resize-handle{right:8px;bottom:8px}}
+
+
+/* PDF viewer + download controls */
+.note-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.note-actions .note-open-button,.note-download-button,.note-direct-button{display:inline-flex;align-items:center;justify-content:center;padding:9px 13px;border-radius:9px;text-decoration:none;font-weight:700;border:1px solid #344054;cursor:pointer}
+.note-actions .note-open-button{margin-top:0}
+.note-download-button{background:#61dafb;color:#081018}
+.note-direct-button{background:#273142;color:#fff}
+body.theme-white .note-direct-button{background:#e2e7ed;color:#17202b}
+.pdf-viewer-modal{position:fixed;inset:0;z-index:10050;display:grid;place-items:center;padding:18px}
+.pdf-viewer-modal[hidden]{display:none!important}
+.pdf-viewer-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.72)}
+.pdf-viewer-panel{position:relative;width:min(1200px,96vw);height:min(900px,94vh);display:flex;flex-direction:column;background:#101620;border:1px solid #344054;border-radius:14px;overflow:hidden;box-shadow:0 20px 70px rgba(0,0,0,.45)}
+.pdf-viewer-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px;background:#151b25;color:#fff}
+.pdf-viewer-header h2{margin:0;font-size:1rem}
+.pdf-viewer-actions{display:flex;align-items:center;gap:8px}
+.pdf-viewer-close{width:38px;height:38px;border:1px solid #596579;border-radius:8px;background:#273142;color:#fff;font-size:25px;line-height:1;cursor:pointer}
+#pdfViewerFrame{width:100%;height:100%;border:0;background:#fff}
+@media(max-width:700px){.pdf-viewer-modal{padding:6px}.pdf-viewer-panel{width:99vw;height:96vh;border-radius:10px}.note-actions>*{flex:1 1 auto}}
+body.pdf-viewer-open{overflow:hidden}

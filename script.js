@@ -2685,97 +2685,130 @@ function resetCircleZoom(which) {
 
 /* =====================================================
    RESIZABLE CIRCLE PANELS
+   Desktop: shrinking the graph gives its control column the freed space.
+   Phone: once the graph is small enough, the controls move into that same
+   freed horizontal space, so the user gets a genuine two-column layout.
    ===================================================== */
 (function enableCirclePanelResizing() {
-    const workspaces = document.querySelectorAll(".circle-workspace");
+    const workspaces = document.querySelectorAll('.circle-workspace');
     if (!workspaces.length) return;
 
     const MIN_DESKTOP = 280;
-    const MIN_MOBILE = 220;
+    const MIN_MOBILE = 150;
 
-    function clampSize(size, workspace, card) {
-        const mobile = window.matchMedia("(max-width: 800px)").matches;
+    function clampSize(size, workspace) {
+        const mobile = window.matchMedia('(max-width: 800px)').matches;
         const min = mobile ? MIN_MOBILE : MIN_DESKTOP;
-        const available = Math.max(min, workspace.clientWidth - (mobile ? 0 : 300));
+        const reserve = mobile ? 0 : 300;
+        const available = Math.max(min, workspace.clientWidth - reserve);
         return Math.max(min, Math.min(available, size));
     }
 
     function applySize(workspace, card, size) {
-        const finalSize = clampSize(size, workspace, card);
-        const mobile = window.matchMedia("(max-width: 800px)").matches;
+        const finalSize = clampSize(size, workspace);
+        const mobile = window.matchMedia('(max-width: 800px)').matches;
 
         if (mobile) {
-            card.style.width = finalSize + "px";
-            card.style.maxWidth = "100%";
-            card.style.marginInline = "0 auto";
-            workspace.style.gridTemplateColumns = "1fr";
+            const canFitControls = workspace.clientWidth - finalSize - 10 >= 150;
+            const compact = finalSize < workspace.clientWidth * 0.80 && canFitControls;
+            workspace.classList.toggle('is-compact', compact);
+            if (compact) {
+                workspace.style.setProperty('--circle-panel-column', finalSize + 'px');
+                workspace.style.gridTemplateColumns = finalSize + 'px minmax(150px,1fr)';
+                card.style.width = finalSize + 'px';
+                card.style.maxWidth = 'none';
+                card.style.marginInline = '0';
+            } else {
+                workspace.style.removeProperty('--circle-panel-column');
+                workspace.style.gridTemplateColumns = '1fr';
+                card.style.width = finalSize + 'px';
+                card.style.maxWidth = '100%';
+                card.style.marginInline = '0 auto';
+            }
         } else {
-            card.style.width = "";
-            card.style.maxWidth = "";
-            card.style.marginInline = "";
-            workspace.style.gridTemplateColumns =
-                finalSize + "px minmax(0, 1fr)";
+            workspace.classList.remove('is-compact');
+            workspace.style.removeProperty('--circle-panel-column');
+            card.style.width = '';
+            card.style.maxWidth = '';
+            card.style.marginInline = '';
+            workspace.style.gridTemplateColumns = finalSize + 'px minmax(300px,1fr)';
         }
 
-        card.style.setProperty("--circle-panel-size", finalSize + "px");
+        card.style.setProperty('--circle-panel-size', finalSize + 'px');
         requestAnimationFrame(() => {
-            if (workspace.id === "combined" || card.dataset.resizableCircle === "combined") drawCombined();
+            if (card.dataset.resizableCircle === 'combined') drawCombined();
             else drawFreeCircle();
         });
     }
 
     workspaces.forEach(workspace => {
-        const card = workspace.querySelector(".circle-graph-card");
-        const handle = card && card.querySelector(".circle-resize-handle");
+        const card = workspace.querySelector('.circle-graph-card');
+        const handle = card && card.querySelector('.circle-resize-handle');
         if (!card || !handle) return;
 
-        let startX = 0;
-        let startY = 0;
-        let startSize = 0;
+        let resizing = false, startX = 0, startY = 0, startSize = 0;
 
-        handle.addEventListener("pointerdown", function(e) {
-            e.preventDefault();
-            startX = e.clientX;
-            startY = e.clientY;
-            startSize = card.getBoundingClientRect().width;
-            card.classList.add("is-resizing");
-            handle.setPointerCapture?.(e.pointerId);
-        });
-
-        handle.addEventListener("pointermove", function(e) {
-            if (!card.classList.contains("is-resizing")) return;
-            e.preventDefault();
-
-            const mobile = window.matchMedia("(max-width: 800px)").matches;
-            const delta = mobile
-                ? (e.clientX - startX + e.clientY - startY) / 2
-                : e.clientX - startX;
-
-            applySize(workspace, card, startSize + delta);
-        });
-
+        function begin(x,y) {
+            resizing=true; startX=x; startY=y;
+            startSize=card.getBoundingClientRect().width;
+            card.classList.add('is-resizing');
+        }
+        function move(x,y,e) {
+            if(!resizing)return;
+            if(e && e.cancelable)e.preventDefault();
+            const dx=x-startX, dy=y-startY;
+            /* A diagonal drag feels natural; use the larger component so any
+               direction works instead of requiring a perfect diagonal. */
+            const delta=Math.abs(dx)>=Math.abs(dy)?dx:dy;
+            applySize(workspace,card,startSize+delta);
+        }
         function stop(e) {
-            if (!card.classList.contains("is-resizing")) return;
-            if (e && e.preventDefault) e.preventDefault();
-            card.classList.remove("is-resizing");
+            if(!resizing)return;
+            if(e && e.cancelable)e.preventDefault();
+            resizing=false; card.classList.remove('is-resizing');
         }
 
-        handle.addEventListener("pointerup", stop);
-        handle.addEventListener("pointercancel", stop);
-        handle.addEventListener("lostpointercapture", stop);
+        if(window.PointerEvent){
+            handle.addEventListener('pointerdown',e=>{
+                if(e.button!==undefined && e.button!==0)return;
+                e.preventDefault(); begin(e.clientX,e.clientY);
+                try{handle.setPointerCapture(e.pointerId);}catch(_){ }
+            },{passive:false});
+            window.addEventListener('pointermove',e=>move(e.clientX,e.clientY,e),{passive:false});
+            window.addEventListener('pointerup',stop,{passive:false});
+            window.addEventListener('pointercancel',stop,{passive:false});
+        }else{
+            handle.addEventListener('mousedown',e=>{e.preventDefault();begin(e.clientX,e.clientY);});
+            window.addEventListener('mousemove',e=>move(e.clientX,e.clientY,e));
+            window.addEventListener('mouseup',stop);
+            handle.addEventListener('touchstart',e=>{const t=e.touches[0];if(!t)return;e.preventDefault();begin(t.clientX,t.clientY);},{passive:false});
+            window.addEventListener('touchmove',e=>{if(!resizing||!e.touches[0])return;e.preventDefault();const t=e.touches[0];move(t.clientX,t.clientY,e);},{passive:false});
+            window.addEventListener('touchend',stop,{passive:false});
+            window.addEventListener('touchcancel',stop,{passive:false});
+        }
 
-        /* Start at the responsive layout's natural size. */
-        requestAnimationFrame(() => {
-            applySize(workspace, card, card.getBoundingClientRect().width);
-        });
+        requestAnimationFrame(()=>applySize(workspace,card,card.getBoundingClientRect().width));
     });
 
-    window.addEventListener("resize", () => {
-        workspaces.forEach(workspace => {
-            const card = workspace.querySelector(".circle-graph-card");
-            if (!card) return;
-            const current = card.getBoundingClientRect().width;
-            applySize(workspace, card, current);
+    window.addEventListener('resize',()=>workspaces.forEach(workspace=>{
+        const card=workspace.querySelector('.circle-graph-card');
+        if(card)applySize(workspace,card,card.getBoundingClientRect().width);
+    }));
+})();
+
+/* Circle top-right toggle: hide/show the circle's auxiliary controls. */
+(function enableCircleDetailsToggles(){
+    document.querySelectorAll('.circle-details-toggle').forEach(toggle=>{
+        const card=toggle.closest('.circle-graph-card');
+        if(!card)return;
+        toggle.addEventListener('click',()=>{
+            const collapsed=card.classList.toggle('details-collapsed');
+            toggle.setAttribute('aria-expanded',String(!collapsed));
+            toggle.textContent=collapsed?'⌄':'⌃';
+            toggle.setAttribute('aria-label',collapsed?'Show circle controls':'Hide circle controls');
+            const workspace=card.closest('.circle-workspace');
+            const legend=workspace && workspace.querySelector('.triangle-legend');
+            if(legend) legend.hidden=collapsed;
         });
     });
 })();
@@ -5106,9 +5139,9 @@ window.TrigWave=Object.assign(window.TrigWave||{},{
 
 /* =====================================================
    WHOLE PROGRAM FIT / RESIZE
-   The bottom-right handle scales the complete application.
-   Drag horizontally OR vertically; either direction changes the fit.
-   Double-click/double-tap resets to 100%.
+   Bottom-right handle scales the complete application.
+   Drag in ANY direction: left/up = smaller, right/down = larger.
+   Double click / double tap = 100%.
    ===================================================== */
 (function enableProgramFit() {
   'use strict';
@@ -5117,132 +5150,136 @@ window.TrigWave=Object.assign(window.TrigWave||{},{
   if (!shell || !handle) return;
 
   var MIN = 0.40, MAX = 1.30;
-  var scale = 1;
-  var startX = 0, startY = 0, startScale = 1;
-  var resizing = false;
-  var lastTap = 0;
+  var scale = 1, startX = 0, startY = 0, startScale = 1;
+  var resizing = false, lastTap = 0, pointerId = null;
 
   function apply(value) {
     scale = Math.max(MIN, Math.min(MAX, Number(value) || 1));
     shell.style.setProperty('--program-scale', String(scale));
-
-    /* CSS zoom is the primary method because it changes the layout footprint,
-       so the page really fits instead of leaving a transformed blank area. */
-    if (window.CSS && CSS.supports && CSS.supports('zoom', '1')) {
+    /* zoom is supported by Chromium (including Chrome on Android) and
+       changes both visual size and layout footprint. The transform fallback
+       below also preserves the document footprint on browsers without zoom. */
+    if (window.CSS && CSS.supports && CSS.supports('zoom: 1')) {
       shell.style.zoom = String(scale);
+      shell.style.width = '100%';
       shell.style.transform = 'none';
-      shell.style.width = '';
-      shell.style.marginBottom = '';
+      shell.style.marginBottom = '0';
     } else {
-      /* Fallback for older smartboard/browser engines. */
       shell.style.zoom = '';
+      shell.style.width = (100 / scale) + '%';
       shell.style.transformOrigin = 'top left';
       shell.style.transform = 'scale(' + scale + ')';
-      shell.style.width = (100 / scale) + '%';
-      var h = shell.scrollHeight || shell.getBoundingClientRect().height;
-      shell.style.marginBottom = (-h * (1 - scale)) + 'px';
+      shell.style.marginBottom = Math.max(0, shell.offsetHeight * scale - shell.offsetHeight) + 'px';
     }
-
     handle.setAttribute('aria-valuenow', String(Math.round(scale * 100)));
     handle.setAttribute('aria-valuetext', Math.round(scale * 100) + '%');
-    handle.title = 'Program fit: ' + Math.round(scale * 100) + '%. Drag ↖/↙ or left/right/up/down. Double-click/tap to reset.';
   }
 
-  function begin(x, y) {
-    startX = x;
-    startY = y;
-    startScale = scale;
-    resizing = true;
+  function begin(x, y, id) {
+    startX=x; startY=y; startScale=scale; resizing=true; pointerId=id;
     document.body.classList.add('program-is-resizing');
   }
-
   function move(x, y, e) {
     if (!resizing) return;
     if (e && e.cancelable) e.preventDefault();
-
-    var dx = x - startX;
-    var dy = y - startY;
-    /* Use the strongest axis. This makes left/right AND up/down work
-       independently instead of cancelling each other on diagonal movement. */
-    var dominant = Math.abs(dx) >= Math.abs(dy) ? dx : dy;
-    apply(startScale + dominant / 280);
+    var dx=x-startX, dy=y-startY;
+    /* Horizontal OR vertical movement controls scale; diagonal movement uses
+       the dominant axis, so every direction behaves predictably. */
+    var delta = Math.abs(dx) >= Math.abs(dy) ? dx : dy;
+    apply(startScale + delta / 180);
   }
-
   function stop(e) {
     if (!resizing) return;
     if (e && e.cancelable) e.preventDefault();
-    resizing = false;
+    resizing=false; pointerId=null;
     document.body.classList.remove('program-is-resizing');
   }
-
-  function reset(e) {
-    if (e) e.preventDefault();
-    apply(1);
-  }
+  function reset(e) { if(e && e.preventDefault)e.preventDefault(); apply(1); }
 
   if (window.PointerEvent) {
-    handle.addEventListener('pointerdown', function(e) {
-      if (e.button !== undefined && e.button !== 0) return;
+    handle.addEventListener('pointerdown', function(e){
+      if(e.button !== undefined && e.button !== 0) return;
       e.preventDefault();
-      begin(e.clientX, e.clientY);
-      try { handle.setPointerCapture(e.pointerId); } catch (_) {}
-    });
-    window.addEventListener('pointermove', function(e) { move(e.clientX, e.clientY, e); }, {passive:false});
+      begin(e.clientX,e.clientY,e.pointerId);
+      try{handle.setPointerCapture(e.pointerId);}catch(_){ }
+    }, {passive:false});
+    window.addEventListener('pointermove', function(e){
+      if(pointerId !== null && e.pointerId !== pointerId) return;
+      move(e.clientX,e.clientY,e);
+    }, {passive:false});
     window.addEventListener('pointerup', stop, {passive:false});
     window.addEventListener('pointercancel', stop, {passive:false});
   } else {
-    handle.addEventListener('mousedown', function(e) { e.preventDefault(); begin(e.clientX, e.clientY); });
-    window.addEventListener('mousemove', function(e) { move(e.clientX, e.clientY, e); });
-    window.addEventListener('mouseup', stop);
-    handle.addEventListener('touchstart', function(e) {
-      var t = e.touches[0]; if (!t) return;
-      e.preventDefault(); begin(t.clientX, t.clientY);
-    }, {passive:false});
-    window.addEventListener('touchmove', function(e) {
-      if (!resizing) return;
-      var t = e.touches[0]; if (!t) return;
-      move(t.clientX, t.clientY, e);
-    }, {passive:false});
-    window.addEventListener('touchend', stop, {passive:false});
-    window.addEventListener('touchcancel', stop, {passive:false});
+    handle.addEventListener('mousedown',function(e){e.preventDefault();begin(e.clientX,e.clientY,'mouse');});
+    window.addEventListener('mousemove',function(e){move(e.clientX,e.clientY,e);});
+    window.addEventListener('mouseup',stop);
+    handle.addEventListener('touchstart',function(e){
+      var t=e.touches[0]; if(!t)return; e.preventDefault(); begin(t.clientX,t.clientY,'touch');
+    },{passive:false});
+    window.addEventListener('touchmove',function(e){
+      if(!resizing || !e.touches[0])return; e.preventDefault();
+      var t=e.touches[0]; move(t.clientX,t.clientY,e);
+    },{passive:false});
+    window.addEventListener('touchend',stop,{passive:false});
+    window.addEventListener('touchcancel',stop,{passive:false});
   }
 
-  handle.addEventListener('dblclick', reset);
-  handle.addEventListener('wheel', function(e) {
-    e.preventDefault();
-    apply(scale + (e.deltaY < 0 ? 0.05 : -0.05));
-  }, {passive:false});
-
-  /* Reliable double-tap for touch devices that do not emit dblclick. */
-  handle.addEventListener('pointerup', function() {
-    var now = Date.now();
-    if (now - lastTap < 330) apply(1);
-    lastTap = now;
+  handle.addEventListener('dblclick',reset);
+  handle.addEventListener('wheel',function(e){
+    e.preventDefault(); apply(scale + (e.deltaY < 0 ? .05 : -.05));
+  },{passive:false});
+  handle.addEventListener('pointerup',function(){
+    var now=Date.now();
+    if(now-lastTap < 380) apply(1);
+    lastTap=now;
+  });
+  handle.addEventListener('keydown',function(e){
+    var step=.05;
+    if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();apply(scale-step);}
+    else if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();apply(scale+step);}
+    else if(e.key==='Home'||e.key==='0'){e.preventDefault();apply(1);}
   });
 
-  /* Keyboard accessibility: focus the handle and use arrow keys to fit. */
-  handle.addEventListener('keydown', function(e) {
-    var step = 0.05;
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); apply(scale - step); }
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); apply(scale + step); }
-    if (e.key === 'Home' || e.key === '0') { e.preventDefault(); apply(1); }
-  });
-
-  handle.setAttribute('role', 'slider');
-  handle.setAttribute('aria-valuemin', '40');
-  handle.setAttribute('aria-valuemax', '130');
-  handle.setAttribute('aria-valuenow', '100');
-  handle.tabIndex = 0;
+  handle.setAttribute('role','slider');
+  handle.setAttribute('aria-valuemin','40');
+  handle.setAttribute('aria-valuemax','130');
+  handle.tabIndex=0;
   apply(1);
 })();
 
 /* Learning Hub renderer.
-   Supports PDFs, normal web links, YouTube links and future post links. */
+   Supports PDFs, normal web links, YouTube links and future post links.
+   PDF resources open inside the site in a viewer and also offer download.
+*/
 (function(){
   'use strict';
   function escapeHtml(v){return String(v==null?'':v).replace(/[&<>'"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]})}
   var CLASS_OPTIONS=['Class 9','Class 10','Class 11','Class 12','Other'];
   var SUBJECT_OPTIONS=['Mathematics (Maths)','Chemistry','Physics','English','Other'];
+
+  function pdfUrl(file){
+    if(!file)return '';
+    try{
+      var clean=String(file).replace(/^\.\//,'');
+      return new URL(clean, document.baseURI).href;
+    }catch(e){return file;}
+  }
+
+  function githubPagesPdfCandidates(file){
+    var list=[];
+    if(!file)return list;
+    var clean=String(file).replace(/^\.\//,'').replace(/^\//,'');
+    try{
+      list.push(new URL(clean, document.baseURI).href);
+      /* Project Pages fallback: keep the repository sub-path if the page is
+         served from /REPO/. */
+      var path=location.pathname;
+      var repoBase=path.split('/').filter(Boolean)[0];
+      if(repoBase && repoBase.indexOf('.')===-1) list.push(location.origin+'/'+repoBase+'/'+clean);
+      list.push(location.origin+'/'+clean);
+    }catch(e){}
+    return list.filter(function(v,i,a){return v && a.indexOf(v)===i;});
+  }
 
   function initLearningHub(){
     var grid=document.getElementById('notesGrid');
@@ -5254,11 +5291,10 @@ window.TrigWave=Object.assign(window.TrigWave||{},{
 
     var notes=Array.isArray(window.TRIGO_NOTES)?window.TRIGO_NOTES.slice():[];
     if(!notes.length){
-      var fallback={id:'system-of-quadrants-trigonometry-notes',title:'The System of Quadrants — Trigonometry Notes',classLevel:'All Classes',classLevels:['Class 9','Class 10','Class 11','Class 12','Other'],subject:'Mathematics (Maths)',status:'free',type:'pdf',description:'Handwritten concept notes covering the system of quadrants and coordinate-plane sign ideas used in trigonometry.',tags:['quadrants','trigonometry','free notes'],file:'./pdfs/system-of-quadrants-trigonometry-notes.pdf',actionLabel:'Open PDF'};
-      notes=[fallback];
+      notes=[{id:'system-of-quadrants-trigonometry-notes',title:'The System of Quadrants — Trigonometry Notes',classLevel:'All Classes',classLevels:['Class 9','Class 10','Class 11','Class 12','Other'],subject:'Mathematics (Maths)',status:'free',type:'pdf',description:'Handwritten concept notes covering the system of quadrants and coordinate-plane sign ideas used in trigonometry.',tags:['quadrants','trigonometry','free notes'],file:'pdfs/system-of-quadrants-trigonometry-notes.pdf',actionLabel:'Open PDF'}];
     }
 
-    function ensureOptions(select, values, allLabel){
+    function ensureOptions(select,values,allLabel){
       var current=select.value;
       select.innerHTML='<option value="all">'+escapeHtml(allLabel)+'</option>'+values.map(function(v){return '<option value="'+escapeHtml(v)+'">'+escapeHtml(v)+'</option>';}).join('');
       if(values.indexOf(current)>=0)select.value=current;
@@ -5267,10 +5303,17 @@ window.TrigWave=Object.assign(window.TrigWave||{},{
     ensureOptions(subjectFilter,SUBJECT_OPTIONS,'All Subjects');
 
     function actionFor(n){
-      var target=n.file||n.url;
+      var target=n.type==='pdf'?pdfUrl(n.file):n.url;
       if(!target)return '';
-      var label=n.actionLabel || (n.type==='pdf'?'Open PDF':'Open Link');
-      return '<a class="note-open-button" href="'+escapeHtml(target)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(label)+'</a>';
+      var label=n.actionLabel||(n.type==='pdf'?'Open PDF':'Open Link');
+      if(n.type==='pdf'){
+        return '<div class="note-actions">'+
+          '<button class="note-open-button" type="button" data-pdf-file="'+escapeHtml(n.file||'')+'" data-pdf-url="'+escapeHtml(target)+'" data-pdf-title="'+escapeHtml(n.title)+'">'+escapeHtml(label)+'</button>'+ 
+          '<a class="note-download-button" href="'+escapeHtml(target)+'" download>Download PDF</a>'+ 
+          '<a class="note-direct-button" href="'+escapeHtml(target)+'" target="_blank" rel="noopener noreferrer">Open in new tab</a>'+ 
+          '</div>';
+      }
+      return '<div class="note-actions"><a class="note-open-button" href="'+escapeHtml(target)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(label)+'</a></div>';
     }
 
     function typeLabel(n){
@@ -5283,15 +5326,12 @@ window.TrigWave=Object.assign(window.TrigWave||{},{
     function render(){
       var c=classFilter.value,s=subjectFilter.value,a=accessFilter.value;
       var filtered=notes.filter(function(n){
-        var levels=Array.isArray(n.classLevels)?n.classLevels:(n.classLevel==='All Classes'?['Class 9','Class 10','Class 11','Class 12','Other']:[n.classLevel]);
-        var classMatch=c==='all'||levels.indexOf(c)>=0;
-        var subjectMatch=s==='all'||n.subject===s;
-        var accessMatch=a==='all'||n.status===a;
-        return classMatch&&subjectMatch&&accessMatch;
+        var levels=Array.isArray(n.classLevels)?n.classLevels:(n.classLevel==='All Classes'?CLASS_OPTIONS:[n.classLevel]);
+        return (c==='all'||levels.indexOf(c)>=0)&&(s==='all'||n.subject===s)&&(a==='all'||n.status===a);
       });
       grid.innerHTML=filtered.length?filtered.map(function(n){
         var tags=(Array.isArray(n.tags)?n.tags:[]).map(function(t){return '<span class="note-tag">'+escapeHtml(t)+'</span>';}).join('');
-        return '<article class="note-card"><div class="note-card-top"><span class="note-status '+escapeHtml(n.status)+'">'+escapeHtml(n.status)+'</span><span class="note-type">'+escapeHtml(typeLabel(n))+'</span></div><h3>'+escapeHtml(n.title)+'</h3><div class="note-meta">'+escapeHtml(n.classLevel)+(n.classLevel==='All Classes'?'':'')+' · '+escapeHtml(n.subject)+'</div><p>'+escapeHtml(n.description)+'</p><div class="note-tags">'+tags+'</div>'+actionFor(n)+'</article>';
+        return '<article class="note-card"><div class="note-card-top"><span class="note-status '+escapeHtml(n.status)+'">'+escapeHtml(n.status)+'</span><span class="note-type">'+escapeHtml(typeLabel(n))+'</span></div><h3>'+escapeHtml(n.title)+'</h3><div class="note-meta">'+escapeHtml(n.classLevel)+' · '+escapeHtml(n.subject)+'</div><p>'+escapeHtml(n.description)+'</p><div class="note-tags">'+tags+'</div>'+actionFor(n)+'</article>';
       }).join(''):'<div class="card notes-empty"><h3>No resource here yet</h3><p>More PDFs and links will be added gradually.</p></div>';
     }
 
@@ -5299,20 +5339,58 @@ window.TrigWave=Object.assign(window.TrigWave||{},{
     if(support)support.href=window.TRIGO_SUPPORT_URL||'#';
     render();
 
-    /* On GitHub Pages/any real web server, new manifest entries are merged.
-       The notes.js entry above also guarantees that the PDF opens when the
-       project is opened locally from a folder, where fetch() may be blocked. */
-    fetch('pdfs/manifest.json',{cache:'no-store'})
+    grid.addEventListener('click',function(e){
+      var btn=e.target.closest('.note-open-button[data-pdf-url]');
+      if(!btn)return;
+      var url=btn.getAttribute('data-pdf-url');
+      var file=btn.getAttribute('data-pdf-file')||'';
+      var title=btn.getAttribute('data-pdf-title')||'PDF';
+      var viewer=document.getElementById('pdfViewerModal');
+      var frame=document.getElementById('pdfViewerFrame');
+      var heading=document.getElementById('pdfViewerTitle');
+      var download=document.getElementById('pdfViewerDownload');
+      if(!viewer||!frame||!download)return;
+      if(heading)heading.textContent=title;
+      /* Try the normal project-relative URL first. If GitHub Pages is using a
+         different repository base, fall back to the other valid candidates. */
+      var candidates=githubPagesPdfCandidates(file);
+      if(!candidates.length)candidates=[url];
+      var index=0;
+      function loadCandidate(){
+        frame.src=candidates[index]||url;
+        download.href=candidates[index]||url;
+      }
+      frame.onerror=function(){
+        if(index<candidates.length-1){index++;loadCandidate();}
+      };
+      loadCandidate();
+      viewer.hidden=false;
+      document.body.classList.add('pdf-viewer-open');
+    });
+
+    fetch(new URL('pdfs/manifest.json',document.baseURI).href,{cache:'no-store'})
       .then(function(r){if(!r.ok)throw new Error('manifest unavailable');return r.json();})
       .then(function(extra){
         if(!Array.isArray(extra))return;
-        var byId={};
-        notes.forEach(function(n){byId[n.id]=n;});
+        var byId={}; notes.forEach(function(n){byId[n.id]=n;});
         extra.forEach(function(n){if(n&&n.id)byId[n.id]=Object.assign({},byId[n.id]||{},n);});
-        notes=Object.keys(byId).map(function(k){return byId[k];});
-        render();
-      })
-      .catch(function(){/* Local file mode: notes.js remains the source of truth. */});
+        notes=Object.keys(byId).map(function(k){return byId[k];}); render();
+      }).catch(function(){/* notes.js remains usable */});
   }
+
+  function closeViewer(){
+    var viewer=document.getElementById('pdfViewerModal');
+    var frame=document.getElementById('pdfViewerFrame');
+    if(frame)frame.src='about:blank';
+    if(viewer)viewer.hidden=true;
+    document.body.classList.remove('pdf-viewer-open');
+  }
+
+  document.addEventListener('click',function(e){
+    if(e.target.closest('[data-close-pdf-viewer]'))closeViewer();
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')closeViewer();});
+
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initLearningHub);else initLearningHub();
 })();
+

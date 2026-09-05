@@ -53,6 +53,7 @@
 <button onclick="resetCircleZoom('combined')" type="button">Reset</button>
 </div>
 <canvas id="combinedCanvas" class="circle-canvas"></canvas>
+<button class="circle-details-toggle" type="button" aria-expanded="true" aria-label="Hide Unit Circle controls" title="Show or hide circle zoom controls">⌃</button>
 <button class="circle-resize-handle" type="button" aria-label="Resize Unit Circle panel" title="Drag to resize the circle panel">↘</button>
 </div>
 <div class="card control-card">
@@ -134,6 +135,7 @@
 <button onclick="resetCircleZoom('free')" type="button">Reset</button>
 </div>
 <canvas id="freeCircleCanvas" class="circle-canvas"></canvas>
+<button class="circle-details-toggle" type="button" aria-expanded="true" aria-label="Hide Any Angle circle controls" title="Show or hide circle controls">⌃</button>
 <button class="circle-resize-handle" type="button" aria-label="Resize Any Angle Circle panel" title="Drag to resize the circle panel">↘</button>
 </div>
 <div class="card control-card">
@@ -387,6 +389,19 @@
 </div>
 </section>
 </main>
+</div>
+<div id="pdfViewerModal" class="pdf-viewer-modal" hidden aria-hidden="true">
+  <div class="pdf-viewer-backdrop" data-close-pdf-viewer></div>
+  <section class="pdf-viewer-panel" role="dialog" aria-modal="true" aria-labelledby="pdfViewerTitle">
+    <header class="pdf-viewer-header">
+      <h2 id="pdfViewerTitle">PDF Viewer</h2>
+      <div class="pdf-viewer-actions">
+        <a id="pdfViewerDownload" class="note-download-button" href="#" download>Download PDF</a>
+        <button type="button" class="pdf-viewer-close" data-close-pdf-viewer aria-label="Close PDF viewer">×</button>
+      </div>
+    </header>
+    <iframe id="pdfViewerFrame" title="PDF viewer" src="about:blank"></iframe>
+  </section>
 </div>
 <button id="program-fit-handle" type="button" aria-label="Resize whole program" title="Drag ↖ to make the whole program smaller, or drag ↘ to make it larger">↘</button>
 <script src="data/site-config.js"></script>
