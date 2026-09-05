@@ -1,0 +1,26 @@
+[
+  {
+    "id": "system-of-quadrants-trigonometry-notes",
+    "title": "The System of Quadrants — Trigonometry Notes",
+    "classLevel": "All Classes",
+    "subject": "Mathematics (Maths)",
+    "status": "free",
+    "type": "pdf",
+    "description": "Handwritten concept notes covering the system of quadrants and coordinate-plane sign ideas used in trigonometry.",
+    "tags": [
+      "quadrants",
+      "trigonometry",
+      "coordinate plane",
+      "free notes"
+    ],
+    "file": "./pdfs/system-of-quadrants-trigonometry-notes.pdf",
+    "actionLabel": "Open PDF",
+    "classLevels": [
+      "Class 9",
+      "Class 10",
+      "Class 11",
+      "Class 12",
+      "Other"
+    ]
+  }
+]
