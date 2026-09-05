@@ -2560,13 +2560,22 @@ function resetCircleZoom(which) {
 
 /* =====================================================
    LONG-PRESS TRIG VALUE -> SCHOOL-STYLE P/Q
-   Exact library values are preferred. For other angles, show a
-   reduced rational approximation of the displayed decimal value,
-   clearly marked as approximate.
+   Exact school-style values for the seven requested basic angles only.
+   Non-basic angles do not trigger the long-press popup.
    ===================================================== */
 (function enableTrigLongPressFractions() {
     const functionNames = ["sin", "cos", "tan", "cot", "sec", "cosec"];
-    const holdMs = 2000;
+    const BASIC_EXACT_ANGLES = new Set([0, 15, 30, 45, 60, 75, 90]);
+    const BASIC_EXACT_VALUES = {
+        0:   {sin:"0", cos:"1", tan:"0", cot:"undefined", sec:"1", cosec:"undefined"},
+        15:  {sin:"(√6−√2)/4", cos:"(√6+√2)/4", tan:"2−√3", cot:"2+√3", sec:"√6−√2", cosec:"√6+√2"},
+        30:  {sin:"1/2", cos:"√3/2", tan:"1/√3", cot:"√3", sec:"2/√3", cosec:"2"},
+        45:  {sin:"1/√2", cos:"1/√2", tan:"1", cot:"1", sec:"√2", cosec:"√2"},
+        60:  {sin:"√3/2", cos:"1/2", tan:"√3", cot:"1/√3", sec:"2", cosec:"2/√3"},
+        75:  {sin:"(√6+√2)/4", cos:"(√6−√2)/4", tan:"2+√3", cot:"2−√3", sec:"√6+√2", cosec:"√6−√2"},
+        90:  {sin:"1", cos:"0", tan:"undefined", cot:"0", sec:"undefined", cosec:"1"}
+    };
+    const holdMs = 1600;
     let popup = null;
     let timer = null;
     let activeEl = null;
@@ -2610,6 +2619,17 @@ function resetCircleZoom(which) {
 
     function exactValue(angle, func) {
         const normalized=normalizeAngle(angle);
+        // Long-press exact display is intentionally limited to the seven basic
+        // angles requested for the interactive Angle / Any Angle views.
+        const basic = Object.keys(BASIC_EXACT_VALUES).map(Number);
+        const basicAngle = basic.find(a => {
+            const d = Math.abs(a - normalized);
+            return Math.min(d, 360 - d) < 0.0005;
+        });
+        if (basicAngle !== undefined) return BASIC_EXACT_VALUES[basicAngle][func] || null;
+        return null;
+
+        /* Legacy library fallback intentionally disabled for this interaction.
         const candidates=[];
         const add=(a,v)=>candidates.push([Math.abs(normalizeAngle(a)-normalized),v]);
         const libraries=[window.SCHOOL_VALUES, window.OTHER_VALUES, typeof SCHOOL_VALUES!="undefined"?SCHOOL_VALUES:null, typeof OTHER_VALUES!="undefined"?OTHER_VALUES:null];
@@ -2624,6 +2644,7 @@ function resetCircleZoom(which) {
             }
         }
         return null;
+        */
     }
 
     function renderFraction(text, approximate=false) {
@@ -2641,8 +2662,9 @@ function resetCircleZoom(which) {
     }
 
     function show(el, func, angle) {
-        const p=ensurePopup();
         const exact=exactValue(angle,func);
+        if(!exact) return;
+        const p=ensurePopup();
         const numeric=getFunctionValue(func,degToRad(angle));
         let display=exact;
         let note="Exact value from the trig value library.";
@@ -2665,6 +2687,9 @@ function resetCircleZoom(which) {
     function start(el,func){
         clearTimeout(timer); activeEl=el;
         const angle=el.closest("#combined") ? Number(angleInput?.value||0) : Number(freeAngleInput?.value||0);
+        const normalized=normalizeAngle(angle);
+        const isBasic=BASIC_EXACT_ANGLES.has(normalized);
+        if(!isBasic) return;
         timer=setTimeout(()=>show(el,func,angle),holdMs);
     }
     function cancel(){ clearTimeout(timer); timer=null; activeEl=null; }
@@ -2796,21 +2821,26 @@ function resetCircleZoom(which) {
     }));
 })();
 
-/* Circle top-right toggle: hide/show the circle's auxiliary controls. */
-(function enableCircleDetailsToggles(){
-    document.querySelectorAll('.circle-details-toggle').forEach(toggle=>{
-        const card=toggle.closest('.circle-graph-card');
-        if(!card)return;
-        toggle.addEventListener('click',()=>{
-            const collapsed=card.classList.toggle('details-collapsed');
-            toggle.setAttribute('aria-expanded',String(!collapsed));
-            toggle.textContent=collapsed?'⌄':'⌃';
-            toggle.setAttribute('aria-label',collapsed?'Show circle controls':'Hide circle controls');
-            const workspace=card.closest('.circle-workspace');
-            const legend=workspace && workspace.querySelector('.triangle-legend');
-            if(legend) legend.hidden=collapsed;
-        });
+function showDerivationComingSoon(button){
+  var card = button && button.closest ? button.closest('.formula-card') : null;
+  var title = card && card.querySelector('h3') ? card.querySelector('h3').textContent.trim() : 'this formula group';
+  window.alert('Derivation for ' + title + ' is in progress ....');
+}
+
+/* Hide/show only the requested formula/detail sections. */
+(function enableSectionDetailsToggles(){
+  document.querySelectorAll('.section-details-toggle').forEach(function(toggle){
+    var header=toggle.closest('.detail-section-header');
+    if(!header)return;
+    var target=header.nextElementSibling;
+    if(!target)return;
+    toggle.addEventListener('click',function(){
+      var hidden=target.classList.toggle('details-hidden');
+      toggle.setAttribute('aria-expanded',String(!hidden));
+      toggle.textContent=hidden?'⌄':'⌃';
+      toggle.setAttribute('aria-label',hidden?'Show details':'Hide details');
     });
+  });
 })();
 
 function drawDegreeLabel(ctx, cx, cy, radius, degree) {
@@ -5135,116 +5165,6 @@ window.TrigWave=Object.assign(window.TrigWave||{},{
   }
 });
 
-})();
-
-/* =====================================================
-   WHOLE PROGRAM FIT / RESIZE
-   Bottom-right handle scales the complete application.
-   Drag in ANY direction: left/up = smaller, right/down = larger.
-   Double click / double tap = 100%.
-   ===================================================== */
-(function enableProgramFit() {
-  'use strict';
-  var shell = document.getElementById('program-shell');
-  var handle = document.getElementById('program-fit-handle');
-  if (!shell || !handle) return;
-
-  var MIN = 0.40, MAX = 1.30;
-  var scale = 1, startX = 0, startY = 0, startScale = 1;
-  var resizing = false, lastTap = 0, pointerId = null;
-
-  function apply(value) {
-    scale = Math.max(MIN, Math.min(MAX, Number(value) || 1));
-    shell.style.setProperty('--program-scale', String(scale));
-    /* zoom is supported by Chromium (including Chrome on Android) and
-       changes both visual size and layout footprint. The transform fallback
-       below also preserves the document footprint on browsers without zoom. */
-    if (window.CSS && CSS.supports && CSS.supports('zoom: 1')) {
-      shell.style.zoom = String(scale);
-      shell.style.width = '100%';
-      shell.style.transform = 'none';
-      shell.style.marginBottom = '0';
-    } else {
-      shell.style.zoom = '';
-      shell.style.width = (100 / scale) + '%';
-      shell.style.transformOrigin = 'top left';
-      shell.style.transform = 'scale(' + scale + ')';
-      shell.style.marginBottom = Math.max(0, shell.offsetHeight * scale - shell.offsetHeight) + 'px';
-    }
-    handle.setAttribute('aria-valuenow', String(Math.round(scale * 100)));
-    handle.setAttribute('aria-valuetext', Math.round(scale * 100) + '%');
-  }
-
-  function begin(x, y, id) {
-    startX=x; startY=y; startScale=scale; resizing=true; pointerId=id;
-    document.body.classList.add('program-is-resizing');
-  }
-  function move(x, y, e) {
-    if (!resizing) return;
-    if (e && e.cancelable) e.preventDefault();
-    var dx=x-startX, dy=y-startY;
-    /* Horizontal OR vertical movement controls scale; diagonal movement uses
-       the dominant axis, so every direction behaves predictably. */
-    var delta = Math.abs(dx) >= Math.abs(dy) ? dx : dy;
-    apply(startScale + delta / 180);
-  }
-  function stop(e) {
-    if (!resizing) return;
-    if (e && e.cancelable) e.preventDefault();
-    resizing=false; pointerId=null;
-    document.body.classList.remove('program-is-resizing');
-  }
-  function reset(e) { if(e && e.preventDefault)e.preventDefault(); apply(1); }
-
-  if (window.PointerEvent) {
-    handle.addEventListener('pointerdown', function(e){
-      if(e.button !== undefined && e.button !== 0) return;
-      e.preventDefault();
-      begin(e.clientX,e.clientY,e.pointerId);
-      try{handle.setPointerCapture(e.pointerId);}catch(_){ }
-    }, {passive:false});
-    window.addEventListener('pointermove', function(e){
-      if(pointerId !== null && e.pointerId !== pointerId) return;
-      move(e.clientX,e.clientY,e);
-    }, {passive:false});
-    window.addEventListener('pointerup', stop, {passive:false});
-    window.addEventListener('pointercancel', stop, {passive:false});
-  } else {
-    handle.addEventListener('mousedown',function(e){e.preventDefault();begin(e.clientX,e.clientY,'mouse');});
-    window.addEventListener('mousemove',function(e){move(e.clientX,e.clientY,e);});
-    window.addEventListener('mouseup',stop);
-    handle.addEventListener('touchstart',function(e){
-      var t=e.touches[0]; if(!t)return; e.preventDefault(); begin(t.clientX,t.clientY,'touch');
-    },{passive:false});
-    window.addEventListener('touchmove',function(e){
-      if(!resizing || !e.touches[0])return; e.preventDefault();
-      var t=e.touches[0]; move(t.clientX,t.clientY,e);
-    },{passive:false});
-    window.addEventListener('touchend',stop,{passive:false});
-    window.addEventListener('touchcancel',stop,{passive:false});
-  }
-
-  handle.addEventListener('dblclick',reset);
-  handle.addEventListener('wheel',function(e){
-    e.preventDefault(); apply(scale + (e.deltaY < 0 ? .05 : -.05));
-  },{passive:false});
-  handle.addEventListener('pointerup',function(){
-    var now=Date.now();
-    if(now-lastTap < 380) apply(1);
-    lastTap=now;
-  });
-  handle.addEventListener('keydown',function(e){
-    var step=.05;
-    if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();apply(scale-step);}
-    else if(e.key==='ArrowRight'||e.key==='ArrowDown'){e.preventDefault();apply(scale+step);}
-    else if(e.key==='Home'||e.key==='0'){e.preventDefault();apply(1);}
-  });
-
-  handle.setAttribute('role','slider');
-  handle.setAttribute('aria-valuemin','40');
-  handle.setAttribute('aria-valuemax','130');
-  handle.tabIndex=0;
-  apply(1);
 })();
 
 /* Learning Hub renderer.

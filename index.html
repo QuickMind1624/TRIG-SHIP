@@ -53,7 +53,6 @@
 <button onclick="resetCircleZoom('combined')" type="button">Reset</button>
 </div>
 <canvas id="combinedCanvas" class="circle-canvas"></canvas>
-<button class="circle-details-toggle" type="button" aria-expanded="true" aria-label="Hide Unit Circle controls" title="Show or hide circle zoom controls">⌃</button>
 <button class="circle-resize-handle" type="button" aria-label="Resize Unit Circle panel" title="Drag to resize the circle panel">↘</button>
 </div>
 <div class="card control-card">
@@ -74,7 +73,8 @@
 <div class="ratio purple"><span>sec(θ)</span><strong id="secValue">1</strong></div>
 <div class="ratio pink"><span>cosec(θ)</span><strong id="cosecValue">undefined</strong></div>
 </div>
-<div class="fraction-panel">
+<div class="detail-section-header"><h4>Trig Ratios</h4><button class="section-details-toggle" type="button" aria-expanded="true" aria-label="Hide trig ratio formulas">⌃</button></div>
+<div class="fraction-panel hideable-detail">
 <div>
 <span class="function-name">sin(θ)</span>
 <div class="fraction">
@@ -135,7 +135,6 @@
 <button onclick="resetCircleZoom('free')" type="button">Reset</button>
 </div>
 <canvas id="freeCircleCanvas" class="circle-canvas"></canvas>
-<button class="circle-details-toggle" type="button" aria-expanded="true" aria-label="Hide Any Angle circle controls" title="Show or hide circle controls">⌃</button>
 <button class="circle-resize-handle" type="button" aria-label="Resize Any Angle Circle panel" title="Drag to resize the circle panel">↘</button>
 </div>
 <div class="card control-card">
@@ -154,6 +153,8 @@
 <input id="freeAngleInput" step="any" type="number" value="0"/>
 <span>degrees — any number allowed</span>
 </div>
+<div class="detail-section-header any-angle-detail-header"><h4>Angle Details &amp; Triangle</h4><button class="section-details-toggle" type="button" aria-expanded="true" aria-label="Hide angle details and triangle labels">⌃</button></div>
+<div class="any-angle-hideable hideable-detail">
 <div class="free-angle-info" id="freeAngleInfo"></div>
 <div class="triangle-legend">
 <div class="legend-item">
@@ -169,6 +170,7 @@
 <span>Base</span>
 </div>
 </div>
+</div>
 <div class="free-ratio-box">
 <div><span>sin(θ)</span><strong id="freeSin">0</strong></div>
 <div><span>cos(θ)</span><strong id="freeCos">1</strong></div>
@@ -176,9 +178,7 @@
 <div><span>cot(θ)</span><strong id="freeCot">undefined</strong></div>
 <div><span>sec(θ)</span><strong id="freeSec">1</strong></div>
 <div><span>cosec(θ)</span><strong id="freeCosec">undefined</strong></div>
-</div>
-</div>
-</div>
+
 </section>
 
 <section class="page-section" id="values">
@@ -316,27 +316,27 @@
 </div>
 <div class="formula-grid">
 <div class="formula-card">
-<h3>Basic Ratios</h3>
+<h3>Basic Ratios</h3><button class="derivation-button" type="button" onclick="showDerivationComingSoon(this)">Derivation <span>(in progress ....)</span></button>
 <div id="basicFormulas"></div>
 </div>
 <div class="formula-card">
-<h3>Identities</h3>
+<h3>Identities</h3><button class="derivation-button" type="button" onclick="showDerivationComingSoon(this)">Derivation <span>(in progress ....)</span></button>
 <div id="identityFormulas"></div>
 </div>
 <div class="formula-card">
-<h3>Addition &amp; Subtraction</h3>
+<h3>Addition &amp; Subtraction</h3><button class="derivation-button" type="button" onclick="showDerivationComingSoon(this)">Derivation <span>(in progress ....)</span></button>
 <div id="additionFormulas"></div>
 </div>
 <div class="formula-card">
-<h3>Reciprocal Functions</h3>
+<h3>Reciprocal Functions</h3><button class="derivation-button" type="button" onclick="showDerivationComingSoon(this)">Derivation <span>(in progress ....)</span></button>
 <div id="reciprocalFormulas"></div>
 </div>
 <div class="formula-card">
-<h3>Inverse Trigonometric Functions</h3>
+<h3>Inverse Trigonometric Functions</h3><button class="derivation-button" type="button" onclick="showDerivationComingSoon(this)">Derivation <span>(in progress ....)</span></button>
 <div id="inverseFormulas"></div>
 </div>
 <div class="formula-card">
-<h3>Principal Values</h3>
+<h3>Principal Values</h3><button class="derivation-button" type="button" onclick="showDerivationComingSoon(this)">Derivation <span>(in progress ....)</span></button>
 <div id="principalFormulas"></div>
 </div>
 </div>
@@ -403,7 +403,6 @@
     <iframe id="pdfViewerFrame" title="PDF viewer" src="about:blank"></iframe>
   </section>
 </div>
-<button id="program-fit-handle" type="button" aria-label="Resize whole program" title="Drag ↖ to make the whole program smaller, or drag ↘ to make it larger">↘</button>
 <script src="data/site-config.js"></script>
 <script src="data/notes.js"></script>
 <script>
