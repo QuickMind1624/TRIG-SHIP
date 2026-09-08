@@ -5314,3 +5314,48 @@ window.TrigWave=Object.assign(window.TrigWave||{},{
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initLearningHub);else initLearningHub();
 })();
 
+
+
+
+/* =====================================================
+   CIRCLE THREE-DOT MENU — deliberately simple and direct.
+   The dots stay visible; Hide resets the circle and hides
+   only Circle Zoom / − / + / Reset controls. Show controls restores them.
+   ===================================================== */
+function toggleCircleMenu(button) {
+  var toolbar = button && button.closest('.circle-zoom-toolbar');
+  if (!toolbar) return;
+  var popup = toolbar.querySelector('.circle-menu-popup');
+  if (!popup) return;
+  popup.hidden = !popup.hidden;
+  button.setAttribute('aria-expanded', popup.hidden ? 'false' : 'true');
+}
+
+function hideCircleZoomControls(button) {
+  var toolbar = button && button.closest('.circle-zoom-toolbar');
+  if (!toolbar) return;
+  var card = toolbar.closest('.circle-graph-card');
+  var kind = card && card.getAttribute('data-resizable-circle');
+  if (kind && typeof resetCircleZoom === 'function') resetCircleZoom(kind);
+
+  var controls = toolbar.querySelector('.circle-toolbar-controls');
+  if (controls) controls.style.display = 'none';
+
+  var hideButton = toolbar.querySelector('.circle-menu-hide');
+  var showButton = toolbar.querySelector('.circle-menu-show');
+  if (hideButton) hideButton.hidden = true;
+  if (showButton) showButton.hidden = false;
+}
+
+function showCircleZoomControls(button) {
+  var toolbar = button && button.closest('.circle-zoom-toolbar');
+  if (!toolbar) return;
+
+  var controls = toolbar.querySelector('.circle-toolbar-controls');
+  if (controls) controls.style.display = '';
+
+  var hideButton = toolbar.querySelector('.circle-menu-hide');
+  var showButton = toolbar.querySelector('.circle-menu-show');
+  if (hideButton) hideButton.hidden = false;
+  if (showButton) showButton.hidden = true;
+}

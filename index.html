@@ -47,10 +47,17 @@
 <div class="workspace circle-workspace">
 <div class="card graph-card circle-graph-card" data-resizable-circle="combined">
 <div aria-label="Unit circle zoom controls" class="circle-zoom-toolbar">
+<button type="button" class="circle-menu-dots" aria-label="Circle options" aria-expanded="false" onclick="toggleCircleMenu(this)">⋮</button>
+<div class="circle-menu-popup" hidden>
+<button type="button" class="circle-menu-hide" onclick="hideCircleZoomControls(this)">Hide</button>
+<button type="button" class="circle-menu-show" onclick="showCircleZoomControls(this)" hidden>Show controls</button>
+</div>
+<div class="circle-toolbar-controls">
 <span>Circle Zoom</span>
 <button onclick="changeCircleZoom('combined', -1)" type="button">−</button>
 <button onclick="changeCircleZoom('combined', 1)" type="button">+</button>
 <button onclick="resetCircleZoom('combined')" type="button">Reset</button>
+</div>
 </div>
 <canvas id="combinedCanvas" class="circle-canvas"></canvas>
 <button class="circle-resize-handle" type="button" aria-label="Resize Unit Circle panel" title="Drag to resize the circle panel">↘</button>
@@ -129,10 +136,17 @@
 <div class="workspace circle-workspace">
 <div class="card graph-card circle-graph-card ts-any-angle-graph-card" data-resizable-circle="free">
 <div aria-label="Any angle circle zoom controls" class="circle-zoom-toolbar">
+<button type="button" class="circle-menu-dots" aria-label="Circle options" aria-expanded="false" onclick="toggleCircleMenu(this)">⋮</button>
+<div class="circle-menu-popup" hidden>
+<button type="button" class="circle-menu-hide" onclick="hideCircleZoomControls(this)">Hide</button>
+<button type="button" class="circle-menu-show" onclick="showCircleZoomControls(this)" hidden>Show controls</button>
+</div>
+<div class="circle-toolbar-controls">
 <span>Circle Zoom</span>
 <button onclick="changeCircleZoom('free', -1)" type="button">−</button>
 <button onclick="changeCircleZoom('free', 1)" type="button">+</button>
 <button onclick="resetCircleZoom('free')" type="button">Reset</button>
+</div>
 </div>
 <canvas id="freeCircleCanvas" class="circle-canvas"></canvas>
 <button class="circle-resize-handle" type="button" aria-label="Resize Any Angle Circle panel" title="Drag to resize the circle panel">↘</button>
@@ -316,11 +330,11 @@
 </div>
 <div class="formula-grid">
 <div class="formula-card">
-<h3>Basic Ratios</h3><button class="derivation-button" type="button" onclick="showDerivationComingSoon(this)">Derivation <span>(in progress ....)</span></button>
+<h3>Basic Ratios</h3>
 <div id="basicFormulas"></div>
 </div>
 <div class="formula-card">
-<h3>Identities</h3><button class="derivation-button" type="button" onclick="showDerivationComingSoon(this)">Derivation <span>(in progress ....)</span></button>
+<h3>Identities</h3>
 <div id="identityFormulas"></div>
 </div>
 <div class="formula-card">
@@ -328,15 +342,15 @@
 <div id="additionFormulas"></div>
 </div>
 <div class="formula-card">
-<h3>Reciprocal Functions</h3><button class="derivation-button" type="button" onclick="showDerivationComingSoon(this)">Derivation <span>(in progress ....)</span></button>
+<h3>Reciprocal Functions</h3>
 <div id="reciprocalFormulas"></div>
 </div>
 <div class="formula-card">
-<h3>Inverse Trigonometric Functions</h3><button class="derivation-button" type="button" onclick="showDerivationComingSoon(this)">Derivation <span>(in progress ....)</span></button>
+<h3>Inverse Trigonometric Functions</h3>
 <div id="inverseFormulas"></div>
 </div>
 <div class="formula-card">
-<h3>Principal Values</h3><button class="derivation-button" type="button" onclick="showDerivationComingSoon(this)">Derivation <span>(in progress ....)</span></button>
+<h3>Principal Values</h3>
 <div id="principalFormulas"></div>
 </div>
 </div>

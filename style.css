@@ -3723,3 +3723,81 @@ body.theme-black .ts-rotate-note{color:#d5dbe5}
 #values .section-title{margin-top:0;margin-bottom:14px}
 #values .table-card{margin-top:0}
 #values br{display:none}
+
+/* =====================================================
+   CIRCLE THREE-DOT MENU
+   ===================================================== */
+.circle-zoom-toolbar {
+    position:relative;
+    min-height:32px;
+}
+.circle-toolbar-controls {
+    display:flex;
+    align-items:center;
+    gap:7px;
+    flex-wrap:wrap;
+}
+.circle-menu-dots {
+    position:absolute;
+    top:0;
+    right:0;
+    z-index:20;
+    width:32px;
+    height:34px;
+    min-width:32px !important;
+    min-height:34px !important;
+    padding:0;
+    margin:0;
+    border:1px solid #2f6fed;
+    border-radius:8px;
+    background:rgba(245,249,255,.98);
+    color:#1769e0;
+    font-size:24px;
+    font-weight:800;
+    line-height:28px;
+    cursor:pointer;
+    box-shadow:0 2px 8px rgba(23,105,224,.24);
+}
+.circle-menu-dots:hover,.circle-menu-dots:focus-visible {
+    background:#eaf2ff;
+    outline:2px solid #61dafb;
+    outline-offset:1px;
+}
+.circle-menu-popup {
+    position:absolute;
+    top:39px;
+    right:0;
+    z-index:30;
+    min-width:76px;
+    padding:4px;
+    border:1px solid #2f6fed;
+    border-radius:8px;
+    background:#fff;
+    box-shadow:0 4px 14px rgba(0,0,0,.18);
+}
+.circle-menu-popup[hidden],.circle-toolbar-controls[hidden] {
+    display:none !important;
+}
+.circle-menu-hide,.circle-menu-show {
+    display:block;
+    width:100%;
+    padding:7px 10px;
+    border:0;
+    border-radius:5px;
+    background:transparent;
+    color:#1769e0;
+    font-weight:700;
+    cursor:pointer;
+    text-align:left;
+}
+.circle-menu-hide:hover,.circle-menu-hide:focus-visible,.circle-menu-show:hover,.circle-menu-show:focus-visible {
+    background:#eaf2ff;
+    outline:none;
+}
+
+
+/* Final deterministic circle-menu behavior */
+.circle-zoom-toolbar { position:relative; z-index:50; }
+.circle-menu-dots { position:absolute !important; top:0 !important; right:0 !important; }
+.circle-menu-popup { z-index:9999 !important; }
+.circle-toolbar-controls[style*="display: none"] { display:none !important; }
