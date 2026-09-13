@@ -3681,6 +3681,7 @@ body.theme-white .note-direct-button{background:#e2e7ed;color:#17202b}
 .pdf-viewer-header h2{margin:0;font-size:1rem}
 .pdf-viewer-actions{display:flex;align-items:center;gap:8px}
 .pdf-viewer-close{width:38px;height:38px;border:1px solid #596579;border-radius:8px;background:#273142;color:#fff;font-size:25px;line-height:1;cursor:pointer}
+.pdf-viewer-panel iframe{display:block;width:100%;height:100%;flex:1 1 auto;min-height:0;border:0;background:#fff}
 #pdfViewerFrame{width:100%;height:100%;border:0;background:#fff}
 @media(max-width:700px){.pdf-viewer-modal{padding:6px}.pdf-viewer-panel{width:99vw;height:96vh;border-radius:10px}.note-actions>*{flex:1 1 auto}}
 body.pdf-viewer-open{overflow:hidden}
@@ -3801,3 +3802,168 @@ body.theme-black .ts-rotate-note{color:#d5dbe5}
 .circle-menu-dots { position:absolute !important; top:0 !important; right:0 !important; }
 .circle-menu-popup { z-index:9999 !important; }
 .circle-toolbar-controls[style*="display: none"] { display:none !important; }
+
+
+/* =========================================================
+   EXACT VALUE ENCOUNTER DOT + RESULT PANEL
+   ========================================================= */
+.ratio.exact-hit-active,
+.free-ratio-box > div.exact-hit-active { cursor: pointer; }
+
+.exact-hit-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: #6f0d0d;
+    box-shadow: 0 0 0 2px rgba(111,13,13,.18);
+    vertical-align: middle;
+    flex: 0 0 auto;
+}
+
+.exact-value-panel {
+    margin-top: 12px;
+    padding: 16px 18px;
+    border: 1px solid #6f0d0d;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(111,13,13,.12), rgba(255,255,255,.025));
+}
+
+.exact-value-heading {
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #ff8a8a;
+    margin-bottom: 10px;
+}
+
+.exact-value-equation {
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-family: "Times New Roman", serif;
+    font-size: 22px;
+    color: #fff;
+    text-align: center;
+}
+
+.exact-fraction {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.05;
+    max-width: min(92vw, 900px);
+}
+
+.exact-top,
+.exact-bottom {
+    padding: 2px 6px;
+    max-width: min(90vw, 860px);
+    overflow-wrap: anywhere;
+}
+
+.exact-bar {
+    display: block;
+    width: 100%;
+    min-width: 36px;
+    height: 1.5px;
+    background: currentColor;
+    margin: 2px 0;
+}
+
+.exact-text-value { font-weight: 700; }
+
+.exact-value-source {
+    margin-top: 9px;
+    font-size: 12px;
+    color: #aeb8c6;
+    text-align: center;
+}
+
+body.theme-white .exact-value-panel { background: #fff7f7; border-color: #8f2525; }
+body.theme-white .exact-value-equation { color: #151515; }
+body.theme-white .exact-value-source { color: #5f6368; }
+
+@media (max-width: 800px) {
+    .exact-value-equation { font-size: 18px; }
+}
+
+/* Exact encounter: proper radical bars, function-specific value colours,
+   and a side-by-side equivalent/reverse-form box. */
+.exact-value-equation { width:100%; }
+.exact-equation-main { display:flex; align-items:center; justify-content:center; gap:12px; flex-wrap:wrap; }
+.exact-color-sin { color:#ff5b67; }
+.exact-color-cos { color:#61a8ff; }
+.exact-color-tan { color:#54d68a; }
+.exact-color-cot { color:#ffb454; }
+.exact-color-sec { color:#b98cff; }
+.exact-color-cosec { color:#ff75bd; }
+.exact-function-name, .exact-equals { font-weight:800; }
+.exact-radical { display:inline-flex; align-items:flex-start; vertical-align:middle; line-height:1; }
+.exact-root-symbol { font-size:1.05em; line-height:1; }
+.exact-radicand { border-top:1.5px solid currentColor; padding:2px 2px 0 1px; margin-top:1px; }
+.exact-rationalized-box {
+    display:inline-flex; flex-direction:column; align-items:center; justify-content:center;
+    min-width:170px; max-width:min(42vw,360px); margin-left:12px; padding:9px 12px;
+    border:1px solid currentColor; border-radius:8px; background:rgba(255,255,255,.035);
+    vertical-align:middle;
+}
+.exact-rationalized-title { font:700 11px/1.2 Arial,sans-serif; letter-spacing:.04em; text-transform:uppercase; opacity:.78; margin-bottom:6px; }
+.exact-rationalized-value { font-family:"Times New Roman",serif; font-size:19px; text-align:center; overflow-wrap:anywhere; }
+.rationalized-note { font-family:Arial,sans-serif; font-size:12px; opacity:.72; }
+@media (max-width:800px) {
+  .exact-rationalized-box { min-width:145px; max-width:80vw; margin-left:0; }
+  .exact-equation-main { gap:8px; }
+}
+
+/* Other Values → Derivations link: additive only; existing table/layout remains unchanged. */
+.other-values-heading-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  flex-wrap:wrap;
+}
+.other-values-heading-row h3{margin:0;}
+.other-values-derivation-link{
+  display:inline-flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:2px;
+  min-width:220px;
+  padding:10px 16px;
+  border:1px solid rgba(120,32,32,.55);
+  border-radius:12px;
+  text-decoration:none;
+  background:linear-gradient(135deg,rgba(255,247,247,.98),rgba(248,231,231,.98));
+  box-shadow:0 5px 14px rgba(80,20,20,.12);
+  transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease;
+}
+.other-values-derivation-link:hover,
+.other-values-derivation-link:focus-visible{
+  transform:translateY(-1px);
+  box-shadow:0 8px 18px rgba(80,20,20,.18);
+  border-color:rgba(120,32,32,.85);
+  outline:none;
+}
+.derivation-link-kicker{
+  font-size:.68rem;
+  letter-spacing:.12em;
+  font-weight:800;
+  color:#7a2020;
+}
+.derivation-link-main{
+  font-size:.88rem;
+  font-weight:900;
+  letter-spacing:.02em;
+  color:#3c1616;
+}
+@media (max-width:640px){
+  .other-values-derivation-link{width:100%;min-width:0;}
+}

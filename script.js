@@ -974,6 +974,7 @@ function drawCombined() {
             values.cosec
         );
 
+    refreshExactValueState("combined", angle);
 }
 
 
@@ -2559,154 +2560,276 @@ function resetCircleZoom(which) {
 
 
 /* =====================================================
-   LONG-PRESS TRIG VALUE -> SCHOOL-STYLE P/Q
-   Exact school-style values for the seven requested basic angles only.
-   Non-basic angles do not trigger the long-press popup.
+   EXACT VALUE ENCOUNTER + CLICK
+   The supplied value sheet provides exact sin/cos values.
+   The remaining four functions are derived from those two values.
    ===================================================== */
-(function enableTrigLongPressFractions() {
-    const functionNames = ["sin", "cos", "tan", "cot", "sec", "cosec"];
-    const BASIC_EXACT_ANGLES = new Set([0, 15, 30, 45, 60, 75, 90]);
-    const BASIC_EXACT_VALUES = {
-        0:   {sin:"0", cos:"1", tan:"0", cot:"undefined", sec:"1", cosec:"undefined"},
-        15:  {sin:"(√6−√2)/4", cos:"(√6+√2)/4", tan:"2−√3", cot:"2+√3", sec:"√6−√2", cosec:"√6+√2"},
-        30:  {sin:"1/2", cos:"√3/2", tan:"1/√3", cot:"√3", sec:"2/√3", cosec:"2"},
-        45:  {sin:"1/√2", cos:"1/√2", tan:"1", cot:"1", sec:"√2", cosec:"√2"},
-        60:  {sin:"√3/2", cos:"1/2", tan:"√3", cot:"1/√3", sec:"2", cosec:"2/√3"},
-        75:  {sin:"(√6+√2)/4", cos:"(√6−√2)/4", tan:"2+√3", cot:"2−√3", sec:"√6+√2", cosec:"√6−√2"},
-        90:  {sin:"1", cos:"0", tan:"undefined", cot:"0", sec:"undefined", cosec:"1"}
-    };
-    const holdMs = 1600;
-    let popup = null;
-    let timer = null;
-    let activeEl = null;
+const EXACT_TRIG_LIBRARY = {
+    0:  { sin:["0",1], cos:["1",1] },
+    3:  { sin:["(√5−1)(√6+√2) − √(10+2√5)(√6−√2)",16], cos:["√(10+2√5)(√6+√2) + (√5−1)(√6−√2)",16] },
+    6:  { sin:["√(30−6√5) − (1+√5)",8], cos:["√(30+6√5) + (1+√5)",8] },
+    12: { sin:["√(10+2√5) − √3(√5−1)",8], cos:["√(10−2√5) + √3(√5−1)",8] },
+    15: { sin:["√6−√2",4], cos:["√6+√2",4] },
+    18: { sin:["√5−1",4], cos:["√(10+2√5)",4] },
+    24: { sin:["√3(1+√5) − √(10−2√5)",8], cos:["√3(1+√5) + √(10−2√5)",8] },
+    27: { sin:["2√(5+√5) − √10 + √2",8], cos:["2√(5+√5) + √10 − √2",8] },
+    30: { sin:["1",2], cos:["√3",2] },
+    42: { sin:["√(30+6√5) − √5 + 1",8], cos:["√(30−6√5) + √5 − 1",8] },
+    45: { sin:["√2",2], cos:["√2",2] },
+    48: { sin:["√(10+2√5) + √3(√5−1)",8], cos:["√(10−2√5) + √3(√5−1)",8] },
+    54: { sin:["√5+1",4], cos:["√(10−2√5)",4] },
+    60: { sin:["√3",2], cos:["1",2] },
+    72: { sin:["√(10+2√5)",4], cos:["√5−1",4] },
+    75: { sin:["√6+√2",4], cos:["√6−√2",4] },
+    90: { sin:["1",1], cos:["0",1] }
+};
 
-    function ensurePopup() {
-        if (popup) return popup;
-        popup = document.createElement("div");
-        popup.className = "trig-fraction-popup";
-        popup.setAttribute("role", "dialog");
-        popup.setAttribute("aria-live", "polite");
-        popup.innerHTML = `
-            <button class="trig-fraction-close" type="button" aria-label="Close">×</button>
-            <div class="trig-fraction-title"></div>
-            <div class="trig-fraction-angle"></div>
-            <div class="trig-fraction-value"></div>
-            <div class="trig-fraction-note"></div>`;
-        document.body.appendChild(popup);
-        popup.querySelector(".trig-fraction-close").addEventListener("click", hide);
-        return popup;
+const EXACT_TRIG_ANGLES = Object.keys(EXACT_TRIG_LIBRARY).map(Number);
+const EXACT_HIT_TOLERANCE = 0.051;
+const EXACT_FUNCTIONS = ["sin","cos","tan","cot","sec","cosec"];
+
+/* Optional compact/rationalized forms. The source sin/cos values already
+   have rational denominators, so those are marked as already rationalized.
+   Derived functions use these cleaner equivalents where a useful compact
+   rationalized form is known; otherwise the derived exact quotient is shown. */
+const EXACT_DERIVED_OVERRIDES = {
+    0:  {tan:{text:"0",kind:"text"}, cot:{text:"undefined",kind:"text"}, sec:{text:"1",kind:"text"}, cosec:{text:"undefined",kind:"text"}},
+    15: {
+        tan:{text:"2−√3",kind:"text", alternate:{text:"(√6−√2)/(√6+√2)",kind:"text"}},
+        cot:{text:"2+√3",kind:"text", alternate:{text:"(√6+√2)/(√6−√2)",kind:"text"}},
+        sec:{text:"√6−√2",kind:"text", alternate:{text:"4/(√6+√2)",kind:"text"}},
+        cosec:{text:"√6+√2",kind:"text", alternate:{text:"4/(√6−√2)",kind:"text"}}
+    },
+    18: {
+        tan:{num:"√(25−10√5)",den:"5",kind:"fraction", alternate:{text:"(√5−1)/√(10+2√5)",kind:"text"}},
+        cot:{text:"√(5+2√5)",kind:"text", alternate:{text:"√(10+2√5)/(√5−1)",kind:"text"}},
+        sec:{num:"√(50−10√5)",den:"5",kind:"fraction", alternate:{text:"4/√(10+2√5)",kind:"text"}},
+        cosec:{text:"√5+1",kind:"text", alternate:{text:"4/(√5−1)",kind:"text"}}
+    },
+    30: {
+        tan:{num:"√3",den:"3",kind:"fraction", alternate:{text:"1/√3",kind:"text"}},
+        cot:{text:"√3",kind:"text", alternate:{text:"√3/1",kind:"text"}},
+        sec:{num:"2√3",den:"3",kind:"fraction", alternate:{text:"2/√3",kind:"text"}},
+        cosec:{text:"2",kind:"text", alternate:{text:"2/1",kind:"text"}}
+    },
+    45: {
+        tan:{text:"1",kind:"text"}, cot:{text:"1",kind:"text"}, sec:{text:"√2",kind:"text", alternate:{text:"2/√2",kind:"text"}}, cosec:{text:"√2",kind:"text", alternate:{text:"2/√2",kind:"text"}}
+    },
+    54: {
+        tan:{num:"√(25+10√5)",den:"5",kind:"fraction", alternate:{text:"(√5+1)/√(10−2√5)",kind:"text"}},
+        cot:{text:"√(5−2√5)",kind:"text", alternate:{text:"√(10−2√5)/(√5+1)",kind:"text"}},
+        sec:{num:"√(50+10√5)",den:"5",kind:"fraction", alternate:{text:"4/√(10−2√5)",kind:"text"}},
+        cosec:{text:"√5−1",kind:"text", alternate:{text:"4/(√5+1)",kind:"text"}}
+    },
+    60: {
+        tan:{text:"√3",kind:"text", alternate:{text:"√3/1",kind:"text"}},
+        cot:{num:"√3",den:"3",kind:"fraction", alternate:{text:"1/√3",kind:"text"}},
+        sec:{text:"2",kind:"text", alternate:{text:"2/1",kind:"text"}},
+        cosec:{num:"2√3",den:"3",kind:"fraction", alternate:{text:"2/√3",kind:"text"}}
+    },
+    72: {
+        tan:{text:"√(5+2√5)",kind:"text", alternate:{text:"√(10+2√5)/(√5−1)",kind:"text"}},
+        cot:{num:"√(25−10√5)",den:"5",kind:"fraction", alternate:{text:"(√5−1)/√(10+2√5)",kind:"text"}},
+        sec:{text:"√5+1",kind:"text", alternate:{text:"4/√(10+2√5)",kind:"text"}},
+        cosec:{num:"√(50−10√5)",den:"5",kind:"fraction", alternate:{text:"4/(√5−1)",kind:"text"}}
+    },
+    75: {
+        tan:{text:"2+√3",kind:"text", alternate:{text:"(√6+√2)/(√6−√2)",kind:"text"}},
+        cot:{text:"2−√3",kind:"text", alternate:{text:"(√6−√2)/(√6+√2)",kind:"text"}},
+        sec:{text:"√6+√2",kind:"text", alternate:{text:"4/(√6−√2)",kind:"text"}},
+        cosec:{text:"√6−√2",kind:"text", alternate:{text:"4/(√6+√2)",kind:"text"}}
     }
+};
 
-    function gcd(a,b) {
-        a=Math.abs(a); b=Math.abs(b);
-        while (b) [a,b]=[b,a%b];
-        return a || 1;
-    }
+function exactReferenceAngle(angle) {
+    const a = normalizeAngle(Number(angle));
+    if (a <= 90) return a;
+    if (a <= 180) return 180 - a;
+    if (a <= 270) return a - 180;
+    return 360 - a;
+}
 
-    function rationalApprox(value, maxDen=10000) {
-        if (!Number.isFinite(value)) return null;
-        const sign = value < 0 ? -1 : 1;
-        value = Math.abs(value);
-        let bestN=Math.round(value), bestD=1, bestErr=Math.abs(value-bestN);
-        for (let d=1; d<=maxDen; d++) {
-            const n=Math.round(value*d), err=Math.abs(value-n/d);
-            if (err < bestErr) { bestN=n; bestD=d; bestErr=err; }
-            if (bestErr < 1e-10) break;
-        }
-        const g=gcd(bestN,bestD);
-        return {n: sign*(bestN/g), d: bestD/g, error: bestErr};
-    }
-
-    function exactValue(angle, func) {
-        const normalized=normalizeAngle(angle);
-        // Long-press exact display is intentionally limited to the seven basic
-        // angles requested for the interactive Angle / Any Angle views.
-        const basic = Object.keys(BASIC_EXACT_VALUES).map(Number);
-        const basicAngle = basic.find(a => {
-            const d = Math.abs(a - normalized);
-            return Math.min(d, 360 - d) < 0.0005;
-        });
-        if (basicAngle !== undefined) return BASIC_EXACT_VALUES[basicAngle][func] || null;
-        return null;
-
-        /* Legacy library fallback intentionally disabled for this interaction.
-        const candidates=[];
-        const add=(a,v)=>candidates.push([Math.abs(normalizeAngle(a)-normalized),v]);
-        const libraries=[window.SCHOOL_VALUES, window.OTHER_VALUES, typeof SCHOOL_VALUES!="undefined"?SCHOOL_VALUES:null, typeof OTHER_VALUES!="undefined"?OTHER_VALUES:null];
-        for (const lib of libraries) {
-            if (!lib) continue;
-            for (const key of Object.keys(lib)) {
-                const a=Number(key);
-                if (!Number.isFinite(a)) continue;
-                let dist=Math.abs(a-normalized);
-                dist=Math.min(dist,360-dist);
-                if (dist<0.0005 && lib[key]?.[func]) return lib[key][func];
-            }
-        }
-        return null;
-        */
-    }
-
-    function renderFraction(text, approximate=false) {
-        if (text === "undefined") return `<div class="trig-undefined">undefined</div>`;
-        if (text && text.includes("/") && !text.includes(" ")) {
-            const parts=text.split("/");
-            if (parts.length===2) return `<div class="trig-pq-fraction"><span>${parts[0]}</span><i></i><span>${parts[1]}</span></div>`;
-        }
-        const match=String(text).match(/^(-?\d+(?:\.\d+)?)$/);
-        if (match) {
-            const r=rationalApprox(Number(text));
-            if (r) return `<div class="trig-pq-fraction"><span>${r.n}</span><i></i><span>${r.d}</span></div>`;
-        }
-        return `<div class="trig-pq-expression">${text}</div>`;
-    }
-
-    function show(el, func, angle) {
-        const exact=exactValue(angle,func);
-        if(!exact) return;
-        const p=ensurePopup();
-        const numeric=getFunctionValue(func,degToRad(angle));
-        let display=exact;
-        let note="Exact value from the trig value library.";
-        let approximate=false;
-        if (!display) {
-            const r=rationalApprox(numeric);
-            if (!r) display="undefined";
-            else { display=`${r.n}/${r.d}`; approximate=true; note="Approximate p/q for the displayed numerical value (not an exact trig identity)."; }
-        }
-        p.querySelector(".trig-fraction-title").textContent=func+"(θ)";
-        p.querySelector(".trig-fraction-angle").textContent=`θ = ${Number(angle).toFixed(2).replace(/\.00$/,'')}°`;
-        p.querySelector(".trig-fraction-value").innerHTML=renderFraction(display,approximate);
-        p.querySelector(".trig-fraction-note").textContent=note;
-        const rect=el.getBoundingClientRect();
-        p.style.left=Math.min(window.innerWidth-p.offsetWidth-12,Math.max(12,rect.left+rect.width/2-p.offsetWidth/2))+"px";
-        p.style.top=Math.min(window.innerHeight-p.offsetHeight-12,Math.max(12,rect.bottom+10))+"px";
-        p.classList.add("show");
-    }
-    function hide(){ if(popup) popup.classList.remove("show"); }
-    function start(el,func){
-        clearTimeout(timer); activeEl=el;
-        const angle=el.closest("#combined") ? Number(angleInput?.value||0) : Number(freeAngleInput?.value||0);
-        const normalized=normalizeAngle(angle);
-        const isBasic=BASIC_EXACT_ANGLES.has(normalized);
-        if(!isBasic) return;
-        timer=setTimeout(()=>show(el,func,angle),holdMs);
-    }
-    function cancel(){ clearTimeout(timer); timer=null; activeEl=null; }
-
-    document.querySelectorAll(".circle-workspace .ratio, .circle-workspace .free-ratio-box > div").forEach(el=>{
-        const label=el.querySelector("span");
-        const func=label ? label.textContent.trim().replace(/\(θ\)$/i,"") : "";
-        if(!functionNames.includes(func)) return;
-        el.classList.add("trig-longpress-target");
-        el.addEventListener("pointerdown",()=>start(el,func));
-        el.addEventListener("pointerup",cancel);
-        el.addEventListener("pointercancel",cancel);
-        el.addEventListener("pointerleave",cancel);
-        el.addEventListener("contextmenu",e=>e.preventDefault());
+function exactAngleMatch(angle) {
+    const reference = exactReferenceAngle(angle);
+    let best = null;
+    let bestDistance = Infinity;
+    EXACT_TRIG_ANGLES.forEach(a => {
+        const d = Math.abs(a - reference);
+        if (d < bestDistance) { bestDistance = d; best = a; }
     });
-    document.addEventListener("pointerdown",e=>{ if(popup?.classList.contains("show") && !popup.contains(e.target) && !e.target.closest(".trig-longpress-target")) hide(); });
-})();
+    return best !== null && bestDistance <= EXACT_HIT_TOLERANCE ? best : null;
+}
+
+function exactFunctionSign(rawAngle, func) {
+    const r = normalizeAngle(Number(rawAngle));
+    const eps = 1e-7;
+    const sinSign = Math.abs(Math.sin(r * Math.PI / 180)) < eps ? 0 : (Math.sin(r * Math.PI / 180) > 0 ? 1 : -1);
+    const cosSign = Math.abs(Math.cos(r * Math.PI / 180)) < eps ? 0 : (Math.cos(r * Math.PI / 180) > 0 ? 1 : -1);
+    if (func === "sin" || func === "cosec") return sinSign;
+    if (func === "cos" || func === "sec") return cosSign;
+    return sinSign * cosSign;
+}
+
+function signedExactValue(value, sign) {
+    if (!value || sign >= 0) return value;
+    if (value.kind === "text") return {...value, text: "−" + value.text};
+    return {...value, num: "−(" + value.num + ")"};
+}
+
+function exactDerivedValue(referenceAngle, func, rawAngle) {
+    const row = EXACT_TRIG_LIBRARY[referenceAngle];
+    if (!row) return null;
+    let value = EXACT_DERIVED_OVERRIDES[referenceAngle]?.[func] || null;
+    const sn = row.sin[0], sd = row.sin[1];
+    const cn = row.cos[0], cd = row.cos[1];
+    if (!value) {
+        if (func === "sin") value = sd === 1 ? {text:sn,kind:"text"} : {num:sn, den:String(sd), kind:"fraction"};
+        if (func === "cos") value = cd === 1 ? {text:cn,kind:"text"} : {num:cn, den:String(cd), kind:"fraction"};
+        if (func === "tan") value = cn === "0" ? {text:"undefined",kind:"text"} : {num:sn, den:cn, kind:"fraction"};
+        if (func === "cot") value = sn === "0" ? {text:"undefined",kind:"text"} : {num:cn, den:sn, kind:"fraction"};
+        if (func === "sec") value = cn === "0" ? {text:"undefined",kind:"text"} : {num:String(cd), den:cn, kind:"fraction"};
+        if (func === "cosec") value = sn === "0" ? {text:"undefined",kind:"text"} : {num:String(sd), den:sn, kind:"fraction"};
+    }
+    /* Handle axis cases before applying quadrant signs. */
+    if (func === "tan" && row.cos[0] === "0") return {text:"undefined",kind:"text"};
+    if (func === "cot" && row.sin[0] === "0") return {text:"undefined",kind:"text"};
+    if (func === "sec" && row.cos[0] === "0") return {text:"undefined",kind:"text"};
+    if (func === "cosec" && row.sin[0] === "0") return {text:"undefined",kind:"text"};
+    if ((func === "tan" || func === "cosec") && row.sin[0] === "0") {
+        return func === "tan" ? {text:"0",kind:"text"} : {text:"undefined",kind:"text"};
+    }
+    if ((func === "cot" || func === "sec") && row.cos[0] === "0") {
+        return func === "cot" ? {text:"0",kind:"text"} : {text:"undefined",kind:"text"};
+    }
+    const sign = exactFunctionSign(rawAngle, func);
+    return signedExactValue(value, sign);
+}
+
+function exactRadicalMarkup(text) {
+    let out = "";
+    for (let i = 0; i < text.length; i++) {
+        if (text[i] !== "√") { out += text[i]; continue; }
+        if (text[i + 1] === "(") {
+            let depth = 0, j = i + 1;
+            for (; j < text.length; j++) {
+                if (text[j] === "(") depth++;
+                else if (text[j] === ")") { depth--; if (depth === 0) break; }
+            }
+            const inside = text.slice(i + 2, j);
+            out += `<span class="exact-radical"><span class="exact-root-symbol">√</span><span class="exact-radicand">${exactRadicalMarkup(inside)}</span></span>`;
+            i = j;
+        } else {
+            let j = i + 1;
+            if (text[j] === "−") j++;
+            while (j < text.length && /[0-9a-zA-Z]/.test(text[j])) j++;
+            const inside = text.slice(i + 1, j);
+            out += `<span class="exact-radical"><span class="exact-root-symbol">√</span><span class="exact-radicand">${exactRadicalMarkup(inside)}</span></span>`;
+            i = j - 1;
+        }
+    }
+    return out;
+}
+
+function exactValueMarkup(value) {
+    if (!value) return "";
+    if (value.kind === "text") return `<span class="exact-text-value">${exactRadicalMarkup(value.text)}</span>`;
+    return `<span class="exact-fraction"><span class="exact-top">${exactRadicalMarkup(value.num)}</span><span class="exact-bar"></span><span class="exact-bottom">${exactRadicalMarkup(value.den)}</span></span>`;
+}
+
+function exactRationalizedMarkup(value) {
+    if (!value) return "";
+    if (value.rationalized) return exactRadicalMarkup(value.rationalized);
+    if (value.kind === "fraction" && !/[√]/.test(value.den)) return exactValueMarkup(value);
+    return `<span class="rationalized-note">${value.kind === "text" ? "Already rationalized / compact form" : "Exact form shown; no shorter rationalized form stored"}</span>`;
+}
+
+function getCircleRatioElements(scope) {
+    const root = scope === "combined"
+        ? document.querySelector("#combined .ratio-box")
+        : document.querySelector("#freecircle .free-ratio-box");
+    return root ? Array.from(root.children) : [];
+}
+
+function setExactHitState(scope, rawAngle) {
+    const angle = exactAngleMatch(rawAngle);
+    const items = getCircleRatioElements(scope);
+    items.forEach(item => {
+        item.classList.remove("exact-hit-active");
+        const dot = item.querySelector(".exact-hit-dot");
+        if (dot) dot.remove();
+    });
+
+    const panel = document.getElementById(scope === "combined" ? "combinedExactValue" : "freeExactValue");
+    if (panel) {
+        panel.hidden = true;
+        panel.dataset.locked = "";
+        const equation = panel.querySelector(".exact-value-equation");
+        if (equation) equation.innerHTML = "";
+    }
+    if (angle === null) return;
+
+    items.forEach(item => {
+        const label = item.querySelector("span");
+        if (!label) return;
+        const func = label.textContent.trim().replace(/\(θ\)$/i, "");
+        if (!EXACT_FUNCTIONS.includes(func)) return;
+        item.classList.add("exact-hit-active");
+        const dot = document.createElement("span");
+        dot.className = "exact-hit-dot";
+        dot.title = "Exact value available";
+        dot.setAttribute("aria-hidden", "true");
+        label.prepend(dot);
+    });
+}
+
+function showExactValue(scope, func) {
+    const raw = scope === "combined" ? Number(angleInput?.value) : Number(freeAngleInput?.value);
+    const matched = exactAngleMatch(raw);
+    if (matched === null) return;
+    const value = exactDerivedValue(matched, func, raw);
+    if (!value) return;
+    const panel = document.getElementById(scope === "combined" ? "combinedExactValue" : "freeExactValue");
+    const equation = document.getElementById(scope === "combined" ? "combinedExactEquation" : "freeExactEquation");
+    if (!panel || !equation) return;
+
+    const shownAngle = cleanAngleText(raw);
+    const colorClass = "exact-color-" + func;
+    const alternate = value.alternate ? signedExactValue(value.alternate, exactFunctionSign(raw, func)) : null;
+    equation.innerHTML = `
+        <div class="exact-equation-main ${colorClass}">
+            <span class="exact-function-name">${func}(${shownAngle}°)</span>
+            <span class="exact-equals">=</span>
+            ${exactValueMarkup(value)}
+        </div>
+        ${alternate ? `<div class="exact-rationalized-box ${colorClass}">
+            <div class="exact-rationalized-title">Reverse / equivalent form</div>
+            <div class="exact-rationalized-value">${exactValueMarkup(alternate)}</div>
+        </div>` : ""}`;
+    panel.hidden = false;
+    panel.dataset.locked = "true";
+    panel.scrollIntoView({behavior:"smooth", block:"nearest"});
+}
+
+function bindExactValueClicks() {
+    [["combined","combined"],["freecircle","free"]].forEach(([section,scope]) => {
+        getCircleRatioElements(scope).forEach(item => {
+            item.addEventListener("click", () => {
+                if (!item.classList.contains("exact-hit-active")) return;
+                const label = item.querySelector("span");
+                if (!label) return;
+                const func = label.textContent.trim().replace(/\(θ\)$/i, "");
+                showExactValue(scope, func);
+            });
+        });
+    });
+}
+
+function refreshExactValueState(scope, angle) {
+    setExactHitState(scope, angle);
+}
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", bindExactValueClicks);
+else bindExactValueClicks();
 
 /* =====================================================
    RESIZABLE CIRCLE PANELS
@@ -3314,6 +3437,8 @@ function drawFreeCircle() {
         "freeCosec"
     ).innerText =
         cleanNumber(cosecV);
+
+    refreshExactValueState("free", rawAngle);
 
     document.getElementById(
         "freeAngleInfo"
@@ -5201,101 +5326,33 @@ window.TrigWave=Object.assign(window.TrigWave||{},{
     return list.filter(function(v,i,a){return v && a.indexOf(v)===i;});
   }
 
+  window.openPdfReview=function(button){
+    var viewer=document.getElementById('pdfViewerModal');
+    var frame=document.getElementById('pdfViewerFrame');
+    var heading=document.getElementById('pdfViewerTitle');
+    var download=document.getElementById('pdfViewerDownload');
+    if(!button||!viewer||!frame||!download)return;
+    var review=button.getAttribute('data-pdf-review');
+    var full=button.getAttribute('data-pdf-full');
+    var title=button.getAttribute('data-pdf-title')||'PDF Viewer';
+    if(!review||!full)return;
+    try{
+      frame.src=new URL(review,document.baseURI).href;
+      download.href=new URL(full,document.baseURI).href;
+    }catch(e){
+      frame.src=review;
+      download.href=full;
+    }
+    if(heading)heading.textContent=title+' — Review (7 pages)';
+    download.textContent='Download Full PDF';
+    viewer.hidden=false;
+    viewer.setAttribute('aria-hidden','false');
+    document.body.classList.add('pdf-viewer-open');
+  }
+
   function initLearningHub(){
-    var grid=document.getElementById('notesGrid');
-    var classFilter=document.getElementById('notesClassFilter');
-    var subjectFilter=document.getElementById('notesSubjectFilter');
-    var accessFilter=document.getElementById('notesAccessFilter');
-    var support=document.getElementById('supportProjectButton');
-    if(!grid||!classFilter||!subjectFilter||!accessFilter)return;
-
-    var notes=Array.isArray(window.TRIGO_NOTES)?window.TRIGO_NOTES.slice():[];
-    if(!notes.length){
-      notes=[{id:'system-of-quadrants-trigonometry-notes',title:'The System of Quadrants — Trigonometry Notes',classLevel:'All Classes',classLevels:['Class 9','Class 10','Class 11','Class 12','Other'],subject:'Mathematics (Maths)',status:'free',type:'pdf',description:'Handwritten concept notes covering the system of quadrants and coordinate-plane sign ideas used in trigonometry.',tags:['quadrants','trigonometry','free notes'],file:'pdfs/system-of-quadrants-trigonometry-notes.pdf',actionLabel:'Open PDF'}];
-    }
-
-    function ensureOptions(select,values,allLabel){
-      var current=select.value;
-      select.innerHTML='<option value="all">'+escapeHtml(allLabel)+'</option>'+values.map(function(v){return '<option value="'+escapeHtml(v)+'">'+escapeHtml(v)+'</option>';}).join('');
-      if(values.indexOf(current)>=0)select.value=current;
-    }
-    ensureOptions(classFilter,CLASS_OPTIONS,'All Classes');
-    ensureOptions(subjectFilter,SUBJECT_OPTIONS,'All Subjects');
-
-    function actionFor(n){
-      var target=n.type==='pdf'?pdfUrl(n.file):n.url;
-      if(!target)return '';
-      var label=n.actionLabel||(n.type==='pdf'?'Open PDF':'Open Link');
-      if(n.type==='pdf'){
-        return '<div class="note-actions">'+
-          '<button class="note-open-button" type="button" data-pdf-file="'+escapeHtml(n.file||'')+'" data-pdf-url="'+escapeHtml(target)+'" data-pdf-title="'+escapeHtml(n.title)+'">'+escapeHtml(label)+'</button>'+ 
-          '<a class="note-download-button" href="'+escapeHtml(target)+'" download>Download PDF</a>'+ 
-          '<a class="note-direct-button" href="'+escapeHtml(target)+'" target="_blank" rel="noopener noreferrer">Open in new tab</a>'+ 
-          '</div>';
-      }
-      return '<div class="note-actions"><a class="note-open-button" href="'+escapeHtml(target)+'" target="_blank" rel="noopener noreferrer">'+escapeHtml(label)+'</a></div>';
-    }
-
-    function typeLabel(n){
-      if(n.type==='pdf')return 'PDF';
-      if(n.type==='youtube')return 'YouTube';
-      if(n.type==='post')return 'Post';
-      return 'Web Link';
-    }
-
-    function render(){
-      var c=classFilter.value,s=subjectFilter.value,a=accessFilter.value;
-      var filtered=notes.filter(function(n){
-        var levels=Array.isArray(n.classLevels)?n.classLevels:(n.classLevel==='All Classes'?CLASS_OPTIONS:[n.classLevel]);
-        return (c==='all'||levels.indexOf(c)>=0)&&(s==='all'||n.subject===s)&&(a==='all'||n.status===a);
-      });
-      grid.innerHTML=filtered.length?filtered.map(function(n){
-        var tags=(Array.isArray(n.tags)?n.tags:[]).map(function(t){return '<span class="note-tag">'+escapeHtml(t)+'</span>';}).join('');
-        return '<article class="note-card"><div class="note-card-top"><span class="note-status '+escapeHtml(n.status)+'">'+escapeHtml(n.status)+'</span><span class="note-type">'+escapeHtml(typeLabel(n))+'</span></div><h3>'+escapeHtml(n.title)+'</h3><div class="note-meta">'+escapeHtml(n.classLevel)+' · '+escapeHtml(n.subject)+'</div><p>'+escapeHtml(n.description)+'</p><div class="note-tags">'+tags+'</div>'+actionFor(n)+'</article>';
-      }).join(''):'<div class="card notes-empty"><h3>No resource here yet</h3><p>More PDFs and links will be added gradually.</p></div>';
-    }
-
-    [classFilter,subjectFilter,accessFilter].forEach(function(el){el.addEventListener('change',render);});
-    if(support)support.href=window.TRIGO_SUPPORT_URL||'#';
-    render();
-
-    grid.addEventListener('click',function(e){
-      var btn=e.target.closest('.note-open-button[data-pdf-url]');
-      if(!btn)return;
-      var url=btn.getAttribute('data-pdf-url');
-      var file=btn.getAttribute('data-pdf-file')||'';
-      var title=btn.getAttribute('data-pdf-title')||'PDF';
-      var viewer=document.getElementById('pdfViewerModal');
-      var frame=document.getElementById('pdfViewerFrame');
-      var heading=document.getElementById('pdfViewerTitle');
-      var download=document.getElementById('pdfViewerDownload');
-      if(!viewer||!frame||!download)return;
-      if(heading)heading.textContent=title;
-      /* Try the normal project-relative URL first. If GitHub Pages is using a
-         different repository base, fall back to the other valid candidates. */
-      var candidates=githubPagesPdfCandidates(file);
-      if(!candidates.length)candidates=[url];
-      var index=0;
-      function loadCandidate(){
-        frame.src=candidates[index]||url;
-        download.href=candidates[index]||url;
-      }
-      frame.onerror=function(){
-        if(index<candidates.length-1){index++;loadCandidate();}
-      };
-      loadCandidate();
-      viewer.hidden=false;
-      document.body.classList.add('pdf-viewer-open');
-    });
-
-    fetch(new URL('pdfs/manifest.json',document.baseURI).href,{cache:'no-store'})
-      .then(function(r){if(!r.ok)throw new Error('manifest unavailable');return r.json();})
-      .then(function(extra){
-        if(!Array.isArray(extra))return;
-        var byId={}; notes.forEach(function(n){byId[n.id]=n;});
-        extra.forEach(function(n){if(n&&n.id)byId[n.id]=Object.assign({},byId[n.id]||{},n);});
-        notes=Object.keys(byId).map(function(k){return byId[k];}); render();
-      }).catch(function(){/* notes.js remains usable */});
+    /* Opening is handled directly by the Review PDF button so it remains
+       reliable even if the rest of the catalogue code changes. */
   }
 
   function closeViewer(){

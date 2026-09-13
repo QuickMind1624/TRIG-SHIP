@@ -12,3 +12,9 @@ TRIG-SHIP responsive/robustness update
 10. Hardened angle input listeners against missing elements.
 11. Kept circle zoom separate from panel resizing.
 12. Checked JavaScript syntax for the project files after the changes.
+
+12. Added exact-value encounter system to Unit Circle and Any Angle Circle using the supplied exact sin/cos sheet.
+13. Added exact angles: 0°, 3°, 6°, 12°, 15°, 18°, 24°, 27°, 30°, 42°, 45°, 48°, 54°, 60°, 72°, 75°, 90°.
+14. When the controller reaches an exact angle, all six trig cards receive a dark-red availability dot; clicking a marked function reveals its exact value below the ratio cards.
+15. sin/cos use the supplied exact forms; tan/cot/sec/cosec are derived from those sin/cos values, with compact standard forms used where available.
+16. The exact-result panel resets whenever the angle leaves an exact-value angle.
