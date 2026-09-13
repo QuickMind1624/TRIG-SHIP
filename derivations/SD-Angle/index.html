@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>S-D-Angle</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-theme="blue">
+<header class="topbar">
+  <div class="brand"><strong>S-D-Angle</strong><span>EXACT TRIGONOMETRIC DERIVATION</span></div>
+  <a class="trigship-back" href="../../index.html" aria-label="Back to TrigoLab">← BACK TO TRIGOLAB</a>
+  <div class="theme-slabs" aria-label="Color themes">
+    <button class="theme-slab blue active" onclick="setTheme('blue')">BLUE</button>
+    <button class="theme-slab green" onclick="setTheme('green')">GREEN</button>
+    <button class="theme-slab purple" onclick="setTheme('purple')">PURPLE</button>
+    <button class="theme-slab brown" onclick="setTheme('brown')">BROWN</button>
+  </div>
+</header>
+<main>
+<section id="notice" class="view active">
+  <div class="notice-wrap">
+    <div class="eyebrow">HUMBLE NOTICE</div>
+    <h1>Read it. Question it. Derive it.</h1>
+    <p>This program is written to be read, not compressed. If understanding needs ten steps, there will be ten steps.</p>
+    <p>The value is only the destination. The work is the program.</p>
+    <button class="primary" onclick="show('home')">ENTER S-D-ANGLE →</button>
+  </div>
+</section>
+<section id="home" class="view">
+  <div class="section-head"><div class="eyebrow">START HERE</div><h1>Choose the parent function</h1><p>Only the two parent routes live here. The function colours stay fixed even when the whole program theme changes.</p></div>
+  <div class="function-grid">
+    <button class="function-card sin-card" onclick="openFamily('sin')"><span class="function-name">sin()</span><span class="function-desc">Blue route × exact values → open an angle → read the full derivation</span><span class="arrow">→</span></button>
+    <button class="function-card cos-card" onclick="openFamily('cos')"><span class="function-name">cos()</span><span class="function-desc">Green route × exact values → open an angle → read the full derivation</span><span class="arrow">→</span></button>
+  </div>
+</section>
+<section id="family" class="view"><div class="page-top"><button class="back" onclick="show('home')">← Back</button><div><div id="familyKicker" class="eyebrow"></div><h1 id="familyTitle"></h1></div></div><div class="folder-note">Each line below is a <b>folder</b>. The exact value is shown on the same line; open the line to enter the complete reasoning.</div><div id="angleList" class="angle-list"></div></section>
+<section id="derive" class="view"><div class="page-top"><button class="back" onclick="show('family')">← Back</button><div><div id="deriveKicker" class="eyebrow"></div><h1 id="deriveTitle"></h1></div></div><div id="derivation"></div></section>
+<section id="formula" class="view"><div class="page-top"><button class="back" onclick="show('derive')">← Back</button><div><div id="formulaKicker" class="eyebrow"></div><h1 id="formulaTitle"></h1></div></div><div id="formulaContent"></div></section>
+</main>
+<footer>S-D-Angle × written to be read × exact mathematics first</footer>
+<script src="app.js"></script>
+</body>
+</html>
