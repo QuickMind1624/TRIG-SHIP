@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Angle Derivation Lab — UCM</title>
+<style>
+:root{
+  --bg:#07131f;--bg2:#0a1a28;--panel:#0d2233;--panel2:#10283b;--line:#294a62;
+  --text:#edf4f8;--muted:#afc0cc;--accent:#7fb3df;--accent2:#c7e1f5;--soft:#17364d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:linear-gradient(145deg,var(--bg),#091a29 58%,#06111b);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.7}
+.wrap{width:min(1180px,92vw);margin:auto;padding:38px 0 90px}
+header{padding:8px 0 25px}.eyebrow{font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent2);margin-bottom:8px}.title{font-size:clamp(30px,4vw,48px);line-height:1.15;margin:0;font-weight:750}.sub{margin:12px 0 0;color:var(--muted);font-size:17px}
+.methods{display:flex;gap:12px;margin:18px 0 34px;flex-wrap:wrap}.method{border:1px solid var(--line);background:#0b1b29;color:var(--text);padding:12px 25px;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;transition:.2s}.method:hover{border-color:#527b9c}.method.active{background:#17364c;border-color:#80b0d3;box-shadow:0 0 0 1px #315876 inset}
+.section{display:none}.section.active{display:block}
+.construction{border:1px solid var(--line);background:#f7f9fb;border-radius:16px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.24)}.construction img{display:block;width:100%;height:auto}
+.box{position:relative;margin-top:30px;border:1px solid var(--line);background:linear-gradient(180deg,#0e2638,#0b1e2e);border-radius:18px;padding:38px 42px 44px;box-shadow:0 14px 38px rgba(0,0,0,.16)}
+.box h2{margin:0 0 12px;font-size:29px;line-height:1.25}.box-intro{margin:0 0 30px;color:var(--muted);font-size:18px;max-width:880px}
+.block{padding:25px 0 29px;border-top:1px solid rgba(127,179,223,.17)}.block:first-of-type{border-top:0;padding-top:0}.block h3{font-size:23px;line-height:1.35;margin:0 0 12px}.block p{font-size:18px;color:#dce7ee;max-width:930px;margin:0 0 14px}.label{display:inline-block;color:var(--accent2);font-size:12px;letter-spacing:.13em;text-transform:uppercase;font-weight:750;margin-bottom:7px}
+.math-line{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:15px 0 17px;font-family:Georgia,"Times New Roman",serif;font-size:21px;color:#fff}.math-note{color:var(--muted);font-size:16px;margin-top:8px}.eq-stack{display:grid;gap:13px;margin:17px 0}.eq-row{display:flex;align-items:center;flex-wrap:wrap;gap:10px;font-family:Georgia,"Times New Roman",serif;font-size:21px;color:#fff}.eq-arrow{color:var(--accent2);font-family:Inter,sans-serif;font-size:19px}.frac{display:inline-flex;vertical-align:middle;flex-direction:column;align-items:center;justify-content:center;line-height:1.05;margin:0 3px;min-width:34px}.frac .top{padding:0 7px 4px;border-bottom:1.6px solid currentColor}.frac .bottom{padding:4px 7px 0}.power-wrap{display:inline-flex;align-items:flex-start;gap:2px}.power-wrap sup{font-size:.62em;line-height:1;margin-top:-.15em}.big-frac{font-size:22px}.highlight{display:inline-flex;align-items:center;gap:8px;padding:10px 15px;border:1px solid #315775;background:#102b40;border-radius:11px;margin:4px 0;color:#f5fbff;font-family:Georgia,"Times New Roman",serif;font-size:21px}
+.clue{margin:18px 0 0;padding:15px 18px;border-left:3px solid var(--accent);background:rgba(30,67,91,.25);border-radius:0 10px 10px 0;color:#dceaf3;font-size:17px}.clue b{color:#fff}
+.alt-wrap{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start}.alt-btn{border:1px solid #365970;background:#0b1d2b;color:#cfe5f4;border-radius:9px;padding:9px 13px;font-weight:700;cursor:pointer}.alt-btn:hover{border-color:#76a7ca}.alt-panel{display:none;width:100%;padding:18px 20px;border:1px solid #2a4a60;background:#0a1a28;border-radius:12px}.alt-panel.open{display:block}.alt-panel h4{margin:0 0 8px;font-size:18px}.alt-panel p{font-size:17px;margin-bottom:10px}.alt-panel .eq-row{font-size:20px}
+.dtm-empty{border:1px dashed #34546a;border-radius:16px;padding:60px;text-align:center;color:var(--muted);background:#0b1b29}.dtm-empty strong{display:block;color:var(--text);font-size:22px;margin-bottom:8px}
+
+.box4-layout{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(240px,.6fr);gap:24px;align-items:start;margin:4px 0 10px}.box4-image{background:#f7f9fb;border:1px solid var(--line);border-radius:15px;overflow:hidden}.box4-image img{display:block;width:100%;height:auto}.image-caption{padding:10px 14px;color:#4b6070;background:#eef3f7;font-size:14px}.box4-side{position:sticky;top:18px}.deep-btn{width:100%;border:1px solid #365970;background:#0b1d2b;color:#d7ebf8;border-radius:10px;padding:12px 14px;font-weight:750;text-align:left;cursor:pointer}.deep-btn:hover{border-color:#76a7ca}.deep-panel{display:none;margin-top:10px;padding:18px 20px;border:1px solid #2a4a60;background:#0a1a28;border-radius:12px}.deep-panel.open{display:block}.deep-panel h4{margin:0 0 8px;font-size:18px}.deep-panel p{font-size:16px;margin-bottom:10px}.final-step{background:linear-gradient(180deg,#102b40,#0c2131);border:1px solid #345c78;border-radius:13px;padding-left:18px;padding-right:18px}
+@media(max-width:820px){.box4-layout{grid-template-columns:1fr}.box4-side{position:static}}
+@media(max-width:700px){.wrap{width:min(94vw,1180px);padding-top:24px}.box{padding:28px 22px 34px}.box h2{font-size:25px}.block h3{font-size:21px}.block p{font-size:17px}.math-line,.eq-row{font-size:19px}}
+
+.substep{margin:18px 0;padding:18px 20px;border:1px solid rgba(160,190,220,.14);border-radius:14px;background:rgba(255,255,255,.025)}
+.substep .label{display:inline-block;margin-bottom:10px}
+.route-note{margin-top:20px;padding:16px 18px;border-left:3px solid rgba(150,190,230,.55);background:rgba(255,255,255,.025)}
+
+.proof-map{margin:18px 0 26px;padding:14px 16px;border:1px solid var(--line);background:rgba(13,34,51,.78);border-radius:14px;box-shadow:0 10px 28px rgba(0,0,0,.12)}
+.proof-map-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:11px}
+.proof-map-title{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--accent2);font-weight:800}
+.proof-map-note{font-size:13px;color:var(--muted)}
+.proof-steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.proof-step{position:relative;border:1px solid #294a62;background:#0a1b29;color:#cfe2ee;border-radius:10px;padding:10px 11px;text-align:left;cursor:pointer;min-height:62px;transition:.18s}
+.proof-step:hover{border-color:#76a7ca;background:#10283a}
+.proof-step.active{border-color:#80b0d3;background:#17364c;box-shadow:0 0 0 1px #315876 inset}
+.proof-step-num{display:block;font-size:11px;color:var(--accent2);font-weight:800;letter-spacing:.08em;margin-bottom:3px}
+.proof-step-label{display:block;font-size:14px;font-weight:750;line-height:1.25}
+@media(max-width:700px){.proof-map-head{align-items:flex-start;flex-direction:column;gap:2px}.proof-steps{grid-template-columns:repeat(2,minmax(0,1fr))}.proof-step{min-height:58px}}
+
+
+.explanation-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,34%);gap:28px;align-items:start}
+.explanation-main{min-width:0}
+.explanation-side{position:sticky;top:18px;background:#f7f9fb;border:1px solid var(--line);border-radius:15px;overflow:visible;box-shadow:0 10px 28px rgba(0,0,0,.12);z-index:2}
+.side-image-viewport{position:relative;max-height:64vh;overflow:auto;border-radius:15px 15px 0 0;scroll-behavior:smooth;background:#f7f9fb}
+.side-image-viewport::-webkit-scrollbar{width:8px;height:8px}.side-image-viewport::-webkit-scrollbar-thumb{background:#9bb1c0;border-radius:8px}.side-image-viewport::-webkit-scrollbar-track{background:#e8eef2}
+.side-image{display:block;width:var(--side-img-width,100%);max-width:none;height:auto;margin:0 auto;cursor:zoom-in;user-select:none;-webkit-user-drag:none;transition:width .18s ease,opacity .18s ease}
+.side-image-tools{position:absolute;top:10px;left:10px;z-index:5;display:flex;align-items:flex-start;gap:7px}
+.side-size-toggle,.side-image-close{width:34px;height:34px;border:1px solid #54748c;background:rgba(7,19,31,.92);color:#fff;border-radius:9px;font-size:18px;line-height:1;cursor:pointer;box-shadow:0 5px 16px rgba(0,0,0,.2)}
+.side-size-toggle:hover,.side-image-close:hover{border-color:#8ab7d6;background:#10283a}
+.side-size-panel{display:none;align-items:center;gap:7px;padding:6px 8px;border:1px solid #54748c;background:rgba(7,19,31,.94);border-radius:9px;box-shadow:0 5px 16px rgba(0,0,0,.2)}
+.side-size-panel.open{display:flex}.side-size-panel input{width:100px;accent-color:#7fb3df}.side-size-value{min-width:42px;color:#d7ebf8;font-size:12px;font-weight:750;text-align:center}
+.side-image-close{position:absolute;top:10px;right:10px;display:none;font-size:22px;z-index:20}.explanation-side.enlarged .side-image-close{display:block;position:absolute}
+.side-undo{display:none;width:100%;border:0;border-top:1px solid #294a62;background:#0b1d2b;color:#d7ebf8;padding:11px 14px;font-weight:750;cursor:pointer;border-radius:0 0 15px 15px}.side-undo:hover{background:#10283a}
+.explanation-side.image-hidden .side-image-viewport{display:none}.explanation-side.image-hidden .side-undo{display:block}
+.explanation-side .image-caption{padding:10px 13px;color:#4b6070;background:#eef3f7;font-size:13px;line-height:1.45}
+.explanation-side.image-hidden .image-caption{border-radius:15px 15px 0 0}
+@media(max-width:900px){.explanation-layout{grid-template-columns:minmax(0,1fr) minmax(210px,31%);gap:20px}}
+@media(max-width:700px){.explanation-layout{grid-template-columns:1fr}.explanation-side{position:static;max-width:520px;margin:0 auto;width:100%}.side-image-viewport{max-height:58vh}}
+
+</style>
+</head>
+<body>
+<main class="wrap">
+<header>
+  <div class="eyebrow">Angle Derivation Lab</div>
+  <h1 class="title">Angle Sum &amp; Angle Difference</h1>
+  <p class="sub">Choose a method and follow the construction before we turn it into equations.</p>
+</header>
+<nav class="methods" aria-label="Derivation methods">
+  <button class="method active" data-target="ucm">Unit Circle Method (UCM)</button>
+  <button class="method" data-target="dtm">Dual Triangle Method (DTM)</button>
+</nav>
+
+<section id="ucm" class="section active">
+  <div class="construction">
+    <img src="assets/ucm/master-construction.png" alt="Unit Circle Method construction supplied by the user">
+  </div>
+
+  <div class="proof-map" aria-label="UCM proof map">
+    <div class="proof-map-head"><span class="proof-map-title">Proof map · UCM</span><span class="proof-map-note">Jump to any stage</span></div>
+    <div class="proof-steps">
+      <button class="proof-step active" data-jump="ucm-box1"><span class="proof-step-num">01</span><span class="proof-step-label">Known values</span></button>
+      <button class="proof-step" data-jump="ucm-box2"><span class="proof-step-num">02</span><span class="proof-step-label">Build the lengths</span></button>
+      <button class="proof-step" data-jump="ucm-box3"><span class="proof-step-num">03</span><span class="proof-step-label">Split the geometry</span></button>
+      <button class="proof-step" data-jump="ucm-box4"><span class="proof-step-num">04</span><span class="proof-step-label">Triangle OMA</span></button>
+    </div>
+  </div>
+
+  <section class="box" id="ucm-box1">
+    <h2>01 · What do we already know?</h2>
+    <p class="box-intro">Before calculating anything, collect the facts that are already known. We will use these known trigonometric values to reach the smaller 15° angle.</p>
+    <div class="explanation-layout">
+      <div class="explanation-main">
+
+    <div class="block">
+      <span class="label">Known values</span>
+      <h3>The 30° and 45° angles give us four values we can use immediately.</h3>
+      <div class="eq-stack">
+        <div class="eq-row"><span>sin(30°)</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span></div>
+        <div class="eq-row"><span>sin(45°)</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+        <div class="eq-row"><span>cos(30°)</span><span>=</span><span class="frac"><span class="top">√3</span><span class="bottom">2</span></span></div>
+        <div class="eq-row"><span>cos(45°)</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+      </div>
+      <p>Our target is the smaller angle between the 30° and 45° directions. So the quantity we ultimately want is <b>sin(15°)</b>.</p>
+      <div class="highlight">We will find <b>sin(15°)</b> with the help of <b>sin(30°)</b> and <b>sin(45°)</b>.</div>
+    </div>
+
+    <div class="block">
+      <span class="label">The basic language of the triangle</span>
+      <h3>What do sine and cosine actually mean here?</h3>
+      <p>For a right triangle, choose an angle <b>x</b>. Relative to that angle, the side directly opposite it is the <b>perpendicular</b>, the side next to it is the <b>base</b>, and the longest side opposite the right angle is the <b>hypotenuse</b>.</p>
+      <div class="math-line"><span>sin(x)</span><span>=</span><span class="frac"><span class="top">perpendicular</span><span class="bottom">hypotenuse</span></span></div>      <div class="math-line"><span>cos(x)</span><span>=</span><span class="frac"><span class="top">base</span><span class="bottom">hypotenuse</span></span></div>
+      <p class="math-note">This is why the lengths in our construction matter: once the hypotenuse is known, a sine or cosine value can tell us the corresponding side length.</p>
+    </div>
+  
+      </div>
+    <aside class="explanation-side" data-side-image>
+      <div class="side-image-viewport">
+        <div class="side-image-tools">
+          <button class="side-size-toggle" type="button" aria-label="Adjust image size" title="Adjust image size">⌄</button>
+          <div class="side-size-panel" aria-hidden="true">
+            <input class="side-size-range" type="range" min="50" max="1000" value="100" step="5" aria-label="Image size">
+            <span class="side-size-value">100%</span>
+          </div>
+        </div>
+        <img class="side-image" src="assets/ucm/master-construction.png" alt="Original UCM construction" draggable="false">
+      </div>
+      <button class="side-image-close" type="button" aria-label="Return image to default size" title="Return to default size">×</button>
+      <button class="side-undo" type="button">Undo · show image</button>
+      <div class="image-caption">Original UCM construction — kept visible beside the explanation so the geometry stays in view.</div>
+    </aside>
+    </div></section>
+
+  <section class="box" id="ucm-box2">
+    <h2>02 · What does the construction give us?</h2>
+    <p class="box-intro">Now we stop looking at the diagram as one large picture. We pick out one fact at a time and let each fact lead to the next one.</p>
+    <div class="explanation-layout">
+      <div class="explanation-main">
+
+    <div class="block">
+      <span class="label">First clue · equal unit lengths</span>
+      <h3>BE = BA = 1 unit</h3>
+      <p>The construction gives us two equal lengths from the same starting point B:</p>
+      <div class="math-line"><span>BE</span><span>=</span><span>BA</span><span>=</span><span>1&nbsp; unit</span></div>
+      <p>Therefore, in <b>△BCE</b>, the side <b>BE</b> is the hypotenuse, and in <b>△BAD</b>, the side <b>BA</b> is the hypotenuse. These two hypotenuses have the same length: <b>1 unit</b>.</p>
+      <p>That repeated unit length is the important clue to keep in mind. A unit length can also be viewed as a <b>radius</b>, so the construction naturally connects the two right triangles with the idea of a unit circle.</p>
+    </div>
+
+    <div class="block">
+      <span class="label">Second clue · find AD</span>
+      <h3>Use the 45° triangle first.</h3>
+      <p>In <b>△BAD</b>, the angle at B is 45°, the hypotenuse is <b>AB</b>, and the side opposite 45° is <b>AD</b>. Therefore:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span class="frac"><span class="top">AD</span><span class="bottom">AB</span></span><span>=</span><span>sin(45°)</span></div>
+        <div class="eq-row"><span class="frac"><span class="top">AD</span><span class="bottom">AB</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+      </div>
+      <p>We already know from the construction that <b>AB = 1 unit</b>. Substitute that value:</p>
+      <div class="eq-row"><span class="frac"><span class="top">AD</span><span class="bottom">1</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span><span class="eq-arrow">→</span><span>AD = </span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+      <p>So the vertical segment <b>AD</b> is now known. We have not guessed its length; it came directly from the 45° sine ratio and the unit hypotenuse.</p>
+    </div>
+
+    <div class="block">
+      <span class="label">Third clue · find BD</span>
+      <h3>The same 45° triangle also gives us BD.</h3>
+      <p>In the same right triangle, <b>BD</b> is the side adjacent to the 45° angle. Therefore cosine gives:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span class="frac"><span class="top">BD</span><span class="bottom">AB</span></span><span>=</span><span>cos(45°)</span></div>
+        <div class="eq-row"><span class="frac"><span class="top">BD</span><span class="bottom">AB</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+      </div>
+      <p>Since <b>AB = 1 unit</b>:</p>
+      <div class="eq-row"><span>BD</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+      <p>Now we know <b>BD</b>. That matters because BD is the side that the 30° triangle will use next.</p>
+    </div>
+
+    <div class="block">
+      <span class="label">Fourth clue · enter the 30° triangle</span>
+      <h3>BD is common to the next triangle.</h3>
+      <p>Look at <b>△BOD</b>. The angle at B is 30°, and the right angle is at D. Therefore <b>BO</b> is the hypotenuse and <b>BD</b> is the side adjacent to 30°.</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span class="frac"><span class="top">BD</span><span class="bottom">OB</span></span><span>=</span><span>cos(30°)</span></div>
+        <div class="eq-row"><span>cos(30°)</span><span>=</span><span>sin(60°)</span><span>=</span><span class="frac"><span class="top">√3</span><span class="bottom">2</span></span></div>
+        <div class="eq-row"><span class="frac"><span class="top">BD</span><span class="bottom">OB</span></span><span>=</span><span class="frac"><span class="top">√3</span><span class="bottom">2</span></span></div>
+      </div>
+      <p>We already found <b>BD = 1/√2</b>. To isolate <b>OB</b>, divide BD by the cosine value:</p>
+      <div class="eq-row"><span>OB</span><span>=</span><span class="frac"><span class="top">BD</span><span class="bottom">cos(30°)</span></span><span>=</span><span class="frac"><span class="top">1/√2</span><span class="bottom">√3/2</span></span></div>
+      <p>Dividing by a fraction means multiplying by its reciprocal:</p>
+      <div class="eq-row"><span>OB</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span><span>×</span><span class="frac"><span class="top">2</span><span class="bottom">√3</span></span><span>=</span><span class="frac"><span class="top">√6</span><span class="bottom">3</span></span></div>
+    </div>
+
+    <div class="block">
+      <span class="label">Fifth clue · find OD</span>
+      <h3>Now sine gives the vertical part of △BOD.</h3>
+      <p>For the 30° angle in <b>△BOD</b>, <b>OD</b> is opposite the angle and <b>OB</b> is the hypotenuse. So:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span class="frac"><span class="top">OD</span><span class="bottom">OB</span></span><span>=</span><span>sin(30°)</span></div>
+        <div class="eq-row"><span class="frac"><span class="top">OD</span><span class="bottom">OB</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span></div>
+      </div>
+      <p>We have already found <b>OB = √6/3</b>. Substitute it:</p>
+      <div class="eq-row"><span>OD</span><span>=</span><span>OB × </span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span><span>=</span><span class="frac"><span class="top">√6</span><span class="bottom">3</span></span><span>×</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span><span>=</span><span class="frac"><span class="top">√6</span><span class="bottom">6</span></span></div>
+      <p>So <b>OD = √6/6</b>, which is the same as <b>1/√6</b>. Both forms represent the same length.</p>
+      <div class="alt-wrap">
+        <button class="alt-btn" data-alt="tan">Alternative · tan(30°)</button>
+        <button class="alt-btn" data-alt="pyth">Alternative · Pythagoras</button>
+        <div class="alt-panel" id="alt-tan">
+          <h4>Alternative route: use tan(30°)</h4>
+          <p>In △BOD, relative to 30°, OD is opposite and BD is adjacent:</p>
+          <div class="eq-row"><span>tan(30°)</span><span>=</span><span class="frac"><span class="top">OD</span><span class="bottom">BD</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√3</span></span></div>
+          <div class="eq-row"><span>OD</span><span>=</span><span>BD × </span><span class="frac"><span class="top">1</span><span class="bottom">√3</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span><span>×</span><span class="frac"><span class="top">1</span><span class="bottom">√3</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√6</span></span></div>
+        </div>
+        <div class="alt-panel" id="alt-pyth">
+          <h4>Alternative route: use Pythagoras</h4>
+          <p>△BOD is right-angled at D, so the hypotenuse is OB. Therefore:</p>
+          <div class="eq-row"><span>OB²</span><span>=</span><span>BD² + OD²</span></div>
+          <div class="eq-row"><span>OD²</span><span>=</span><span>OB² − BD²</span></div>
+          <div class="eq-row"><span>OD²</span><span>=</span><span class="power-wrap"><span>(</span><span class="frac"><span class="top">√6</span><span class="bottom">3</span></span><span>)</span><sup>2</sup></span><span>−</span><span class="power-wrap"><span>(</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span><span>)</span><sup>2</sup></span></div>
+          <div class="eq-row"><span>OD²</span><span>=</span><span class="frac"><span class="top">(√6)²</span><span class="bottom">3²</span></span><span>−</span><span class="frac"><span class="top">1²</span><span class="bottom">(√2)²</span></span></div>
+          <div class="eq-row"><span>OD²</span><span>=</span><span class="frac"><span class="top">6</span><span class="bottom">9</span></span><span>−</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span><span>=</span><span class="frac"><span class="top">2</span><span class="bottom">3</span></span><span>−</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">6</span></span></div>
+          <div class="eq-row"><span>OD</span><span>=</span><span>√</span><span class="frac"><span class="top">1</span><span class="bottom">6</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√6</span></span></div>
+        </div>
+      </div>
+    </div>
+  
+      </div>
+    <aside class="explanation-side" data-side-image>
+      <div class="side-image-viewport">
+        <div class="side-image-tools">
+          <button class="side-size-toggle" type="button" aria-label="Adjust image size" title="Adjust image size">⌄</button>
+          <div class="side-size-panel" aria-hidden="true">
+            <input class="side-size-range" type="range" min="50" max="1000" value="100" step="5" aria-label="Image size">
+            <span class="side-size-value">100%</span>
+          </div>        </div>
+        <img class="side-image" src="assets/ucm/master-construction.png" alt="Original UCM construction" draggable="false">
+      </div>
+      <button class="side-image-close" type="button" aria-label="Return image to default size" title="Return to default size">×</button>
+      <button class="side-undo" type="button">Undo · show image</button>
+      <div class="image-caption">Original UCM construction — the same construction stays visible while the lengths are derived.</div>
+    </aside>
+    </div></section>
+
+  <section class="box" id="ucm-box3">
+    <h2>03 · Connect the two constructions</h2>
+    <p class="box-intro">We now use the lengths we have just uncovered to move toward the inner triangle. Nothing new is guessed here; we simply read the large triangle as a sum of two smaller vertical pieces.</p>
+    <div class="explanation-layout">
+      <div class="explanation-main">
+
+    <div class="block">
+      <span class="label">First connection</span>
+      <h3>AD is made from AO and OD.</h3>
+      <p>Point O lies on the vertical segment AD. Therefore the whole segment AD is exactly the sum of the two parts AO and OD:</p>
+      <div class="math-line"><span>AD</span><span>=</span><span>AO</span><span>+</span><span>OD</span></div>
+      <p>We already know both quantities on the right: <b>AD = 1/√2</b> and <b>OD = 1/√6</b>. So AO is obtained by subtracting the lower piece OD from the whole length AD:</p>
+      <div class="eq-row"><span>AO</span><span>=</span><span>AD − OD</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span><span>−</span><span class="frac"><span class="top">1</span><span class="bottom">√6</span></span></div>
+      <p>This gives us the length <b>AO</b>, which belongs to the smaller triangle <b>△AOM</b>. That is the triangle we will use next.</p>
+    </div>
+
+    <div class="block">
+      <span class="label">Angle clue · why 75°?</span>
+      <h3>The angle ∠OMB becomes 75° from the perpendicular construction.</h3>
+      <p>At B, the upper ray BA is 45° above the horizontal, while the lower ray BO is 30° above the same horizontal. Therefore the angle between BA and BO is:</p>
+      <div class="math-line"><span>∠MBO</span><span>=</span><span>45° − 30°</span><span>=</span><span>15°</span></div>
+      <p>The segment <b>MO</b> is drawn perpendicular to the 30° ray BO. A perpendicular creates a 90° angle. So in the right triangle <b>△BMO</b>, the remaining two angles must add up to 90°:</p>
+      <div class="math-line"><span>∠OMB</span><span>=</span><span>90° − 15°</span><span>=</span><span>75°</span></div>
+      <p>That is why the 75° mark is there. It is not an independent fact: it follows from the 15° angle at B and the right angle made by <b>MO ⟂ BO</b>.</p>
+    </div>
+  
+      </div>
+    <aside class="explanation-side" data-side-image>
+      <div class="side-image-viewport">
+        <div class="side-image-tools">
+          <button class="side-size-toggle" type="button" aria-label="Adjust image size" title="Adjust image size">⌄</button>
+          <div class="side-size-panel" aria-hidden="true">
+            <input class="side-size-range" type="range" min="50" max="1000" value="100" step="5" aria-label="Image size">
+            <span class="side-size-value">100%</span>
+          </div>
+        </div>
+        <img class="side-image" src="assets/ucm/master-construction.png" alt="Original UCM construction" draggable="false">
+      </div>
+      <button class="side-image-close" type="button" aria-label="Return image to default size" title="Return to default size">×</button>
+      <button class="side-undo" type="button">Undo · show image</button>
+      <div class="image-caption">Original UCM construction — keep the main geometry visible while the proof connects the pieces.</div>
+    </aside>
+    </div></section>
+
+  <section class="box box4" id="ucm-box4">
+    <h2>04 · Build the final 15° triangle</h2>
+    <p class="box-intro">Now we use the lengths we have already found to construct the triangle whose angle is 15°. The goal is not to jump to the answer; every new length will come from something we have already established.</p>
+
+    <div class="box4-layout">
+      <div class="box4-image">
+        <img src="assets/ucm/box4-triangle.png" alt="Auxiliary triangle construction with D, N, T and A, labelled z, h, x, y and m">
+        <div class="image-caption">Auxiliary construction for the next length calculations.</div>
+      </div>
+      <div class="box4-side">
+        <button class="deep-btn" data-deep="angles105">Why does the 105° angle appear?</button>
+        <div class="deep-panel" id="deep-angles105">
+          <h4>Deep look · where does 105° come from?</h4>
+          <p>There are two useful ways to see the same angle. First, the 30° ray is perpendicular to the line that reaches M, so the corresponding angle made with the horizontal is <b>60°</b>. At M, the other ray is the 45° side. Therefore the large angle is simply the two visible pieces together:</p>
+          <div class="eq-row"><span>105°</span><span>=</span><span>60°+45°</span></div>
+          <p>There is also a triangle-angle check. In △OAM, the angle at O is <b>30°</b> and the angle at A is <b>45°</b>. Since the three interior angles of a triangle add to 180°:</p>
+          <div class="eq-row"><span>∠OMA</span><span>=</span><span>180°−30°−45°</span><span>=</span><span>105°</span></div>
+          <p>So the 105° mark is not an assumed value. Both pieces of geometry point to the same angle.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="label">First clue · split AO</span>
+      <h3>Turn the known length AO into two smaller horizontal pieces.</h3>
+      <p>We already calculated the complete length <b>AO</b>. Now divide that same segment into two parts, called <b>x</b> and <b>y</b>. Because the two pieces together make the whole segment:</p>
+      <div class="math-line"><span>x+y</span><span>=</span><span>AO</span></div>
+      <p>From the previous box:</p>
+      <div class="eq-row"><span>AO</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span><span>−</span><span class="frac"><span class="top">1</span><span class="bottom">√6</span></span><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">√6</span></span></div>
+    </div>
+
+    <div class="block">
+      <span class="label">Second clue · express x and y using h</span>
+      <h3>The same height h is shared by both right triangles.</h3>
+      <p>For the left small right triangle, the angle at the base is 30°. Therefore:</p>
+      <div class="eq-row"><span>tan(30°)</span><span>=</span><span class="frac"><span class="top">h</span><span class="bottom">x</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√3</span></span></div>
+      <p>To make <b>x</b> the subject, multiply both sides by x and then by √3:</p>
+      <div class="eq-row"><span>h</span><span>=</span><span class="frac"><span class="top">x</span><span class="bottom">√3</span></span><span>→</span><span>x</span><span>=</span><span>h√3</span></div>
+      <p>For the right small triangle, the base angle is 45°:</p>
+      <div class="eq-row"><span>tan(45°)</span><span>=</span><span class="frac"><span class="top">h</span><span class="bottom">y</span></span><span>=</span><span>1</span></div>
+      <div class="eq-row"><span>h</span><span>=</span><span>y</span><span>→</span><span>y</span><span>=</span><span>h</span></div>
+      <p>So the two pieces are now written using the single unknown height <b>h</b>:</p>
+      <div class="highlight"><span>x+y</span><span>=</span><span>h√3+h</span><span>=</span><span>h(√3+1)</span></div>
+    </div>
+
+    <div class="block">
+      <span class="label">Third clue · solve for h</span>
+      <h3>Both expressions describe the same segment AO.</h3>
+      <p>We have two descriptions of <b>x+y</b>. One comes from the geometry of the two smaller triangles, and the other comes from the length AO that we already calculated. Therefore we can equate them:</p>
+      <div class="eq-row"><span>h(√3+1)</span><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">√6</span></span></div>
+      <p>Now divide both sides by <b>√3+1</b>:</p>
+      <div class="eq-row"><span>h</span><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">√3+1</span></span><span>×</span><span class="frac"><span class="top">1</span><span class="bottom">√6</span></span></div>
+      <p>At this point the fraction containing <b>√3+1</b> is not in a convenient form. So we rationalize it by multiplying the numerator and denominator by its conjugate <b>√3−1</b>:</p>
+      <div class="eq-row"><span>h</span><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">√3+1</span></span><span>×</span><span class="frac"><span class="top">√3−1</span><span class="bottom">√3−1</span></span><span>×</span><span class="frac"><span class="top">1</span><span class="bottom">√6</span></span></div>
+      <div class="eq-row"><span>=</span><span class="frac"><span class="top">(√3−1)²</span><span class="bottom">(√3)²−1²</span></span><span>×</span><span class="frac"><span class="top">1</span><span class="bottom">√6</span></span></div>
+      <div class="eq-row"><span>=</span><span class="frac"><span class="top">3−2√3+1</span><span class="bottom">2</span></span><span>×</span><span class="frac"><span class="top">1</span><span class="bottom">√6</span></span><span>=</span><span class="frac"><span class="top">2−√3</span><span class="bottom">√6</span></span></div>
+      <div class="highlight"><span>h</span><span>=</span><span class="frac"><span class="top">2−√3</span><span class="bottom">√6</span></span></div>
+      <div class="alt-wrap">
+        <button class="alt-btn" data-alt="rational">Rationalization · see why</button>
+        <div class="alt-panel" id="alt-rational">
+          <h4>Why multiply by √3−1?</h4>
+          <p>The denominator contains <b>√3+1</b>. Multiplying by its conjugate turns the denominator into a difference of squares:</p>
+          <div class="eq-row"><span>(√3+1)(√3−1)</span><span>=</span><span>3−1</span><span>=</span><span>2</span></div>
+          <p>So the radical disappears from that denominator, making the expression much easier to simplify.</p>
+        </div>
+      </div>
+    </div>
+    <div class="block">
+      <span class="label">Fourth clue · find AM</span>
+      <h3>Use the 45° triangle to turn h into the side AM.</h3>
+      <p>In the right triangle containing <b>AM</b>, the angle at A is 45°. The side opposite that angle is <b>h</b>, while <b>AM=t</b> is the hypotenuse. Therefore:</p>
+      <div class="eq-row"><span>sin(45°)</span><span>=</span><span class="frac"><span class="top">h</span><span class="bottom">t</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+      <p>Rearrange to make t the subject:</p>
+      <div class="eq-row"><span>t</span><span>=</span><span>h√2</span><span>=</span><span class="frac"><span class="top">2−√3</span><span class="bottom">√3</span></span></div>
+      <p>So <b>AM</b> is now known. We will use it to find the missing hypotenuse of the 15° triangle.</p>
+    </div>
+
+    <div class="block">
+      <span class="label">Fifth clue · find MB</span>
+      <h3>The original unit length gives us the missing hypotenuse.</h3>
+      <p>We already considered <b>AB = 1 unit</b>. Point M lies between A and B, so the complete side AB is split into AM and MB:</p>
+      <div class="math-line"><span>MB+AM</span><span>=</span><span>AB</span><span>=</span><span>1</span></div>
+      <p>Therefore:</p>
+      <div class="eq-row"><span>MB</span><span>=</span><span>1−AM</span><span>=</span><span>1−</span><span class="frac"><span class="top">2−√3</span><span class="bottom">√3</span></span><span>=</span><span class="frac"><span class="top">2(√3−1)</span><span class="bottom">√3</span></span></div>
+      <p>This is the key reason we needed <b>AM</b>: the 15° triangle is already visible, but its hypotenuse is <b>MB</b>, not the full unit segment AB. Subtracting AM from the known unit length gives exactly that missing hypotenuse.</p>
+    </div>
+
+    <div class="block">
+      <span class="label">Sixth clue · find OM</span>
+      <h3>The same 30° relationship gives us OM.</h3>
+      <p>In the right triangle containing <b>OM=z</b> and <b>h</b>, the angle is 30°. Here <b>h</b> is opposite and <b>z</b> is the hypotenuse:</p>
+      <div class="eq-row"><span>sin(30°)</span><span>=</span><span class="frac"><span class="top">h</span><span class="bottom">z</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span></div>
+      <p>Multiply both sides by 2z and divide by 1:</p>
+      <div class="eq-row"><span>z</span><span>=</span><span>2h</span><span>=</span><span class="frac"><span class="top">2(2−√3)</span><span class="bottom">√6</span></span></div>
+      <p>So <b>OM=z</b> is now completely known.</p>
+    </div>
+
+    <div class="block final-step">
+      <span class="label">Final clue · the 15° triangle is ready</span>
+      <h3>Now the target sine is simply opposite ÷ hypotenuse.</h3>
+      <p>The small right triangle at B has angle <b>15°</b>. Its opposite side is <b>OM=z</b>, and its hypotenuse is <b>MB</b>. Therefore:</p>
+      <div class="eq-row"><span>sin(15°)</span><span>=</span><span class="frac"><span class="top">z</span><span class="bottom">MB</span></span></div>
+      <p>Substitute the two lengths we have just found:</p>
+      <div class="eq-row"><span>sin(15°)</span><span>=</span><span class="frac"><span class="top">2(2−√3)/√6</span><span class="bottom">2(√3−1)/√3</span></span></div>
+      <p>Rewrite the complex fraction as multiplication by the reciprocal:</p>
+      <div class="eq-row"><span>=</span><span class="frac"><span class="top">2(2−√3)</span><span class="bottom">√6</span></span><span>×</span><span class="frac"><span class="top">√3</span><span class="bottom">2(√3−1)</span></span></div>
+      <p>Cancel the common factor 2 and simplify:</p>
+      <div class="eq-row"><span>=</span><span class="frac"><span class="top">(2−√3)√3</span><span class="bottom">√6(√3−1)</span></span><span>=</span><span class="frac"><span class="top">√2(2−√3)</span><span class="bottom">2(√3−1)</span></span></div>
+      <p>Rationalize the remaining denominator using the conjugate <b>√3+1</b>:</p>
+      <div class="eq-row"><span>=</span><span class="frac"><span class="top">√2(2−√3)(√3+1)</span><span class="bottom">2(3−1)</span></span><span>=</span><span class="frac"><span class="top">√2(√3−1)</span><span class="bottom">4</span></span></div>
+      <div class="highlight"><span>sin(15°)</span><span>=</span><span class="frac"><span class="top">√6−√2</span><span class="bottom">4</span></span></div>
+    </div>
+
+    <div class="block">
+      <span class="label">One last mathematical note</span>
+      <h3>Could the Law of Sines be used here?</h3>
+      <p>In principle, the Law of Sines can be written for the relevant triangle. But it would require a value such as <b>sin(105°)</b> to obtain the needed side directly. In this derivation, introducing that value through the same angle relationships we are trying to establish would make the argument circular. So we deliberately stay with the right-triangle relations already available to us.</p>
+      <div class="eq-row"><span class="frac"><span class="top">a</span><span class="bottom">sin A</span></span><span>=</span><span class="frac"><span class="top">b</span><span class="bottom">sin B</span></span><span>=</span><span class="frac"><span class="top">c</span><span class="bottom">sin C</span></span></div>
+      <div class="alt-wrap">
+        <button class="alt-btn" data-alt="sine-law">Alternative · Law of Sines</button>
+        <div class="alt-panel" id="alt-sine-law">
+          <h4>Alternative route · Law of Sines</h4>
+
+          <p><b>Yes — the Law of Sines can be used here.</b> This route is kept as an alternative because it takes a different path through the same geometry. We first find <b>sin(105°)</b>, then use the Law of Sines in △OAM to find its remaining sides.</p>
+
+          <div class="substep">
+            <span class="label">Step 1 · Find sin(105°)</span>
+            <p>We already know the two angles 60° and 45°, so:</p>
+            <div class="eq-row"><span>105°</span><span>=</span><span>60° + 45°</span></div>
+            <p>Using the angle-sum identity:</p>
+            <div class="eq-row"><span>sin(105°)</span><span>=</span><span>sin(60°+45°)</span></div>
+            <div class="eq-row"><span>=</span><span>sin60° cos45°</span><span>+</span><span>cos60° sin45°</span></div>
+            <div class="eq-row"><span>=</span><span class="frac"><span class="top">√3</span><span class="bottom">2</span></span><span>×</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span><span>+</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span><span>×</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+            <div class="eq-row"><span>=</span><span class="frac"><span class="top">√3+1</span><span class="bottom">2√2</span></span><span>=</span><span class="frac"><span class="top">√6+√2</span><span class="bottom">4</span></span></div>
+            <div class="highlight"><span>sin(105°)</span><span>=</span><span class="frac"><span class="top">√6+√2</span><span class="bottom">4</span></span></div>
+          </div>
+
+          <div class="substep">
+            <span class="label">Step 2 · Connect 105° with 15°</span>
+            <p>Now notice that:</p>
+            <div class="eq-row"><span>105°</span><span>=</span><span>90° + 15°</span></div>
+            <p>Apply the sine angle-sum identity again:</p>
+            <div class="eq-row"><span>sin(105°)</span><span>=</span><span>sin(90°+15°)</span></div>
+            <div class="eq-row"><span>=</span><span>sin90° cos15°</span><span>+</span><span>cos90° sin15°</span></div>
+            <p>Because <b>sin90° = 1</b> and <b>cos90° = 0</b>, the second term disappears:</p>
+            <div class="eq-row"><span>sin(105°)</span><span>=</span><span>cos15°</span></div>
+            <p>So the value we have already found for sin(105°) is also the value of cos(15°):</p>
+            <div class="eq-row"><span>cos(15°)</span><span>=</span><span class="frac"><span class="top">√6+√2</span><span class="bottom">4</span></span></div>
+          </div>
+
+          <div class="substep">
+            <span class="label">Step 3 · Recover sin(15°)</span>
+            <p>For the same angle, sine and cosine satisfy:</p>
+            <div class="eq-row"><span>sin²(15°)</span><span>+</span><span>cos²(15°)</span><span>=</span><span>1</span></div>
+            <div class="eq-row"><span>sin²(15°)</span><span>=</span><span>1</span><span>−</span><span class="power-wrap"><span>(</span><span class="frac"><span class="top">√6+√2</span><span class="bottom">4</span></span><span>)</span><sup>2</sup></span></div>
+            <div class="eq-row"><span>=</span><span>1</span><span>−</span><span class="frac"><span class="top">8+4√3</span><span class="bottom">16</span></span></div>
+            <div class="eq-row"><span>=</span><span class="frac"><span class="top">8−4√3</span><span class="bottom">16</span></span><span>=</span><span class="frac"><span class="top">2−√3</span><span class="bottom">4</span></span></div>
+            <p>Since 15° is an acute angle, its sine is positive:</p>
+            <div class="eq-row"><span>sin(15°)</span><span>=</span><span>√</span><span class="frac"><span class="top">2−√3</span><span class="bottom">4</span></span><span>=</span><span class="frac"><span class="top">√6−√2</span><span class="bottom">4</span></span></div>
+            <div class="highlight"><span>sin(15°)</span><span>=</span><span class="frac"><span class="top">√6−√2</span><span class="bottom">4</span></span></div>
+          </div>
+
+          <div class="substep">
+            <span class="label">Step 4 · Now use the Law of Sines in △OAM</span>
+            <p>Now the important part: <b>sin(105°) is known</b>, so the Law of Sines can be used directly.</p>
+            <p>In △OAM, side OA is opposite 105°, OM is opposite 45°, and AM is opposite 30°:</p>
+            <div class="eq-row"><span class="frac"><span class="top">OA</span><span class="bottom">sin105°</span></span><span>=</span><span class="frac"><span class="top">OM</span><span class="bottom">sin45°</span></span><span>=</span><span class="frac"><span class="top">AM</span><span class="bottom">sin30°</span></span></div>
+
+            <p>We already know:</p>
+            <div class="eq-row"><span>OA</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span><span>−</span><span class="frac"><span class="top">1</span><span class="bottom">√6</span></span></div>
+            <div class="eq-row"><span>sin105°</span><span>=</span><span class="frac"><span class="top">√6+√2</span><span class="bottom">4</span></span></div>
+            <div class="eq-row"><span>sin45°</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+            <div class="eq-row"><span>sin30°</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span></div>
+
+            <p>For <b>OM</b>:</p>
+            <div class="eq-row"><span>OM</span><span>=</span><span>OA × </span><span class="frac"><span class="top">sin45°</span><span class="bottom">sin105°</span></span></div>
+            <div class="eq-row"><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">√6</span></span><span>×</span><span class="frac"><span class="top">1/√2</span><span class="bottom">(√6+√2)/4</span></span></div>
+            <div class="eq-row"><span>=</span><span class="frac"><span class="top">2√6</span><span class="bottom">3</span></span><span>−</span><span>√2</span></div>
+            <div class="eq-row"><span>OM</span><span>=</span><span class="frac"><span class="top">2√6</span><span class="bottom">3</span></span><span>−</span><span>√2</span></div>
+
+            <p>For <b>AM</b>:</p>
+            <div class="eq-row"><span>AM</span><span>=</span><span>OA × </span><span class="frac"><span class="top">sin30°</span><span class="bottom">sin105°</span></span></div>
+            <div class="eq-row"><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">√6</span></span><span>×</span><span class="frac"><span class="top">1/2</span><span class="bottom">(√6+√2)/4</span></span></div>
+            <div class="eq-row"><span>AM</span><span>=</span><span class="frac"><span class="top">2√3</span><span class="bottom">3</span></span><span>−</span><span>1</span></div>
+
+            <p>So the Law of Sines gives the remaining two sides of △OAM:</p>            <div class="highlight"><span>OM</span><span>=</span><span class="frac"><span class="top">2√6</span><span class="bottom">3</span></span><span>−</span><span>√2</span></div>
+            <div class="highlight"><span>AM</span><span>=</span><span class="frac"><span class="top">2√3</span><span class="bottom">3</span></span><span>−</span><span>1</span></div>
+          </div>
+
+          <p class="route-note"><b>Important:</b> this is an alternative route, not a replacement for the main geometric derivation. Once the angle-sum identity is available, this route is completely valid. It simply uses more previously established trigonometric machinery before applying the Law of Sines.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>
+
+<section id="dtm" class="section">
+  <div class="construction">
+    <img src="assets/dtm/master-construction.png" alt="Dual Triangle Method construction supplied by the user">
+  </div>
+
+  <div class="proof-map" aria-label="DTM proof map">
+    <div class="proof-map-head"><span class="proof-map-title">Proof map · DTM</span><span class="proof-map-note">Jump to any stage</span></div>
+    <div class="proof-steps">
+      <button class="proof-step active" data-jump="dtm-box1"><span class="proof-step-num">01</span><span class="proof-step-label">Known values</span></button>
+      <button class="proof-step" data-jump="dtm-box2"><span class="proof-step-num">02</span><span class="proof-step-label">Find AD</span></button>
+      <button class="proof-step" data-jump="dtm-box3"><span class="proof-step-num">03</span><span class="proof-step-label">Dual-triangle split</span></button>
+      <button class="proof-step" data-jump="dtm-box4"><span class="proof-step-num">04</span><span class="proof-step-label">Finish 15°</span></button>
+    </div>
+  </div>
+
+  <section class="box" id="dtm-box1"><h2>01 · What do we already know?</h2>
+    <p class="box-intro">The DTM starts from the same target, but instead of following the unit-circle construction, we use two connected right triangles and then split the larger triangle into two smaller right triangles.</p>
+    <div class="explanation-layout">
+      <div class="explanation-main">
+
+    <div class="block">
+      <span class="label">Known values</span>
+      <h3>The 30° and 45° angles are our starting information.</h3>
+      <div class="eq-stack">
+        <div class="eq-row"><span>sin(30°)</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span></div>
+        <div class="eq-row"><span>cos(30°)</span><span>=</span><span class="frac"><span class="top">√3</span><span class="bottom">2</span></span></div>
+        <div class="eq-row"><span>sin(45°)</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+        <div class="eq-row"><span>cos(45°)</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+      </div>
+      <p>The construction contains a 30° direction and a 45° direction. Their difference is the 15° angle we want.</p>
+      <div class="highlight">Target: <b>sin(15°)</b></div>
+    </div>
+
+    <div class="block">
+      <span class="label">First setup · one unit</span>
+      <h3>Take BD = 1 unit.</h3>
+      <p>The construction explicitly takes <b>BD</b> as one unit. Also, <b>BC</b> is common to the two right triangles formed around C, so we can calculate the shared length first.</p>
+      <div class="math-line"><span>BD</span><span>=</span><span>1&nbsp; unit</span></div>
+    </div>
+  
+      </div>
+    <aside class="explanation-side" data-side-image>
+      <div class="side-image-viewport">
+        <div class="side-image-tools">
+          <button class="side-size-toggle" type="button" aria-label="Adjust image size" title="Adjust image size">⌄</button>
+          <div class="side-size-panel" aria-hidden="true">
+            <input class="side-size-range" type="range" min="50" max="1000" value="100" step="5" aria-label="Image size">
+            <span class="side-size-value">100%</span>
+          </div>
+        </div>
+        <img class="side-image" src="assets/dtm/master-construction.png" alt="Original DTM construction" draggable="false">
+      </div>
+      <button class="side-image-close" type="button" aria-label="Return image to default size" title="Return to default size">×</button>
+      <button class="side-undo" type="button">Undo · show image</button>
+      <div class="image-caption">Original DTM construction — kept beside the explanation for quick visual reference.</div>
+    </aside>
+    </div></section>
+
+  <section class="box" id="dtm-box2"><h2>02 · Use the two connected right triangles</h2>
+    <p class="box-intro">The first triangle gives us BC and CD. The second triangle uses the same BC to give us BA and AC. That common side is the bridge between the two triangles.</p>
+    <div class="explanation-layout">
+      <div class="explanation-main">
+
+    <div class="block">
+      <span class="label">Triangle BCD · find BC</span>
+      <h3>BD is the hypotenuse, and ∠CBD = 30°.</h3>
+      <p>Since C is the right angle, <b>BD</b> is the hypotenuse. Relative to 30°, <b>BC</b> is the adjacent side:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span class="frac"><span class="top">BC</span><span class="bottom">BD</span></span><span>=</span><span>cos(30°)</span></div>
+        <div class="eq-row"><span class="frac"><span class="top">BC</span><span class="bottom">1</span></span><span>=</span><span class="frac"><span class="top">√3</span><span class="bottom">2</span></span></div>
+        <div class="eq-row"><span>BC</span><span>=</span><span class="frac"><span class="top">√3</span><span class="bottom">2</span></span></div>
+      </div>
+      <p>We can also find the vertical part <b>CD</b> from sine:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span class="frac"><span class="top">CD</span><span class="bottom">BD</span></span><span>=</span><span>sin(30°)</span></div>
+        <div class="eq-row"><span>CD</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="label">Triangle BCA · use the common BC</span>
+      <h3>Now the same BC belongs to the 45° right triangle.</h3>
+      <p>Because C is a right angle and the angle at B is 45°, triangle BCA is a 45°–45°–90° triangle. Here <b>BC</b> is adjacent to 45° and <b>BA</b> is the hypotenuse:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span class="frac"><span class="top">BC</span><span class="bottom">BA</span></span><span>=</span><span>cos(45°)</span></div>
+        <div class="eq-row"><span class="frac"><span class="top">√3/2</span><span class="bottom">BA</span></span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+      </div>
+      <p>Multiply both sides by BA and solve for the hypotenuse:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span>BA</span><span>=</span><span>BC × √2</span></div>
+        <div class="eq-row"><span>=</span><span class="frac"><span class="top">√3</span><span class="bottom">2</span></span><span>×</span><span>√2</span></div>
+        <div class="eq-row"><span>BA</span><span>=</span><span class="frac"><span class="top">√6</span><span class="bottom">2</span></span></div>
+      </div>
+      <p>Since triangle BCA is 45°–45°–90°, its two legs are equal:</p>
+      <div class="eq-row"><span>AC</span><span>=</span><span>BC</span><span>=</span><span class="frac"><span class="top">√3</span><span class="bottom">2</span></span></div>
+    </div>
+
+    <div class="block final-step">
+      <span class="label">Bridge to triangle NDA</span>
+      <h3>Find AD by subtracting the two vertical pieces.</h3>
+      <p>Point D lies between C and A, so the full vertical length AC is split into CD and DA:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span>AD</span><span>=</span><span>AC − CD</span></div>
+        <div class="eq-row"><span>=</span><span class="frac"><span class="top">√3</span><span class="bottom">2</span></span><span>−</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span></div>
+        <div class="eq-row"><span>AD</span><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">2</span></span></div>
+      </div>
+      <div class="highlight"><span>AD</span><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">2</span></span></div>
+    </div>
+        </div>
+    <aside class="explanation-side" data-side-image>
+      <div class="side-image-viewport">
+        <div class="side-image-tools">
+          <button class="side-size-toggle" type="button" aria-label="Adjust image size" title="Adjust image size">⌄</button>
+          <div class="side-size-panel" aria-hidden="true">
+            <input class="side-size-range" type="range" min="50" max="1000" value="100" step="5" aria-label="Image size">
+            <span class="side-size-value">100%</span>
+          </div>
+        </div>
+        <img class="side-image" src="assets/dtm/master-construction.png" alt="Original DTM construction" draggable="false">
+      </div>
+      <button class="side-image-close" type="button" aria-label="Return image to default size" title="Return to default size">×</button>
+      <button class="side-undo" type="button">Undo · show image</button>
+      <div class="image-caption">Original DTM construction — the connected triangles remain visible during the calculation.</div>
+    </aside>
+    </div></section>
+
+  <section class="box" id="dtm-box3"><h2>03 · The dual-triangle split</h2>
+    <p class="box-intro">Now we focus only on triangle NDA. The altitude from N to AD creates two right triangles. This is the key DTM step: one side is shared as the same height <b>h</b>, while the two base angles are 30° and 45°.</p>
+
+    <div class="box4-layout">
+      <div class="box4-image">
+        <img src="assets/dtm/triangle-split.png" alt="User supplied DTM triangle split with altitude NT">
+        <div class="image-caption">The original DTM split: triangle NDA is divided into two right triangles by NT.</div>
+      </div>
+      <div class="box4-side">
+        <div class="deep-panel open" style="display:block;margin-top:0">
+          <h4>What the labels mean</h4>
+          <p><b>DT = x</b>, <b>TA = y</b>, <b>NT = h</b>, <b>ND = z</b>, and <b>NA = m</b>.</p>
+          <p>The two smaller triangles share the same perpendicular height <b>h</b>.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="label">Angles of △NDA</span>
+      <h3>Why are the angles 30°, 45°, and 105°?</h3>
+      <p>At D, the 30° angle is already part of the construction. At A, the 45° angle comes from the original 45° triangle. Therefore the remaining angle at N is:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span>∠DNA</span><span>=</span><span>180° − 30° − 45°</span></div>
+        <div class="eq-row"><span>∠DNA</span><span>=</span><span>105°</span></div>
+      </div>
+      <div class="highlight">△NDA has angles <b>30°</b>, <b>45°</b>, and <b>105°</b>.</div>
+    </div>
+
+    <div class="block">
+      <span class="label">Left right triangle · △DNT</span>
+      <h3>Use the 30° triangle to connect x, h, and z.</h3>
+      <p>In △DNT, the angle at D is 30°, <b>NT = h</b> is opposite 30°, <b>DT = x</b> is adjacent, and <b>ND = z</b> is the hypotenuse.</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span class="frac"><span class="top">h</span><span class="bottom">x</span></span><span>=</span><span>tan(30°)</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√3</span></span></div>
+        <div class="eq-row"><span>h</span><span>=</span><span class="frac"><span class="top">x</span><span class="bottom">√3</span></span><span class="eq-arrow">→</span><span>x</span><span>=</span><span>h√3</span></div>
+      </div>
+      <p>Now use sine for the same triangle:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span class="frac"><span class="top">h</span><span class="bottom">z</span></span><span>=</span><span>sin(30°)</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span></div>
+        <div class="eq-row"><span>z</span><span>=</span><span>2h</span></div>
+      </div>
+    </div>
+
+    <div class="block">
+      <span class="label">Right right triangle · △NTA</span>
+      <h3>Use the 45° triangle to connect y, h, and m.</h3>
+      <p>In △NTA, the angle at A is 45°. The opposite side is <b>NT = h</b>, the adjacent side is <b>TA = y</b>, and the hypotenuse is <b>NA = m</b>.</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span class="frac"><span class="top">h</span><span class="bottom">y</span></span><span>=</span><span>tan(45°)</span><span>=</span><span>1</span></div>
+        <div class="eq-row"><span>y</span><span>=</span><span>h</span></div>
+      </div>
+      <p>And from sine 45°:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span class="frac"><span class="top">h</span><span class="bottom">m</span></span><span>=</span><span>sin(45°)</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span></div>
+        <div class="eq-row"><span>m</span><span>=</span><span>h√2</span></div>
+      </div>
+    </div>
+
+    <div class="block final-step">
+      <span class="label">The shared base · solve h</span>
+      <h3>Both small triangles together make the known side AD.</h3>
+      <p>Because <b>DT = x</b> and <b>TA = y</b>:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span>AD</span><span>=</span><span>x + y</span></div>
+        <div class="eq-row"><span>=</span><span>h√3 + h</span></div>
+        <div class="eq-row"><span>=</span><span>h(√3+1)</span></div>
+      </div>
+      <p>But from the previous box we already know:</p>
+      <div class="eq-row"><span>AD</span><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">2</span></span></div>
+      <p>Equate the two expressions for the same side AD:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span>h(√3+1)</span><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">2</span></span></div>
+        <div class="eq-row"><span>h</span><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">2(√3+1)</span></span></div>
+      </div>
+      <p>Rationalize the denominator:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span>h</span><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">2(√3+1)</span></span><span>×</span><span class="frac"><span class="top">√3−1</span><span class="bottom">√3−1</span></span></div>
+        <div class="eq-row"><span>=</span><span class="frac"><span class="top">(√3−1)²</span><span class="bottom">2(3−1)</span></span></div>
+        <div class="eq-row"><span>=</span><span class="frac"><span class="top">4−2√3</span><span class="bottom">4</span></span></div>
+        <div class="eq-row"><span>h</span><span>=</span><span class="frac"><span class="top">2−√3</span><span class="bottom">2</span></span></div>
+      </div>
+      <div class="highlight"><span>h</span><span>=</span><span class="frac"><span class="top">2−√3</span><span class="bottom">2</span></span></div>
+    </div>
+  </section>
+
+  <section class="box" id="dtm-box4"><h2>04 · Finish the 15° triangle</h2>
+    <p class="box-intro">The DTM has now reduced the problem to two ordinary right triangles. We can recover the needed sides, then use triangle BDN to read off sin(15°).</p>
+    <div class="explanation-layout">
+      <div class="explanation-main">
+
+    <div class="block">
+      <span class="label">Recover ND and NA</span>
+      <h3>The common height h gives both sloping sides.</h3>
+      <div class="eq-stack">
+        <div class="eq-row"><span>ND</span><span>=</span><span>z</span><span>=</span><span>2h</span></div>
+        <div class="eq-row"><span>z</span><span>=</span><span>2</span><span>×</span><span class="frac"><span class="top">2−√3</span><span class="bottom">2</span></span></div>
+        <div class="eq-row"><span>ND</span><span>=</span><span>2−√3</span></div>
+      </div>
+      <div class="eq-stack">
+        <div class="eq-row"><span>NA</span><span>=</span><span>m</span><span>=</span><span>h√2</span></div>
+        <div class="eq-row"><span>m</span><span>=</span><span class="frac"><span class="top">2−√3</span><span class="bottom">2</span></span><span>×</span><span>√2</span></div>
+        <div class="eq-row"><span>NA</span><span>=</span><span>√2 − </span><span class="frac"><span class="top">√6</span><span class="bottom">2</span></span></div>      </div>
+      <div class="highlight"><span>ND</span><span>=</span><span>2−√3</span></div>
+      <div class="highlight"><span>NA</span><span>=</span><span>√2−</span><span class="frac"><span class="top">√6</span><span class="bottom">2</span></span></div>
+    </div>
+
+    <div class="block">
+      <span class="label">Find BN</span>
+      <h3>N lies on BA, so subtract NA from BA.</h3>
+      <p>Because N is on the straight segment BA:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span>BA</span><span>=</span><span>BN + NA</span></div>
+        <div class="eq-row"><span>BN</span><span>=</span><span>BA − NA</span></div>
+        <div class="eq-row"><span>=</span><span class="frac"><span class="top">√6</span><span class="bottom">2</span></span><span>−</span><span>(√2 − </span><span class="frac"><span class="top">√6</span><span class="bottom">2</span></span><span>)</span></div>
+        <div class="eq-row"><span>BN</span><span>=</span><span>√6−√2</span></div>
+      </div>
+      <div class="highlight"><span>BN</span><span>=</span><span>√6−√2</span></div>
+    </div>
+
+    <div class="block final-step">
+      <span class="label">Target · sin(15°)</span>
+      <h3>Now return to the small right triangle BDN.</h3>
+      <p>At B, the angle between <b>BD</b> and <b>BN</b> is the required 15°. Since ∠BDN = 90°, <b>BN</b> is the hypotenuse and <b>DN</b> is the opposite side.</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span>sin(15°)</span><span>=</span><span class="frac"><span class="top">DN</span><span class="bottom">BN</span></span></div>
+        <div class="eq-row"><span>=</span><span class="frac"><span class="top">2−√3</span><span class="bottom">√6−√2</span></span></div>
+      </div>
+      <p>Rationalize the denominator:</p>
+      <div class="eq-stack">
+        <div class="eq-row"><span>sin(15°)</span><span>=</span><span class="frac"><span class="top">(2−√3)(√6+√2)</span><span class="bottom">(√6−√2)(√6+√2)</span></span></div>
+        <div class="eq-row"><span>=</span><span class="frac"><span class="top">(2−√3)(√6+√2)</span><span class="bottom">4</span></span></div>
+        <div class="eq-row"><span>=</span><span class="frac"><span class="top">√6−√2</span><span class="bottom">4</span></span></div>
+      </div>
+      <div class="highlight"><span>sin(15°)</span><span>=</span><span class="frac"><span class="top">√6−√2</span><span class="bottom">4</span></span></div>
+    </div>
+  
+      </div>
+    <aside class="explanation-side" data-side-image>
+      <div class="side-image-viewport">
+        <div class="side-image-tools">
+          <button class="side-size-toggle" type="button" aria-label="Adjust image size" title="Adjust image size">⌄</button>
+          <div class="side-size-panel" aria-hidden="true">
+            <input class="side-size-range" type="range" min="50" max="1000" value="100" step="5" aria-label="Image size">
+            <span class="side-size-value">100%</span>
+          </div>
+        </div>
+        <img class="side-image" src="assets/dtm/master-construction.png" alt="Original DTM construction" draggable="false">
+      </div>
+      <button class="side-image-close" type="button" aria-label="Return image to default size" title="Return to default size">×</button>
+      <button class="side-undo" type="button">Undo · show image</button>
+      <div class="image-caption">Original DTM construction — kept visible while the final 15° result is recovered.</div>
+    </aside>
+    </div></section>
+
+  <div class="alt-wrap" style="margin-top:30px">
+    <button class="alt-btn" data-alt="dtm-law">Alternative Law</button>
+    <div class="alt-panel" id="alt-dtm-law">
+      <h4>Alternative route · Law of Sines</h4>
+      <p>This route is kept separate from the main DTM proof. It uses the side <b>DN</b> already obtained above and then applies the Law of Sines in △BDN as a cross-check route.</p>
+
+      <div class="substep">
+        <span class="label">Step 1 · Find sin(75°)</span>
+        <p>At N, the remaining angle in △BDN is:</p>
+        <div class="eq-row"><span>∠BND</span><span>=</span><span>180°−90°−15°</span><span>=</span><span>75°</span></div>
+        <p>Using the known 30° and 45° values:</p>
+        <div class="eq-row"><span>75°</span><span>=</span><span>45°+30°</span></div>
+        <div class="eq-row"><span>sin(75°)</span><span>=</span><span>sin(45°+30°)</span></div>
+        <div class="eq-row"><span>=</span><span>sin45° cos30°</span><span>+</span><span>cos45° sin30°</span></div>
+        <div class="eq-row"><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span><span>×</span><span class="frac"><span class="top">√3</span><span class="bottom">2</span></span><span>+</span><span class="frac"><span class="top">1</span><span class="bottom">√2</span></span><span>×</span><span class="frac"><span class="top">1</span><span class="bottom">2</span></span></div>
+        <div class="eq-row"><span>sin(75°)</span><span>=</span><span class="frac"><span class="top">√6+√2</span><span class="bottom">4</span></span></div>
+      </div>
+
+      <div class="substep">
+        <span class="label">Step 2 · Use the Law of Sines in △BDN</span>
+        <p>Here <b>BD=1</b>, ∠BDN=90°, and ∠BND=75°. Therefore:</p>
+        <div class="eq-row"><span class="frac"><span class="top">BD</span><span class="bottom">sin75°</span></span><span>=</span><span class="frac"><span class="top">BN</span><span class="bottom">sin90°</span></span></div>
+                <div class="eq-row"><span>BN</span><span>=</span><span class="frac"><span class="top">1</span><span class="bottom">sin75°</span></span></div>
+        <div class="eq-row"><span>=</span><span class="frac"><span class="top">4</span><span class="bottom">√6+√2</span></span></div>
+        <div class="eq-row"><span>BN</span><span>=</span><span>√6−√2</span></div>
+        <div class="highlight"><span>BN</span><span>=</span><span>√6−√2</span></div>
+      </div>
+
+      <div class="substep">
+        <span class="label">Step 3 · Recover sin(15°)</span>
+        <p>From the main DTM route, the opposite side is already known:</p>
+        <div class="eq-row"><span>DN</span><span>=</span><span>2−√3</span></div>
+        <p>Now the definition of sine in the right triangle BDN gives:</p>
+        <div class="eq-row"><span>sin(15°)</span><span>=</span><span class="frac"><span class="top">DN</span><span class="bottom">BN</span></span></div>
+        <div class="eq-row"><span>=</span><span class="frac"><span class="top">2−√3</span><span class="bottom">√6−√2</span></span></div>
+        <div class="eq-row"><span>=</span><span class="frac"><span class="top">√6−√2</span><span class="bottom">4</span></span></div>
+        <div class="highlight"><span>sin(15°)</span><span>=</span><span class="frac"><span class="top">√6−√2</span><span class="bottom">4</span></span></div>
+      </div>
+
+      <p class="route-note"><b>Note:</b> this is an alternative/check route. It still uses the already-established DTM length <b>DN</b>; it is not intended to replace the main dual-triangle derivation.</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<script>
+const buttons=document.querySelectorAll('.method');
+const sections=document.querySelectorAll('.section');
+buttons.forEach(btn=>btn.addEventListener('click',()=>{
+  buttons.forEach(b=>b.classList.remove('active'));btn.classList.add('active');
+  sections.forEach(s=>s.classList.toggle('active',s.id===btn.dataset.target));
+  window.scrollTo({top:0,behavior:'smooth'});
+}));
+document.querySelectorAll('.deep-btn').forEach(btn=>btn.addEventListener('click',()=>{
+  const panel=document.getElementById('deep-'+btn.dataset.deep);
+  panel.classList.toggle('open');
+}));
+document.querySelectorAll('.alt-btn').forEach(btn=>btn.addEventListener('click',()=>{
+  const panel=document.getElementById('alt-'+btn.dataset.alt);
+  document.querySelectorAll('.alt-panel').forEach(p=>{if(p!==panel)p.classList.remove('open')});
+  panel.classList.toggle('open');
+}));
+
+document.querySelectorAll('.proof-step').forEach(btn=>btn.addEventListener('click',()=>{
+  const target=document.getElementById(btn.dataset.jump);
+  if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
+}));
+function updateProofMap(){
+  document.querySelectorAll('.section.active').forEach(section=>{
+    const steps=[...section.querySelectorAll('.proof-step')];
+    const boxes=steps.map(b=>document.getElementById(b.dataset.jump)).filter(Boolean);
+    if(!boxes.length) return;
+    const y=window.scrollY+150;
+    let idx=0;
+    boxes.forEach((box,i)=>{if(box.offsetTop<=y) idx=i;});
+    steps.forEach((step,i)=>step.classList.toggle('active',i===idx));
+  });
+}
+window.addEventListener('scroll',updateProofMap,{passive:true});
+window.addEventListener('resize',updateProofMap);
+
+
+
+// Side-reference image controls: resize, reset, double-tap hide, and undo.
+document.querySelectorAll('[data-side-image]').forEach(card=>{
+  const viewport=card.querySelector('.side-image-viewport');
+  const img=card.querySelector('.side-image');
+  const toggle=card.querySelector('.side-size-toggle');
+  const panel=card.querySelector('.side-size-panel');
+  const range=card.querySelector('.side-size-range');
+  const value=card.querySelector('.side-size-value');
+  const close=card.querySelector('.side-image-close');
+  const undo=card.querySelector('.side-undo');
+  let lastTap=0;
+
+  function setSize(v){
+    v=Math.max(50,Math.min(1000,Number(v)||100));
+    range.value=v;
+    value.textContent=v+'%';
+    img.style.setProperty('--side-img-width',v+'%');
+    card.classList.toggle('enlarged',v>100);
+  }
+  function resetSize(){
+    setSize(100);
+    viewport.scrollTop=0; viewport.scrollLeft=0;
+    panel.classList.remove('open'); panel.setAttribute('aria-hidden','true');
+  }
+  function hideImage(){
+    card.classList.add('image-hidden');
+    card.classList.remove('enlarged');
+    panel.classList.remove('open'); panel.setAttribute('aria-hidden','true');
+  }
+  toggle.addEventListener('click',e=>{
+    e.stopPropagation();
+    const open=panel.classList.toggle('open');
+    panel.setAttribute('aria-hidden',String(!open));
+  });
+  range.addEventListener('input',()=>setSize(range.value));
+  close.addEventListener('click',e=>{e.stopPropagation();resetSize();});
+  undo.addEventListener('click',()=>{
+    card.classList.remove('image-hidden');
+    resetSize();
+  });
+  img.addEventListener('dblclick',e=>{e.preventDefault();hideImage();});
+  img.addEventListener('touchend',e=>{
+    const now=Date.now();
+    if(now-lastTap<330){e.preventDefault();hideImage();}
+    lastTap=now;
+  },{passive:false});
+});
+
+</script>
+</body>
+</html>
