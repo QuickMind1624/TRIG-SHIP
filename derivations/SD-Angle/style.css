@@ -49,3 +49,10 @@ main{width:min(1220px,92vw);margin:auto}.view{display:none;min-height:calc(100vh
   .topbar{flex-wrap:wrap;}
   .trigship-back{order:3;width:100%;}
 }
+
+/* More derivation routes attached to the existing sin()/cos() angle folders. */
+.angle-row-wrap{position:relative;display:flex;align-items:stretch;border-bottom:1px solid var(--border);background:var(--surface)}
+.angle-row-wrap .angle-row{border-bottom:0;flex:1}
+.more-ways-btn{align-self:center;margin:0 14px 0 0;padding:9px 12px;border:1px solid var(--accent);border-radius:5px;background:var(--surface2);color:var(--accent2);text-decoration:none;font-size:.68rem;font-weight:950;letter-spacing:.08em;white-space:nowrap}
+.more-ways-btn:hover{background:var(--accent);color:#fff}
+@media(max-width:700px){.angle-row-wrap{display:block}.more-ways-btn{display:block;width:max-content;margin:0 10px 12px}.angle-row-wrap .angle-row{width:100%}}
