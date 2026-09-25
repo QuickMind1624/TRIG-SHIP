@@ -49,3 +49,5 @@ main{width:min(1220px,92vw);margin:auto}.view{display:none;min-height:calc(100vh
   .topbar{flex-wrap:wrap;}
   .trigship-back{order:3;width:100%;}
 }
+
+.more-ways-btn{display:inline-flex;align-items:center;margin-left:18px;padding:9px 13px;border:1px solid var(--accent);border-radius:4px;background:var(--surface2);color:var(--accent2);font:800 .7rem/1.1 Segoe UI,Arial,sans-serif;letter-spacing:.08em;text-decoration:none;white-space:nowrap;vertical-align:middle}.more-ways-btn:hover{background:var(--accent);color:#fff}
