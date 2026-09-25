@@ -147,7 +147,7 @@ function openFamily(kind){
  const vals=kind==='sin'?sinValues:cosValues;
  document.getElementById('familyKicker').textContent=`${kind==='sin'?'BLUE':'GREEN'} ROUTE`;
  document.getElementById('familyTitle').innerHTML=`<span class="family-function ${kind}">${kind}()</span> exact values`;
- document.getElementById('angleList').innerHTML=angles.map(a=>`<div class="angle-row-wrap"><button class="angle-row" onclick="openDerivation(${a})"><span class="label">${kind}(${a}°)</span><span class="value">${formatMath(vals[a])}</span><span class="open">OPEN FOLDER →</span></button>${kind==='sin' && Number(a)===15 ? '<a class="more-ways-btn" href="../Sin15-More-Ways/index.html">MORE WAYS TO DERIVE →</a>' : ''}</div>`).join('');
+ document.getElementById('angleList').innerHTML=angles.map(a=>`<button class="angle-row" onclick="openDerivation(${a})"><span class="label">${kind}(${a}°)</span><span class="value">${formatMath(vals[a])}</span><span class="open">OPEN FOLDER →</span></button>`).join('');
  show('family');
 }
 let returnScrollY=0;
