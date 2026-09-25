@@ -594,6 +594,76 @@ function drawCombined() {
 
 
     /* =================================================
+       UNIT-SCALE OVERLAY
+       -------------------------------------------------
+       The circle is the unit circle: one radius from the
+       origin to the circumference is exactly 1 unit.
+       Zoom changes only the display size, never the scale.
+       ================================================= */
+    ctx.save();
+
+    const unitMark = (px, py, horizontal = true) => {
+        ctx.strokeStyle = "#333";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        if (horizontal) {
+            ctx.moveTo(px, py - 6);
+            ctx.lineTo(px, py + 6);
+        } else {
+            ctx.moveTo(px - 6, py);
+            ctx.lineTo(px + 6, py);
+        }
+        ctx.stroke();
+    };
+
+    /* x = ±1 and y = ±1 are the four unit-circle intercepts. */
+    unitMark(cx + radius, cy, true);
+    unitMark(cx - radius, cy, true);
+    unitMark(cx, cy - radius, false);
+    unitMark(cx, cy + radius, false);
+
+    ctx.fillStyle = "#1d2730";
+    ctx.font = "700 14px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("+1", cx + radius, cy + 24);
+    ctx.fillText("−1", cx - radius, cy + 24);
+
+    ctx.textAlign = "left";
+    ctx.fillText("+1", cx + 10, cy - radius + 5);
+    ctx.fillText("−1", cx + 10, cy + radius + 5);
+
+    /* Mark the origin explicitly. */
+    ctx.fillStyle = "#4b5560";
+    ctx.font = "600 12px Arial";
+    ctx.fillText("0", cx + 8, cy + 17);
+
+    /* A visible radius reinforces that the circle has radius 1 unit. */
+    const radiusAngle = -Math.PI / 4;
+    const radiusEndX = cx + Math.cos(radiusAngle) * radius;
+    const radiusEndY = cy + Math.sin(radiusAngle) * radius;
+
+    ctx.strokeStyle = "rgba(22,125,204,.72)";
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 4]);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(radiusEndX, radiusEndY);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = "#075b9c";
+    ctx.font = "700 13px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(
+        "r = 1 unit",
+        cx + Math.cos(radiusAngle) * radius * .52,
+        cy + Math.sin(radiusAngle) * radius * .52 - 8
+    );
+
+    ctx.restore();
+
+
+    /* =================================================
        DEGREE NUMBERING
        ================================================= */
 
