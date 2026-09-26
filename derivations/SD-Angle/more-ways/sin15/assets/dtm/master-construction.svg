@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2048" height="974" viewBox="0 0 2048 974">
+<rect width="2048" height="974" fill="white"/>
+<g fill="none" stroke="#111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+<path d="M68 763 L922 763 L922 32 L68 763"/>
+<path d="M238 626 L650 151 L802 307 L238 626"/>
+<path d="M922 763 L922 32"/>
+<path d="M802 307 L922 32"/>
+<path d="M650 151 L802 307"/>
+<path d="M238 626 L68 763"/>
+<path d="M68 763 L922 763"/>
+<path d="M68 763 A145 145 0 0 1 197 703" stroke-width="2"/>
+<path d="M68 763 A225 225 0 0 1 292 658" stroke-width="2"/>
+<path d="M900 763 h22 v-22"/>
+<path d="M781 285 l25 23 l-25 22 l-22 -25 z" fill="#bbb"/>
+</g>
+<polygon points="238,626 650,151 802,307" fill="#22b44b" stroke="#111" stroke-width="3"/>
+<g fill="none" stroke="#111" stroke-width="2">
+<path d="M68 763 L238 626 A190 190 0 0 1 204 685 Z" fill="#bdbdbd"/>
+<path d="M650 151 L610 181 A55 55 0 0 0 690 186 Z" fill="#bdbdbd"/>
+<path d="M121 763 A53 53 0 0 1 115 737"/>
+<path d="M68 763 A225 225 0 0 1 292 658"/>
+<path d="M780 332 A75 75 0 0 1 842 350"/>
+<path d="M648 115 A55 55 0 0 1 705 160"/>
+</g>
+<g font-family="Arial,Helvetica,sans-serif" fill="#039be5" stroke="#039be5" stroke-width="1">
+<g font-size="28"><text x="918" y="50" fill="#111" stroke="none">A</text><text x="43" y="777" fill="#111" stroke="none">B</text><text x="917" y="788" fill="#111" stroke="none">C</text><text x="808" y="318" fill="#111" stroke="none">D</text><text x="635" y="144" fill="#111" stroke="none">N</text></g>
+<g font-size="26">
+<rect x="774" y="36" width="62" height="45" fill="white"/><text x="782" y="68" stroke="none">45°</text>
+<rect x="775" y="196" width="66" height="45" fill="white"/><text x="784" y="228" stroke="none">30°</text>
+<rect x="782" y="343" width="66" height="45" fill="white"/><text x="791" y="375" stroke="none">60°</text>
+<rect x="680" y="60" width="70" height="45" fill="white"/><text x="688" y="92" stroke="none">105°</text>
+<rect x="584" y="132" width="68" height="45" fill="white"/><text x="592" y="164" stroke="none">75°</text>
+<rect x="92" y="586" width="60" height="45" fill="white"/><text x="101" y="618" stroke="none">15°</text>
+<rect x="108" y="790" width="70" height="45" fill="white"/><text x="116" y="822" stroke="none">30°</text>
+</g></g>
+<g font-family="Arial,Helvetica,sans-serif" fill="#3d4fcf" stroke="#3d4fcf" stroke-width="2">
+<path d="M1192 385 H2005 V520 H1192 Z" fill="white"/>
+<path d="M1202 397 H2017 V535 H1202 Z" fill="none"/>
+<path d="M1192 385 l10 12 v138 l-10 -15 z" fill="none"/>
+<path d="M2005 385 l12 12 v138 l-12 -15 z" fill="none"/>
+<text x="1215" y="437" font-size="26" stroke="none">SIDE BC IS COMMON IN BOTH THE TRIANGLES FORMED !</text>
+<text x="1215" y="492" font-size="26" stroke="none">BD IS TAKEN AS ONE UNIT</text>
+</g>
+<g font-family="Arial,Helvetica,sans-serif" fill="#039be5" stroke="#039be5" stroke-width="1">
+<rect x="486" y="555" width="310" height="45" fill="white"/><text x="495" y="588" font-size="25" stroke="none">∠CBD + ∠DBA = ∠CBA</text>
+<rect x="512" y="603" width="226" height="45" fill="white"/><text x="520" y="636" font-size="26" stroke="none">30° + 15° = 45°</text>
+</g>
+<g fill="none" stroke="#039be5" stroke-width="2">
+<path d="M815 82 v22 h-22"/><path d="M807 241 v31 h-48"/><path d="M815 389 v-18 h-35"/>
+<path d="M713 105 v43"/><path d="M618 177 l52 22"/><path d="M122 632 v43 h55"/><path d="M143 790 v-45"/>
+</g>
+</svg>
