@@ -117,7 +117,8 @@ header{padding:8px 0 25px}.eyebrow{font-size:13px;letter-spacing:.16em;text-tran
       <span class="label">The basic language of the triangle</span>
       <h3>What do sine and cosine actually mean here?</h3>
       <p>For a right triangle, choose an angle <b>x</b>. Relative to that angle, the side directly opposite it is the <b>perpendicular</b>, the side next to it is the <b>base</b>, and the longest side opposite the right angle is the <b>hypotenuse</b>.</p>
-      <div class="math-line"><span>sin(x)</span><span>=</span><span class="frac"><span class="top">perpendicular</span><span class="bottom">hypotenuse</span></span></div>      <div class="math-line"><span>cos(x)</span><span>=</span><span class="frac"><span class="top">base</span><span class="bottom">hypotenuse</span></span></div>
+      <div class="math-line"><span>sin(x)</span><span>=</span><span class="frac"><span class="top">perpendicular</span><span class="bottom">hypotenuse</span></span></div>
+      <div class="math-line"><span>cos(x)</span><span>=</span><span class="frac"><span class="top">base</span><span class="bottom">hypotenuse</span></span></div>
       <p class="math-note">This is why the lengths in our construction matter: once the hypotenuse is known, a sine or cosine value can tell us the corresponding side length.</p>
     </div>
   
@@ -236,7 +237,8 @@ header{padding:8px 0 25px}.eyebrow{font-size:13px;letter-spacing:.16em;text-tran
           <div class="side-size-panel" aria-hidden="true">
             <input class="side-size-range" type="range" min="50" max="1000" value="100" step="5" aria-label="Image size">
             <span class="side-size-value">100%</span>
-          </div>        </div>
+          </div>
+        </div>
         <img class="side-image" src="assets/ucm/master-construction.png" alt="Original UCM construction" draggable="false">
       </div>
       <button class="side-image-close" type="button" aria-label="Return image to default size" title="Return to default size">×</button>
@@ -356,6 +358,7 @@ header{padding:8px 0 25px}.eyebrow{font-size:13px;letter-spacing:.16em;text-tran
         </div>
       </div>
     </div>
+
     <div class="block">
       <span class="label">Fourth clue · find AM</span>
       <h3>Use the 45° triangle to turn h into the side AM.</h3>
@@ -474,7 +477,8 @@ header{padding:8px 0 25px}.eyebrow{font-size:13px;letter-spacing:.16em;text-tran
             <div class="eq-row"><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">√6</span></span><span>×</span><span class="frac"><span class="top">1/2</span><span class="bottom">(√6+√2)/4</span></span></div>
             <div class="eq-row"><span>AM</span><span>=</span><span class="frac"><span class="top">2√3</span><span class="bottom">3</span></span><span>−</span><span>1</span></div>
 
-            <p>So the Law of Sines gives the remaining two sides of △OAM:</p>            <div class="highlight"><span>OM</span><span>=</span><span class="frac"><span class="top">2√6</span><span class="bottom">3</span></span><span>−</span><span>√2</span></div>
+            <p>So the Law of Sines gives the remaining two sides of △OAM:</p>
+            <div class="highlight"><span>OM</span><span>=</span><span class="frac"><span class="top">2√6</span><span class="bottom">3</span></span><span>−</span><span>√2</span></div>
             <div class="highlight"><span>AM</span><span>=</span><span class="frac"><span class="top">2√3</span><span class="bottom">3</span></span><span>−</span><span>1</span></div>
           </div>
 
@@ -593,7 +597,8 @@ header{padding:8px 0 25px}.eyebrow{font-size:13px;letter-spacing:.16em;text-tran
       </div>
       <div class="highlight"><span>AD</span><span>=</span><span class="frac"><span class="top">√3−1</span><span class="bottom">2</span></span></div>
     </div>
-        </div>
+  
+      </div>
     <aside class="explanation-side" data-side-image>
       <div class="side-image-viewport">
         <div class="side-image-tools">
@@ -712,7 +717,8 @@ header{padding:8px 0 25px}.eyebrow{font-size:13px;letter-spacing:.16em;text-tran
       <div class="eq-stack">
         <div class="eq-row"><span>NA</span><span>=</span><span>m</span><span>=</span><span>h√2</span></div>
         <div class="eq-row"><span>m</span><span>=</span><span class="frac"><span class="top">2−√3</span><span class="bottom">2</span></span><span>×</span><span>√2</span></div>
-        <div class="eq-row"><span>NA</span><span>=</span><span>√2 − </span><span class="frac"><span class="top">√6</span><span class="bottom">2</span></span></div>      </div>
+        <div class="eq-row"><span>NA</span><span>=</span><span>√2 − </span><span class="frac"><span class="top">√6</span><span class="bottom">2</span></span></div>
+      </div>
       <div class="highlight"><span>ND</span><span>=</span><span>2−√3</span></div>
       <div class="highlight"><span>NA</span><span>=</span><span>√2−</span><span class="frac"><span class="top">√6</span><span class="bottom">2</span></span></div>
     </div>
@@ -832,6 +838,7 @@ document.querySelectorAll('.proof-step').forEach(btn=>btn.addEventListener('clic
   const target=document.getElementById(btn.dataset.jump);
   if(target) target.scrollIntoView({behavior:'smooth',block:'start'});
 }));
+
 function updateProofMap(){
   document.querySelectorAll('.section.active').forEach(section=>{
     const steps=[...section.querySelectorAll('.proof-step')];
