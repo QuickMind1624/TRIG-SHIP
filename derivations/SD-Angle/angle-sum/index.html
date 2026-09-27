@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Angle Sum — cos(A + B)</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef3f8;color:#17232d;font:16px/1.6 Segoe UI,Arial,sans-serif}
+.wrap{width:min(1180px,94vw);margin:auto;padding:34px 0 60px}
+header{display:flex;justify-content:space-between;gap:20px;align-items:flex-end;border-bottom:2px solid #167dcc;padding-bottom:18px}
+.kicker{font-size:.7rem;letter-spacing:.18em;font-weight:900;color:#075b9c}
+h1{font:700 clamp(2.4rem,6vw,5rem)/.98 Georgia,serif;margin:7px 0 0;letter-spacing:-.05em}
+button{font:inherit}.controls{display:flex;gap:8px;flex-wrap:wrap}
+button{border:1px solid #bcd2e3;background:white;padding:10px 14px;border-radius:5px;font-weight:800;cursor:pointer}
+button.primary{background:#167dcc;color:white;border-color:#167dcc}
+.grid{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(320px,.75fr);gap:22px;margin-top:25px}
+.card{background:white;border:1px solid #c9d7e3;border-radius:7px;padding:20px}
+canvas{width:100%;display:block;background:#fbfdff;border:1px solid #c9d7e3;border-radius:5px}
+.range{width:100%;margin:14px 0}.readout{display:flex;justify-content:space-between;font-weight:800;color:#075b9c}
+.step{padding:18px 0;border-bottom:1px solid #d7e2ea}.step:last-child{border-bottom:0}
+.num{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:4px;background:#dcecf8;color:#075b9c;font-weight:900;margin-right:9px}
+.math{margin-top:10px;padding:13px 15px;background:#f8fcff;border:1px solid #c9d7e3;font:1.22rem/1.8 Georgia,serif;overflow:auto}
+.note{color:#536574}.formula{font-size:1.45rem;font-weight:800}
+@media(max-width:850px){.grid{grid-template-columns:1fr}header{align-items:flex-start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div><div class="kicker">ANGLE SUM • FIRST BUILD</div><h1>cos(A + B)</h1></div>
+<div class="controls"><button onclick="resetDemo()">RESET</button><button class="primary" onclick="nextStep()">NEXT STEP →</button></div>
+</header>
+<div class="grid">
+<section class="card">
+<canvas id="c" width="760" height="560"></canvas>
+<div class="readout"><span>A = <b id="aVal">35°</b></span><span>B = <b id="bVal">25°</b></span><span>A+B = <b id="sumVal">60°</b></span></div>
+<input id="a" class="range" type="range" min="5" max="70" value="35">
+<input id="b" class="range" type="range" min="5" max="70" value="25">
+<p class="note">Drag A and B. The final ray is rotated by A and then by B, so its total direction is A+B. The visual is the geometry; the algebra is shown beside it.</p>
+</section>
+<section class="card">
+<div class="kicker">DERIVATION</div>
+<div id="steps"></div>
+</section>
+</div>
+</div>
+<script>
+const cv=document.getElementById('c'),ctx=cv.getContext('2d'),a=document.getElementById('a'),b=document.getElementById('b');
+let step=0;
+const data=[
+['Start with the unit circle','A point on the unit circle has coordinates (cos θ, sin θ).','For θ=A, the starting vector is <b>v=(cos A, sin A)</b>.'],
+['Rotate by B','A rotation through B sends (x,y) to (x cosB − y sinB, x sinB + y cosB).','This is the coordinate form of a 2D rotation.'],
+['Substitute v','x=cosA and y=sinA.','Therefore the final y-coordinate is cosA·sinB + sinA·cosB, while the final x-coordinate is cosA·cosB − sinA·sinB.'],
+['Read the final x-coordinate','The final direction is A+B. On the unit circle, x=cos(angle).','So <b>cos(A+B)=cosA cosB − sinA sinB</b>.'],
+['Final identity','The derived result is exact.','<span class="formula">cos(A+B)=cosA cosB − sinA sinB</span>']
+];
+function rad(x){return x*Math.PI/180}
+function draw(){
+ const A=+a.value,B=+b.value,S=A+B,w=cv.width,h=cv.height,cx=380,cy=285,R=205;
+ ctx.clearRect(0,0,w,h);ctx.save();ctx.translate(cx,cy);
+ ctx.strokeStyle='#9db2c2';ctx.lineWidth=2;ctx.beginPath();ctx.arc(0,0,R,0,Math.PI*2);ctx.stroke();
+ ctx.beginPath();ctx.moveTo(-R-35,0);ctx.lineTo(R+35,0);ctx.moveTo(0,-R-35);ctx.lineTo(0,R+35);ctx.stroke();
+ const ray=(deg, width=4)=>{ctx.save();ctx.rotate(-rad(deg));ctx.lineWidth=width;ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(R,0);ctx.stroke();ctx.restore()};
+ ray(A,4);ray(S,5);
+ ctx.save();ctx.rotate(-rad(A));ctx.strokeStyle='#167dcc';ctx.setLineDash([7,6]);ctx.beginPath();ctx.moveTo(0,0);ctx.lineTo(R,0);ctx.stroke();ctx.restore();
+ const p=(deg)=>({x:R*Math.cos(rad(deg)),y:-R*Math.sin(rad(deg))});
+ const P=p(A),Q=p(S);
+ ctx.fillStyle='#167dcc';ctx.beginPath();ctx.arc(P.x,P.y,7,0,7);ctx.fill();
+ ctx.fillStyle='#15865b';ctx.beginPath();ctx.arc(Q.x,Q.y,8,0,7);ctx.fill();
+ ctx.fillStyle='#17232d';ctx.font='700 18px Segoe UI';ctx.fillText('A',P.x+10,P.y-8);ctx.fillText('A+B',Q.x+10,Q.y-8);
+ ctx.strokeStyle='#167dcc';ctx.lineWidth=3;ctx.beginPath();ctx.arc(0,0,70,0,-rad(A),true);ctx.stroke();
+ ctx.strokeStyle='#15865b';ctx.beginPath();ctx.arc(0,0,95,-rad(A),-rad(S),true);ctx.stroke();
+ ctx.restore();
+ document.getElementById('aVal').textContent=A+'°';document.getElementById('bVal').textContent=B+'°';document.getElementById('sumVal').textContent=S+'°';
+}
+function render(){document.getElementById('steps').innerHTML=data.slice(0,step+1).map((x,i)=>'<div class="step"><span class="num">'+(i+1)+'</span><b>'+x[0]+'</b><div class="math">'+x[1]+'</div><p class="note">'+x[2]+'</p></div>').join('')}
+function nextStep(){step=Math.min(data.length-1,step+1);render()}
+function resetDemo(){step=0;render();draw()}
+a.oninput=draw;b.oninput=draw;resetDemo();
+</script>
+</body>
+</html>
