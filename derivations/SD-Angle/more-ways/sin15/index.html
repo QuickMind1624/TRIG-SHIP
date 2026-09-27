@@ -65,6 +65,7 @@ header{padding:8px 0 25px}.eyebrow{font-size:13px;letter-spacing:.16em;text-tran
 @media(max-width:900px){.explanation-layout{grid-template-columns:minmax(0,1fr) minmax(210px,31%);gap:20px}}
 @media(max-width:700px){.explanation-layout{grid-template-columns:1fr}.explanation-side{position:static;max-width:520px;margin:0 auto;width:100%}.side-image-viewport{max-height:58vh}}
 
+.dtm-visual{margin:0 0 30px;border:1px solid var(--line);background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.24)}.dtm-visual svg{display:block;width:100%;height:auto}
 </style>
 </head>
 <body>
@@ -125,6 +126,65 @@ header{padding:8px 0 25px}.eyebrow{font-size:13px;letter-spacing:.16em;text-tran
       </div>
     </div></section>
 
+  
+  <div class="dtm-visual" aria-label="Dual Triangle Method construction">
+    <svg viewBox="0 0 2048 974" role="img" xmlns="http://www.w3.org/2000/svg">
+      <rect width="2048" height="974" fill="#fff"/>
+      <g stroke="#111" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M68 872 L935 51 L935 872 Z"/>
+        <path d="M68 872 L247 707 L935 872"/>
+        <path d="M247 707 L835 347 L808 300 L620 169"/>
+        <path d="M247 707 L620 169"/>
+        <path d="M620 169 L835 347"/>
+        <path d="M808 300 L935 347"/>
+        <path d="M935 872 L935 51"/>
+        <path d="M913 872 L913 850 L935 850"/>
+        <path d="M808 300 l18 18 l-18 18 l-18-18z" fill="#ddd"/>
+      </g>
+      <path d="M247 707 L620 169 L835 347 Z" fill="#24b94b" stroke="#111" stroke-width="3"/>
+      <g fill="#111" font-family="Arial,Segoe UI,sans-serif" font-size="25" font-weight="500">
+        <text x="930" y="47">A</text><text x="42" y="900">B</text><text x="930" y="900">C</text>
+        <text x="815" y="345">D</text><text x="595" y="164">N</text>
+      </g>
+      <g fill="none" stroke="#555" stroke-width="3">
+        <path d="M68 872 A105 105 0 0 1 160 818"/>
+        <path d="M68 872 A145 145 0 0 1 195 780"/>
+        <path d="M790 286 A72 72 0 0 1 855 342"/>
+        <path d="M805 348 A75 75 0 0 1 864 392"/>
+        <path d="M592 165 A70 70 0 0 0 666 182"/>
+      </g>
+      <g fill="#444" font-family="Arial,Segoe UI,sans-serif" font-size="23">
+        <text x="105" y="830">30°</text><text x="128" y="790">15°</text>
+        <text x="838" y="286">30°</text><text x="844" y="401">60°</text>
+        <text x="610" y="130">105°</text><text x="650" y="104">45°</text><text x="560" y="188">75°</text>
+      </g>
+      <g fill="#fff" stroke="#159ee8" stroke-width="2">
+        <rect x="105" y="900" width="62" height="42"/><rect x="125" y="780" width="62" height="42"/>
+        <rect x="840" y="245" width="62" height="42"/><rect x="845" y="390" width="62" height="42"/>
+        <rect x="603" y="70" width="78" height="42"/><rect x="645" y="38" width="70" height="42"/><rect x="548" y="130" width="70" height="42"/>
+      </g>
+      <g fill="#159ee8" font-family="Arial,Segoe UI,sans-serif" font-size="23" font-weight="500">
+        <text x="118" y="929">30°</text><text x="138" y="809">15°</text>
+        <text x="852" y="274">30°</text><text x="857" y="419">60°</text>
+        <text x="613" y="99">105°</text><text x="654" y="67">45°</text><text x="557" y="159">75°</text>
+      </g>
+      <g fill="#fff" stroke="#4554d8" stroke-width="2">
+        <rect x="1180" y="440" width="770" height="135" rx="2"/>
+        <path d="M1180 440 l15-15 h770 l-15 15 M1950 440 v135 l15 15 v-135z M1180 575 l15 15 h770"/>
+      </g>
+      <g fill="#4554d8" font-family="Arial,Segoe UI,sans-serif" font-size="24">
+        <text x="1200" y="487">SIDE <tspan text-decoration="underline">BC</tspan> IS COMMON IN BOTH THE TRIANGLES FORMED !</text>
+        <text x="1200" y="542"><tspan text-decoration="underline">BD</tspan> IS TAKEN AS ONE UNIT</text>
+      </g>
+      <g fill="#fff" stroke="#159ee8" stroke-width="2">
+        <rect x="420" y="625" width="285" height="42"/><rect x="455" y="674" width="245" height="42"/>
+      </g>
+      <g fill="#159ee8" font-family="Arial,Segoe UI,sans-serif" font-size="22">
+        <text x="433" y="654">∠CBD + ∠DBA = ∠CBA</text>
+        <text x="468" y="703">30° + 15° = 45°</text>
+      </g>
+    </svg>
+  </div>
   <section class="box" id="dtm-box2"><h2>02 · Use the two connected right triangles</h2>
     <p class="box-intro">The first triangle gives us BC and CD. The second triangle uses the same BC to give us BA and AC. That common side is the bridge between the two triangles.</p>
     <div class="explanation-layout">
