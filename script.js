@@ -3017,6 +3017,10 @@ else bindExactValueClicks();
 function showDerivationComingSoon(button){
   var card = button && button.closest ? button.closest('.formula-card') : null;
   var title = card && card.querySelector('h3') ? card.querySelector('h3').textContent.trim() : 'this formula group';
+  if (/addition\s*&\s*subtraction/i.test(title)) {
+    window.location.href = 'derivations/SD-Angle/index.html';
+    return;
+  }
   window.alert('Derivation for ' + title + ' is in progress ....');
 }
 
