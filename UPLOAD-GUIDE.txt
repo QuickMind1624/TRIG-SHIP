@@ -1,0 +1,14 @@
+TRIGOLAB — UPLOAD GUIDE
+
+This archive is a website folder, not a single file to upload as a page.
+
+SAFE DEPLOYMENT
+1. Download this ZIP and extract it on your PC.
+2. Open the extracted folder and confirm index.html is directly inside it.
+3. In your GitHub repository QuickMind1624/TRIG-SHIP, upload the CONTENTS of this extracted folder to the repository root (not the ZIP itself, and not the outer folder).
+4. If GitHub warns that files such as index.html or script.js will be replaced, review the changes before committing. This bundle contains the merged TrigoLab site, so replacing those files is intentional only if you want this version to become the site.
+5. Commit to the branch used by GitHub Pages and wait for the Pages deployment to finish.
+6. Test the Formula Library → Derivation → Choose a derivation method → Unit Circle Method → Derivation/Visualization. Test Back to Methods and Back to TrigoLab on both pages.
+
+IMPORTANT
+Do not upload the ZIP as one file expecting GitHub Pages to unpack it. Extract it first. If you want to preserve any newer changes currently on GitHub, compare/merge those files before replacing them.
