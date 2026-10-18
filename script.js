@@ -3015,8 +3015,9 @@ else bindExactValueClicks();
 })();
 
 function showDerivationComingSoon(button){
-  // Open the methods list first so the learner chooses a method.
-  window.location.href = 'derivations/index.html';
+  var card = button && button.closest ? button.closest('.formula-card') : null;
+  var title = card && card.querySelector('h3') ? card.querySelector('h3').textContent.trim() : 'this formula group';
+  window.alert('Derivation for ' + title + ' is in progress ....');
 }
 
 /* Hide/show only the requested formula/detail sections. */
