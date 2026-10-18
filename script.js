@@ -3015,8 +3015,8 @@ else bindExactValueClicks();
 })();
 
 function showDerivationComingSoon(button){
-  // Open the methods list first; users choose a method from there.
-  window.location.href = 'trigship_unit_circle_method/index.html';
+  // Open the methods list first so the learner chooses a method.
+  window.location.href = 'derivations/index.html';
 }
 
 /* Hide/show only the requested formula/detail sections. */
