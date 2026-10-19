@@ -3015,8 +3015,8 @@ else bindExactValueClicks();
 })();
 
 function showDerivationComingSoon(button){
-  // Open the methods list first; users choose a method from there.
-  window.location.href = 'trigship_unit_circle_method/index.html';
+  // Formula Library → methods list → selected derivation method.
+  window.location.href = 'derivations/angle-sum-difference/index.html';
 }
 
 /* Hide/show only the requested formula/detail sections. */
