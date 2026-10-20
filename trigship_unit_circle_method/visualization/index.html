@@ -1,6 +1,250 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Unit Circle Method — Visualization | TRIG-SHIP</title>
-<style>:root{color-scheme:dark;--bg:#0b1020;--panel:#131b31;--line:#33415f;--text:#f4f6ff;--muted:#b6c1dc;--blue:#67a9ff;--red:#ff758f;--gold:#ffd166}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,sans-serif}header,main{max-width:1000px;margin:auto;padding:22px}header{border-bottom:1px solid var(--line)}a{color:var(--blue)}.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;margin:16px 0}.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}label{display:block;color:var(--muted)}input{width:100%;accent-color:var(--blue)}.math{text-align:center;background:#0e1528;padding:12px;border-radius:10px;overflow-wrap:anywhere}.btn{display:inline-block;padding:9px 14px;border:1px solid var(--line);border-radius:10px;text-decoration:none;margin-right:8px}svg{width:100%;height:auto;display:block;max-height:600px}.muted{color:var(--muted)}</style></head><body><header><div class="muted">TRIG-SHIP · SUM AND DIFFERENCE</div><h1>Unit Circle — Interactive Visualization</h1><p>Move A and B. Watch the point at A+B and its coordinates change.</p><a class="btn" href="../index.html">← Lesson home</a><a class="btn" href="../derivation/index.html">Read derivation →</a></header><main><section class="panel controls"><div><label for="a">Angle A: <strong id="av">35°</strong></label><input id="a" type="range" min="-180" max="180" value="35"></div><div><label for="b">Angle B: <strong id="bv">50°</strong></label><input id="b" type="range" min="-180" max="180" value="50"></div></section><section class="panel"><svg id="plot" viewBox="0 0 640 580" role="img" aria-label="Interactive unit circle with points at A and A plus B"><g id="drawing"></g></svg><div class="math" id="sum"></div><p class="math" id="coords"></p><p class="muted">The circle has radius 1. The blue radius points to A; the gold radius points to A+B; the dashed red chord joins the two points. Coordinates are shown exactly as trigonometric expressions and approximately as decimals for visual checking.</p></section><section class="panel"><h2>Identities connected to the picture</h2><div class="math">cos(A+B) = cos A cos B − sin A sin B</div><div class="math">sin(A+B) = sin A cos B + cos A sin B</div><div class="math">cos(A−B) = cos A cos B + sin A sin B</div><div class="math">sin(A−B) = sin A cos B − cos A sin B</div></section></main>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trig-Ship | Unit Circle Visualization</title>
+<style>
+:root{--bg:#f3f6fb;--paper:#fff;--ink:#182238;--muted:#5b667a;--line:#dce3ee;--accent:#2443b8;--accent-soft:#eaf0ff;--accent-ink:#1b348f;--blue:var(--accent);--panel-shadow:0 8px 26px #15264b10;--point-p:#94152e;--point-q:#106b3a;--point-r:#2445b6;--point-s:#5c36a9;--point-extra:#a86f00}
+*{box-sizing:border-box}
+
+/* User-selectable palettes */
+:root{--bg:#f3f6fb;--paper:#fff;--ink:#182238;--muted:#5b667a;--line:#dce3ee;--accent:#2443b8;--accent-soft:#eaf0ff;--accent-ink:#1b348f;--panel-shadow:0 8px 26px #15264b10}
+:root[data-theme="ocean"]{--bg:#edf7fb;--paper:#fff;--ink:#123042;--muted:#4b6978;--line:#cfe5ee;--accent:#056487;--accent-soft:#e0f5fb;--accent-ink:#03465f;--panel-shadow:0 8px 26px #075c7c10;--point-p:#b34d73;--point-q:#087eaa;--point-r:#5b61c9;--point-s:#087b70;--point-extra:#b16b18}
+:root[data-theme="forest"]{--bg:#f0f7f0;--paper:#fff;--ink:#20362a;--muted:#5c7162;--line:#d4e5d6;--accent:#176837;--accent-soft:#e5f5e9;--accent-ink:#104b27;--panel-shadow:0 8px 26px #17653610;--point-p:#9d3542;--point-q:#25834a;--point-r:#5264ad;--point-s:#7a5a2b;--point-extra:#b67c12}
+:root[data-theme="sunset"]{--bg:#fff5ef;--paper:#fff;--ink:#422b27;--muted:#82645b;--line:#f0d8cc;--accent:#a94324;--accent-soft:#fff0e7;--accent-ink:#713019;--panel-shadow:0 8px 26px #963e2210;--point-p:#b64040;--point-q:#a85b20;--point-r:#6b58b8;--point-s:#277b78;--point-extra:#c18400}
+:root[data-theme="violet"]{--bg:#f6f1ff;--paper:#fff;--ink:#2d2542;--muted:#716487;--line:#e1d7f4;--accent:#5c36a9;--accent-soft:#f0e9ff;--accent-ink:#402477;--panel-shadow:0 8px 26px #5634a010;--point-p:#b04475;--point-q:#37824e;--point-r:#7851c8;--point-s:#087eaa;--point-extra:#b67b12}
+:root[data-theme="midnight"]{--bg:#101827;--paper:#182337;--ink:#edf3ff;--muted:#a9b8d0;--line:#2e405d;--accent:#5e8ce8;--accent-soft:#22395d;--accent-ink:#c8dcff;--panel-shadow:0 8px 26px #0005}
+:root[data-theme="white"]{--bg:#ffffff;--paper:#ffffff;--ink:#182238;--muted:#5b667a;--line:#dce3ee;--accent:#3558d4;--accent-soft:#f1f4fb;--accent-ink:#1b348f;--panel-shadow:0 5px 18px #15264b0a}
+:root[data-theme="magenta"]{--bg:#211126;--paper:#30163a;--ink:#fff0ff;--muted:#d4b8dc;--line:#61356c;--accent:#e14be8;--accent-soft:#47204f;--accent-ink:#ffe0ff;--panel-shadow:0 8px 26px #0005}
+:root{--angle-a:#2789ff;--angle-b:#ef4444;--angle-total:#d946ef}
+:root[data-theme="white"]{--angle-a:#1267d5;--angle-b:#c62828;--angle-total:#b21cc7}
+
+body{background:var(--bg);color:var(--ink)}
+h1,h2,.step .kicker,.point b{font-family:"Engravers MT",Georgia,serif}
+header h1{letter-spacing:.015em}
+.card,.step{backdrop-filter:saturate(1.03)}
+.panel,.step,.card,.nav a{background:var(--paper);border-color:var(--line);box-shadow:var(--panel-shadow)}
+.muted,.small,.foot{color:var(--muted)}
+.formula,.proof,.eq,.control{background:var(--accent-soft);border-color:var(--line);color:var(--ink)}
+.tag,.nav a.active{background:var(--accent);border-color:var(--accent);color:white}
+.formula{border-left-color:var(--accent)}
+a{color:var(--accent)}
+.themebar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 16px;padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:var(--paper);box-shadow:var(--panel-shadow)}
+.themebar label{font-size:.88rem;font-weight:800;color:var(--muted)}
+.themebar select{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font:inherit;font-weight:700}
+.theme-dots{display:flex;gap:6px}
+.theme-dot{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);display:inline-block}
+:root[data-theme="midnight"] header{background:#090f1b}
+.doubt{background:color-mix(in srgb,var(--accent-soft) 55%,var(--paper));border-color:var(--line)}
+.doubt summary{color:var(--accent-ink)}
+@media(prefers-reduced-motion:no-preference){.panel,.step,.card,button,.nav a{transition:background .18s ease,border-color .18s ease,transform .18s ease}.nav a:hover{transform:translateY(-1px)}}
+
+:root{--blue:var(--accent);--paper:var(--paper);--bg:var(--bg)}
+button{background:var(--accent);color:white}
+button.secondary{background:var(--accent-soft);color:var(--accent-ink);border:1px solid var(--line)}
+header{background:#111b31}
+:root[data-theme="ocean"] header{background:#073448}
+:root[data-theme="forest"] header{background:#173d2a}
+:root[data-theme="sunset"] header{background:#55291d}
+:root[data-theme="violet"] header{background:#30204e}
+
+body{margin:0;font:16px/1.6 system-ui,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:#111b31;color:#fff;padding:25px max(18px,calc((100vw - 1180px)/2))}
+header small{letter-spacing:.09em;text-transform:uppercase;color:#cbd7f2}
+h1{font-size:clamp(1.8rem,4vw,2.7rem);line-height:1.12;margin:8px 0}
+header p{max-width:850px;color:#dce5fb;margin-bottom:0}
+main{max-width:1180px;margin:auto;padding:20px 16px 48px}
+.nav{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 14px}
+.nav a{padding:9px 13px;border:1px solid var(--line);border-radius:11px;background:var(--paper);color:var(--ink);text-decoration:none;font-weight:750}
+.nav a.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.themebar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin:0 0 16px;padding:10px 12px;border:1px solid var(--line);border-radius:13px;background:var(--paper);box-shadow:var(--panel-shadow)}
+.themebar label{font-size:.88rem;font-weight:800;color:var(--muted)}
+.themebar select{background:var(--paper);color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:8px 10px;font:inherit;font-weight:700}
+.small,.muted{font-size:.92rem;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(290px,.8fr);gap:16px;align-items:start}
+.card,.step{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:clamp(14px,2.4vw,22px);box-shadow:var(--panel-shadow)}
+.card h2,.step h2{margin:0 0 8px;line-height:1.25}
+.diagram-card{position:relative}
+svg{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:13px;background:var(--paper);overflow:visible}
+.diagram-card>p{max-width:68ch}
+.point .math{overflow-wrap:anywhere}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}
+.control{background:var(--accent-soft);border:1px solid var(--line);padding:11px;border-radius:12px}
+.control label{display:flex;justify-content:space-between;gap:10px;font-size:.9rem;font-weight:800}
+.control input{width:100%;accent-color:var(--accent);margin:9px 0 0}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+button{border:0;border-radius:10px;padding:10px 13px;background:var(--accent);color:white;font-weight:800;cursor:pointer}
+button.secondary{background:var(--accent-soft);color:var(--accent-ink);border:1px solid var(--line)}
+.eq{background:var(--accent-soft);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin:10px 0;overflow-wrap:anywhere}
+.math{font:1.03rem/1.8 Cambria,Georgia,serif}
+.point-list{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.point{border:1px solid var(--line);border-radius:10px;padding:9px 10px;background:var(--paper)}
+.point b{display:block}
+.point .math{font-size:.92rem}
+.swatch{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.p{background:var(--point-p)}.q{background:var(--point-q)}.r{background:var(--point-r)}.s{background:var(--point-s)}.o{background:var(--muted)}
+.doubt{background:color-mix(in srgb,var(--accent-soft) 58%,var(--paper));border:1px solid var(--line);border-radius:12px;margin:12px 0;overflow:hidden}
+.doubt summary{padding:11px 13px;cursor:pointer;font-weight:850;color:var(--accent-ink)}
+.doubt .answer{padding:0 13px 13px}
+.doubt p{margin:.4rem 0}
+.step{margin-top:15px}
+.step .kicker{font-size:.76rem;letter-spacing:.08em;text-transform:uppercase;font-weight:850;color:var(--accent)}
+.steps-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.step p:last-child{margin-bottom:0}
+.final{border-left:5px solid #16864b;background:#eefaf2}
+footer{max-width:1180px;margin:auto;padding:0 16px 28px;color:var(--muted);font-size:.9rem}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.steps-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.controls,.point-list{grid-template-columns:1fr}.themebar{align-items:flex-start}.themebar label{width:100%}}
+
+#coordinatePanel.is-hidden{display:none}.visual-layout:has(#coordinatePanel.is-hidden){grid-template-columns:minmax(0,1fr)}
+
+.coord-menu{position:fixed;right:14px;top:12px;z-index:50;width:42px;height:42px;border:1px solid var(--line);border-radius:12px;background:var(--paper);color:var(--ink);font-size:27px;line-height:1;box-shadow:var(--panel-shadow);cursor:pointer;display:none}
+.coord-menu.visible{display:block}.coord-pop{position:fixed;right:14px;top:60px;z-index:51;background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:8px;box-shadow:var(--panel-shadow);display:none}.coord-pop.open{display:block}.coord-pop button{display:block;width:100%;padding:9px 12px;border:0;border-radius:8px;background:var(--accent-soft);color:var(--accent-ink);font-weight:750;cursor:pointer;white-space:nowrap}
+</style></head>
+<body><button class="coord-menu" id="coordMenu" aria-label="Point coordinates options">⋮</button><div class="coord-pop" id="coordPop"><button id="showCoords">Show point coordinates</button></div>
+<header><small>TRIG-SHIP / ANGLE SUM & DIFFERENCE / UNIT-CIRCLE METHOD</small><h1>Visualization: cosine addition</h1><p>Move A and B, follow the labelled points, then connect the picture to the proof. The circle has radius exactly 1 unit.</p></header>
+<main>
+<nav class="nav"><a href="../index.html">Unit Circle Method</a><a href="../derivation/index.html">1. Derivation</a><a class="active" href="index.html">2. Visualization</a></nav>
+<div class="themebar" role="group" aria-label="Choose website colour theme"><label for="themeSelect">COLOUR THEME</label><select id="themeSelect"><option value="classic">1 · Classic blue</option><option value="ocean">2 · Ocean</option><option value="forest">3 · Forest</option><option value="sunset">4 · Sunset</option><option value="violet">5 · Violet</option><option value="midnight">6 · Dark</option><option value="white">7 · White</option><option value="magenta">8 · Magenta</option></select><span class="small">Choose one of five palettes; your choice is remembered on this browser.</span></div>
+<div class="layout">
+<section class="card diagram-card">
+<h2>Watch the unit circle</h2><p class="muted">Blue shows A. Red adds B after A; magenta shows the total A+B. The red arc below the axis shows −B (clockwise).</p>
+<svg id="diagram" viewBox="0 0 760 600" role="img" aria-label="Watch the unit circle with points P Q R S and triangles OPR and OQS"></svg>
+<p><a href="../index.html">All choices</a></p><div class="controls">
+<div class="control"><label for="a">Angle A <span id="av">130°</span></label><input id="a" type="range" min="0" max="360" value="130"></div>
+<div class="control"><label for="b">Angle B <span id="bv">100°</span></label><input id="b" type="range" min="0" max="360" value="100"></div>
+<div class="control"><label for="diagramSize">Diagram size <span id="sizeValue">100%</span></label><input id="diagramSize" type="range" min="65" max="180" value="100"></div>
+</div>
+<div class="actions"><button id="labels">Hide coordinate callouts</button><button class="secondary" id="reset">Reset angles</button></div>
+<p class="muted">Both angle controls cover a complete turn from 0° to 360°. P follows A, Q follows A+B, and R follows the clockwise turn −B. The point positions repeat after one full turn, but the angle readout still shows the full rotation you selected.</p>
+</section>
+<aside class="card" id="coordinatePanel">
+<h2>Point coordinates</h2><p class="muted">Each point’s exact coordinates are shown in parentheses. Decimal values are only a visual check.</p>
+<div class="point-list">
+<div class="point"><b><span class="swatch o"></span>O · Centre</b><span class="math">(0, 0)</span></div>
+<div class="point"><b><span class="swatch s"></span>S · Reference</b><span class="math">(1, 0)</span></div>
+<div class="point"><b><span class="swatch p"></span>P · Angle A</b><span class="math">(cos A, sin A)</span></div>
+<div class="point"><b><span class="swatch q"></span>Q · Angle A+B</b><span class="math">(cos(A+B), sin(A+B))</span></div>
+<div class="point"><b><span class="swatch r"></span>R · Angle −B</b><span class="math">(cos(−B), sin(−B))</span></div>
+</div>
+<details class="doubt" id="coordinateReadout"><summary>Show / hide current coordinates and angle values</summary><div class="eq math" id="numeric"></div></details>
+<label class="control"><input id="showTotalArc" type="checkbox" checked style="width:auto"> Show / hide all A+B angle arcs</label>
+<details class="doubt"><summary>Quick doubt · Why radius = 1?</summary><div class="answer"><p>For a point at angle θ on a circle of radius r, its coordinates are (r cos θ, r sin θ). If r=1, the coordinates become (cos θ, sin θ). The right-triangle hypotenuse is 1, so cos θ = adjacent/1 and sin θ = opposite/1. That removes an extra multiplier and lets us use cosine and sine directly as the x- and y-coordinates.</p></div></details>
+<details class="doubt"><summary>Quick doubt · Why is the angle −B?</summary><div class="answer"><p>Angles measured anticlockwise are positive by convention; clockwise turns are negative. R is B clockwise from the positive x-axis, so its angle is −B. The directed angular difference is A−(−B)=A+B. The same geometry works for every angle setting: compare the smaller angle between the two rays, not necessarily the full turn shown by the angle controls.</p></div></details>
+<details class="doubt"><summary>Quick doubt · Why do we compare OPR and OQS?</summary><div class="answer"><p>OP=OQ=1 and OR=OS=1 because all four are radii. The rays are separated by the same angle in both triangles: from OP to OR the directed change is A−(−B)=A+B, and from OQ to OS it is (A+B)−0=A+B. A triangle’s interior angle is the smaller angle between its two sides, so both included angles match even when the displayed turn passes 180°. SAS gives congruent triangles and PR = QS.</p></div></details>
+</aside>
+</div>
+<section class="step"><div class="kicker">Read the diagram · 01</div><h2>How the points are constructed</h2><div class="steps-grid"><div><p><b>P = (cos A, sin A)</b></p><p>P sits on the circle at angle A. Because the radius is 1, its horizontal coordinate is cos A and vertical coordinate is sin A.</p></div><div><p><b>Q = (cos(A+B), sin(A+B))</b></p><p>From OP, turn anticlockwise through another B. The total angle from the x-axis is A+B, so Q receives that angle in its coordinate definition.</p></div><div><p><b>R = (cos(−B), sin(−B))</b></p><p>Turn clockwise by B from the x-axis. Using even/odd properties, this is also R = (cos B, −sin B).</p></div><div><p><b>S = (1,0)</b></p><p>S is where the positive x-axis meets the unit circle: one unit right of O, with zero vertical displacement.</p></div></div></section>
+<section class="step"><div class="kicker">Read the diagram · 02</div><h2>The two triangles that matter</h2><p>The highlighted triangles are <b>△OPR</b> and <b>△OQS</b>. They are not selected because their shaded areas are equal; the important facts are their two equal radii and equal included angles.</p><div class="eq math">OP = OQ = 1; &nbsp; OR = OS = 1; &nbsp; ∠POR and ∠QOS have the same smaller angle</div><p>By SAS congruence, △OPR ≅ △OQS. Corresponding sides are equal, so <b>PR = QS</b>. The next page uses the coordinates of P, R, Q and S to calculate these two lengths.</p><p><a href="../derivation/index.html">Continue to the full derivation →</a></p></section>
+</main><footer></footer>
 <script>
-const NS='http://www.w3.org/2000/svg',g=document.getElementById('drawing');function el(tag,attrs){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);return e}function line(x1,y1,x2,y2,color,width=2,dash=''){const e=el('line',{x1,y1,x2,y2,stroke:color,'stroke-width':width});if(dash)e.setAttribute('stroke-dasharray',dash);g.append(e)}function txt(x,y,s,color='#f4f6ff',size=14){const e=el('text',{x,y,fill:color,'font-size':size,'font-family':'system-ui,sans-serif'});e.textContent=s;g.append(e)}function arc(deg,color,r){let pts=[];const step=deg<0?-2:2;for(let d=0;step>0?d<=deg:d>=deg;d+=step){let t=d*Math.PI/180;pts.push((320+r*Math.cos(t))+','+(280-r*Math.sin(t)))}if(pts.length<2){let t=deg*Math.PI/180;pts.push((320+r*Math.cos(t))+','+(280-r*Math.sin(t)))}g.append(el('polyline',{points:pts.join(' '),fill:'none',stroke:color,'stroke-width':3,'stroke-linecap':'round'}))}function point(p,color,label,dx,dy){g.append(el('circle',{cx:p.x,cy:p.y,r:5,fill:color,stroke:'#fff','stroke-width':1.3}));txt(p.x+dx,p.y+dy,label,color,12)}function update(){g.replaceChildren();const A=+document.getElementById('a').value,B=+document.getElementById('b').value,S=A+B;document.getElementById('av').textContent=A+'°';document.getElementById('bv').textContent=B+'°';const O={x:320,y:280},R=190,pos=d=>({x:O.x+R*Math.cos(d*Math.PI/180),y:O.y-R*Math.sin(d*Math.PI/180)}),P=pos(A),Q=pos(S);line(65,O.y,575,O.y,'#7e8aa8');line(O.x,40,O.x,520,'#7e8aa8');for(let i=-1;i<=1;i++){line(O.x+i*R,O.y-6,O.x+i*R,O.y+6,'#aeb9d5');line(O.x-6,O.y-i*R,O.x+6,O.y-i*R,'#aeb9d5')}g.append(el('circle',{cx:O.x,cy:O.y,r:R,fill:'none',stroke:'#9aa8c7','stroke-width':2}));line(O.x,O.y,P.x,P.y,'#67a9ff',3);line(O.x,O.y,Q.x,Q.y,'#ffd166',3);line(P.x,P.y,Q.x,Q.y,'#ff758f',2,'7 6');arc(A,'#67a9ff',43);arc(S,'#ffd166',63);point(P,'#67a9ff','P: (cos A, sin A)',P.x<320?-120:8,P.y<280?-12:18);point(Q,'#ffd166','Q: (cos(A+B), sin(A+B))',Q.x<320?-145:8,Q.y<280?-12:18);txt(O.x+9,O.y+20,'O (0,0)','#f4f6ff',13);txt(575,O.y-10,'x','#b6c1dc',13);txt(O.x+10,48,'y','#b6c1dc',13);txt(O.x+R+8,O.y+20,'1','#b6c1dc',13);txt(O.x-R-18,O.y+20,'−1','#b6c1dc',13);document.getElementById('sum').textContent='A + B = '+S+'°';document.getElementById('coords').textContent='Q exact: (cos '+S+'°, sin '+S+'°) · approximately ('+Math.cos(S*Math.PI/180).toFixed(3)+', '+Math.sin(S*Math.PI/180).toFixed(3)+')'}document.getElementById('a').addEventListener('input',update);document.getElementById('b').addEventListener('input',update);update();
-</script></body></html>
+(()=>{const panel=document.getElementById('coordinatePanel'),menu=document.getElementById('coordMenu'),pop=document.getElementById('coordPop'),show=document.getElementById('showCoords');if(!panel||!menu)return;function sync(){const hidden=panel.classList.contains('is-hidden');menu.classList.toggle('visible',hidden);show.textContent='Show point coordinates';}const layout=document.querySelector('main .layout');if(layout)layout.classList.add('visual-layout');const hide=document.createElement('button');hide.type='button';hide.className='secondary';hide.textContent='Hide point coordinates';hide.style.margin='8px 0';panel.insertBefore(hide,panel.children[1]||null);hide.addEventListener('click',()=>{panel.classList.add('is-hidden');pop.classList.remove('open');sync()});menu.addEventListener('click',()=>pop.classList.toggle('open'));show.addEventListener('click',()=>{panel.classList.remove('is-hidden');pop.classList.remove('open');sync()});document.addEventListener('click',e=>{if(!pop.contains(e.target)&&e.target!==menu)pop.classList.remove('open')});sync();})();
+
+(()=> {
+ const NS='http://www.w3.org/2000/svg', svg=document.getElementById('diagram');
+ const a=document.getElementById('a'), b=document.getElementById('b'), av=document.getElementById('av'), bv=document.getElementById('bv');
+ let showLabels=true;
+ const rad=d=>d*Math.PI/180, fmt=n=>Math.abs(n)<0.0005?'0':n.toFixed(3);
+ function node(tag,attrs={},text=''){const n=document.createElementNS(NS,tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,v));if(text!==undefined&&text!=='')n.textContent=text;svg.appendChild(n);return n}
+ function path(d,stroke,width=2,fill='none',dash=''){node('path',{d,stroke,'stroke-width':width,fill,'stroke-linecap':'round','stroke-linejoin':'round',...(dash?{'stroke-dasharray':dash}:{})})}
+ function draw(){
+  svg.innerHTML=''; const A=+a.value,B=+b.value;
+  av.textContent=A+'°';bv.textContent=B+'°';
+  const cx=380,cy=300,r=218,pt=t=>({x:cx+r*Math.cos(rad(t)),y:cy-r*Math.sin(rad(t))}),O={x:cx,y:cy},P=pt(A),Q=pt(A+B),R=pt(-B),S=pt(0);
+  const css=getComputedStyle(document.documentElement),ink=css.getPropertyValue('--ink').trim()||'#182238',muted=css.getPropertyValue('--muted').trim()||'#5b667a',line=css.getPropertyValue('--line').trim()||'#dce3ee',accent=css.getPropertyValue('--accent').trim()||'#3558d4',paper=css.getPropertyValue('--paper').trim()||'#fff',pCol=css.getPropertyValue('--point-p').trim()||'#b51f3b',qCol=css.getPropertyValue('--point-q').trim()||'#16864b',rCol=css.getPropertyValue('--point-r').trim()||'#3159d9',sCol=css.getPropertyValue('--point-s').trim()||'#7851c8',extra=css.getPropertyValue('--point-extra').trim()||'#d18b00';
+  // Coordinate plane with one-unit ticks and labels.
+  node('line',{x1:40,y1:cy,x2:720,y2:cy,stroke:ink,'stroke-width':2.2});
+  node('line',{x1:cx,y1:42,x2:cx,y2:558,stroke:ink,'stroke-width':2.2});
+  node('path',{d:`M 710 ${cy-6} L 722 ${cy} L 710 ${cy+6} M ${cx-6} 52 L ${cx} 40 L ${cx+6} 52`,stroke:ink,'stroke-width':2,fill:'none'});
+  [-1,1].forEach(k=>{node('line',{x1:cx+k*r,y1:cy-7,x2:cx+k*r,y2:cy+7,stroke:ink,'stroke-width':2});node('line',{x1:cx-7,y1:cy-k*r,x2:cx+7,y2:cy-k*r,stroke:ink,'stroke-width':2})});
+  node('text',{x:cx+r+4,y:cy+23,fill:muted,'font-size':13,'font-weight':700},'1');
+  node('text',{x:cx-r-18,y:cy+23,fill:muted,'font-size':13,'font-weight':700},'−1');
+  node('text',{x:cx+13,y:cy-r+5,fill:muted,'font-size':13,'font-weight':700},'1');
+  node('text',{x:cx+13,y:cy+r+4,fill:muted,'font-size':13,'font-weight':700},'−1');
+  node('text',{x:726,y:cy-13,fill:ink,'font-size':15,'font-weight':800},'x');
+  node('text',{x:cx+13,y:38,fill:ink,'font-size':15,'font-weight':800},'y');
+  node('circle',{cx,cy,r,fill:'none',stroke:ink,'stroke-width':3});
+  // Shaded triangles match the proof: OPR and OQS.
+  node('polygon',{points:`${O.x},${O.y} ${P.x},${P.y} ${R.x},${R.y}`,fill:rCol,'fill-opacity':.12,stroke:'none'});
+  node('polygon',{points:`${O.x},${O.y} ${Q.x},${Q.y} ${S.x},${S.y}`,fill:pCol,'fill-opacity':.12,stroke:'none'});
+  function seg(U,V,color,width=3,dash=''){node('line',{x1:U.x,y1:U.y,x2:V.x,y2:V.y,stroke:color,'stroke-width':width,'stroke-linecap':'round',...(dash?{'stroke-dasharray':dash}:{})})}
+  // Radius lines and corresponding chords
+  seg(O,P,pCol,3.4);seg(O,R,rCol,3.4);seg(P,R,rCol,4.2);
+  seg(O,Q,qCol,3.4);seg(O,S,sCol,3.4);seg(Q,S,pCol,4.2);
+  // Angle arcs: ∠POR runs from -B to A; ∠QOS runs from 0 to A+B.
+  function arcSweep(start,sweep,rr,color,width=2.5){
+    const steps=Math.max(8,Math.ceil(Math.abs(sweep)/5)); let d='';
+    for(let i=0;i<=steps;i++){const ang=rad(start+sweep*i/steps),x=cx+rr*Math.cos(ang),y=cy-rr*Math.sin(ang);d+=(i===0?'M ':' L ')+x+' '+y;}
+    path(d,color,width,'none');
+  }
+  function signedSmallest(deg){let n=((deg%360)+360)%360;return n>180?n-360:n;}
+  const included=signedSmallest(A+B), includedLabel=Math.abs(included).toFixed(0)+'°';
+  // Draw the smaller included angles inside the two triangles, regardless of the selected full-turn values.
+  if(document.getElementById('showTotalArc').checked){
+    arcSweep(A, -included, 54,rCol,2.5);
+    arcSweep(A+B, -included, 76,pCol,2.5);
+    node('text',{x:cx-30,y:cy-65,fill:rCol,'font-size':14,'font-weight':800,'paint-order':'stroke','stroke':paper,'stroke-width':4},includedLabel);
+    node('text',{x:cx+45,y:cy-46,fill:pCol,'font-size':14,'font-weight':800,'paint-order':'stroke','stroke':paper,'stroke-width':4},includedLabel);
+  }
+  // Draw the clockwise rotation −B as a sampled arc; B=360 visibly makes one complete turn.
+  const negR=98;
+  // Colour-coded angle story: blue A, red extra B, magenta total A+B.
+  const angleAColor=css.getPropertyValue('--angle-a').trim()||'#2789ff';
+  const angleBColor=css.getPropertyValue('--angle-b').trim()||'#ef4444';
+  const totalColor=css.getPropertyValue('--angle-total').trim()||'#d946ef';
+  if(document.getElementById('showTotalArc').checked) arcSweep(0,A+B,164,totalColor,3.5);
+  arcSweep(0,A,122,angleAColor,4);
+  arcSweep(A,B,143,angleBColor,4);
+  // Labels follow their arcs so users can see the order A, then B, then total A+B.
+  const labelOnArc=(deg,rr,color,textValue)=>{const t=rad(deg),x=cx+rr*Math.cos(t),y=cy-rr*Math.sin(t);node('text',{x,y,fill:color,'font-size':13,'font-weight':900,'text-anchor':'middle','paint-order':'stroke','stroke':paper,'stroke-width':5},textValue)};
+  labelOnArc(A/2,136,angleAColor,`A ${A}°`);
+  labelOnArc(A+B/2,157,angleBColor,`B ${B}°`);
+  if(document.getElementById('showTotalArc').checked) labelOnArc((A+B)/2,180,totalColor,`A+B ${A+B}°`);
+  arcSweep(0,-B,negR,angleBColor,3);
+  const midNeg=rad(-B/2), labelX=cx+(negR+20)*Math.cos(midNeg), labelY=cy-(negR+20)*Math.sin(midNeg);
+  node('text',{x:labelX,y:labelY,fill:angleBColor,'font-size':13,'font-weight':900,'text-anchor':'middle','paint-order':'stroke','stroke':paper,'stroke-width':5},`−B = −${B}°`);
+  function point(U,color,label,dx,dy,coord){
+    node('circle',{cx:U.x,cy:U.y,r:5.6,fill:color,stroke:'#fff','stroke-width':1.8});
+    if(showLabels){
+      // Callouts sit farther from the circle; the thin leader keeps each label tied to its moving point.
+      let vx=U.x-cx, vy=U.y-cy, len=Math.hypot(vx,vy)||1;
+      let ex=U.x+(vx/len)*48, ey=U.y+(vy/len)*48;
+      ex+=dx*.45; ey+=dy*.45;
+      const anchor=ex<cx?'end':'start';
+      node('path',{d:`M ${U.x} ${U.y} L ${ex} ${ey}`,stroke:color,'stroke-width':1.35,fill:'none','stroke-opacity':.9});
+      node('text',{x:ex+(anchor==='start'?5:-5),y:ey-2,fill:color,'font-size':14,'font-weight':900,'text-anchor':anchor,'paint-order':'stroke','stroke':css.getPropertyValue('--paper').trim()||'#fff','stroke-width':5},label);
+      if(coord)node('text',{x:ex+(anchor==='start'?5:-5),y:ey+14,fill:ink,'font-size':10.5,'font-weight':750,'text-anchor':anchor,'paint-order':'stroke','stroke':css.getPropertyValue('--paper').trim()||'#fff','stroke-width':4},coord);
+    }
+  }
+  point(O,ink,'O',-18,20,'(0, 0)');
+  point(P,pCol,'P',-22,-15,'(cos A, sin A)');
+  point(Q,qCol,'Q',-48,28,'(cos(A+B), sin(A+B))');
+  point(R,rCol,'R',-8,28,'(cos(−B), sin(−B))');
+  point(S,sCol,'S',10,-12,'(1, 0)');
+  // Axis/origin labels and a compact congruence key.
+  node('rect',{x:48,y:52,width:205,height:57,rx:10,fill:css.getPropertyValue('--paper').trim()||'#fff',stroke:line});
+  node('text',{x:62,y:75,fill:rCol,'font-size':12,'font-weight':800},'△OPR  (blue)');
+  node('text',{x:62,y:95,fill:pCol,'font-size':12,'font-weight':800},'△OQS  (red)');
+  document.getElementById('numeric').innerHTML=
+   `<b>Current angles:</b> A = ${A}°, B = ${B}°, A+B = ${A+B}°<br>`+
+   `<b>P</b> ≈ (${fmt(Math.cos(rad(A)))}, ${fmt(Math.sin(rad(A)))})<br>`+
+   `<b>Q</b> ≈ (${fmt(Math.cos(rad(A+B)))}, ${fmt(Math.sin(rad(A+B)))})<br>`+
+   `<b>R</b> ≈ (${fmt(Math.cos(rad(-B)))}, ${fmt(Math.sin(rad(-B)))})<br>`+
+   `<b>S</b> = (1, 0)`;
+ }
+ a.addEventListener('input',draw);b.addEventListener('input',draw);document.getElementById('showTotalArc').addEventListener('change',draw);
+ const sizeControl=document.getElementById('diagramSize'),diagram=document.getElementById('diagram');
+ sizeControl.addEventListener('input',()=>{diagram.style.width=sizeControl.value+'%';document.getElementById('sizeValue').textContent=sizeControl.value+'%'});
+ document.getElementById('labels').addEventListener('click',()=>{showLabels=!showLabels;document.getElementById('labels').textContent=showLabels?'Hide coordinate callouts':'Show coordinate callouts';draw()});
+ document.getElementById('reset').addEventListener('click',()=>{a.value=130;b.value=100;draw()});
+ const root=document.documentElement,sel=document.getElementById('themeSelect');let saved='classic';try{saved=localStorage.getItem('trigship-theme')||'classic'}catch(e){}if(!['classic','ocean','forest','sunset','violet','midnight','white','magenta'].includes(saved))saved='classic';function applyTheme(v){root.dataset.theme=v==='classic'?'classic':v;sel.value=v;try{localStorage.setItem('trigship-theme',v)}catch(e){}draw()}sel.addEventListener('change',()=>applyTheme(sel.value));applyTheme(saved);draw();
+})();
+</script>
+
+<style>
+.next-view{max-width:1100px;margin:28px auto 8px;padding:clamp(18px,3vw,28px);border:1px solid var(--line);border-radius:18px;background:var(--paper);box-shadow:var(--panel-shadow)}
+.next-view h2{margin:6px 0 8px;font-size:clamp(1.2rem,2.5vw,1.65rem)}
+.next-view p{max-width:760px}
+.next-view .cta{display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:12px;background:var(--accent);color:white;text-decoration:none;font-weight:850;border:1px solid var(--accent)}
+</style>
+</body></html>
