@@ -12,7 +12,9 @@
   const summary = document.getElementById('angleRelationsSummary');
   const relatedList = document.getElementById('relatedAnglesList');
   const coterminalList = document.getElementById('coterminalAnglesList');
-  if (!input || !toggle || !panel || !summary || !relatedList || !coterminalList) return;
+  const exactSinList = document.getElementById('exactSinAngles');
+  const exactCosList = document.getElementById('exactCosAngles');
+  if (!input || !toggle || !panel || !summary || !relatedList || !coterminalList || !exactSinList || !exactCosList) return;
 
   const EPS = 1e-8;
   const normalize = angle => {
@@ -40,6 +42,75 @@
     if (a <= 270) return a - 180;
     return 360 - a;
   }
+  // Exact values for standard special angles. Each quadrant gets its real sign.
+  const SPECIAL_REFERENCE_ANGLES = [0, 30, 45, 60, 90];
+  function exactRadical(numerator, denominator) {
+    if (numerator === 0) return '0';
+    const sign = numerator < 0 ? '−' : '';
+    const n = Math.abs(numerator);
+    if (denominator === 1) return sign + (n === 1 ? '1' : String(n));
+    if (n === 1) return sign + '1/' + denominator;
+    return sign + '√' + n + '/' + denominator;
+  }
+  function exactValueFor(angle, func) {
+    const a = normalize(angle);
+    const r = a * Math.PI / 180;
+    const raw = func === 'sin' ? Math.sin(r) : Math.cos(r);
+    if (Math.abs(raw) < EPS) return '0';
+    const rootTwo = Math.abs(Math.abs(raw) - Math.SQRT1_2) < EPS;
+    const rootThree = Math.abs(Math.abs(raw) - Math.sqrt(3) / 2) < EPS;
+    const half = Math.abs(Math.abs(raw) - .5) < EPS;
+    let value;
+    if (rootTwo) value = '1/√2';
+    else if (rootThree) value = '√3/2';
+    else if (half) value = '1/2';
+    else if (Math.abs(Math.abs(raw) - 1) < EPS) value = '1';
+    else return null;
+    return raw < 0 ? '−' + value : value;
+  }
+  function isStandardExactAngle(angle) {
+    const ref = referenceAngle(angle);
+    return SPECIAL_REFERENCE_ANGLES.some(a => Math.abs(a - ref) < EPS);
+  }
+  function addExactAngle(parent, angle, func, note) {
+    const value = exactValueFor(angle, func);
+    if (value === null) return;
+    const item = document.createElement('div');
+    item.className = 'angle-exact-item';
+    const main = document.createElement('strong');
+    main.textContent = clean(angle) + '°';
+    const valueNode = document.createElement('span');
+    valueNode.textContent = func + ' = ' + value;
+    const detail = document.createElement('small');
+    detail.textContent = note;
+    item.append(main, valueNode, detail);
+    parent.appendChild(item);
+  }
+  function renderExactAngles(raw, related) {
+    exactSinList.replaceChildren();
+    exactCosList.replaceChildren();
+    const coterminals = [raw - 360, raw + 360];
+    const candidates = [...related.filter(a => Math.abs(a - normalize(raw)) > EPS), ...coterminals];
+    const unique = candidates.filter((a, i, all) => all.findIndex(b => Math.abs(a - b) < EPS) === i);
+    const sinCurrent = exactValueFor(raw, 'sin');
+    const cosCurrent = exactValueFor(raw, 'cos');
+    let sinCount = 0, cosCount = 0;
+    unique.forEach(angle => {
+      if (!isStandardExactAngle(angle)) return;
+      const sinVal = exactValueFor(angle, 'sin');
+      const cosVal = exactValueFor(angle, 'cos');
+      if (sinVal !== null) {
+        addExactAngle(exactSinList, angle, 'sin', sinVal === sinCurrent ? 'Same exact value as input' : 'Exact value; sign shown');
+        sinCount++;
+      }
+      if (cosVal !== null) {
+        addExactAngle(exactCosList, angle, 'cos', cosVal === cosCurrent ? 'Same exact value as input' : 'Exact value; sign shown');
+        cosCount++;
+      }
+    });
+    if (!sinCount) exactSinList.textContent = 'No other standard exact angles in this set.';
+    if (!cosCount) exactCosList.textContent = 'No other standard exact angles in this set.';
+  }
   function addItem(parent, angle, detail, isEntered) {
     const item = document.createElement('div');
     item.className = 'angle-relation-item' + (isEntered ? ' is-entered' : '');
@@ -56,6 +127,7 @@
       summary.textContent = 'Enter a valid finite angle to see its related and coterminal angles.';
       relatedList.replaceChildren();
       coterminalList.replaceChildren();
+      exactSinList.replaceChildren(); exactCosList.replaceChildren();
       return;
     }
 
@@ -74,6 +146,7 @@
       const detail = quadrant(angle) + (Math.abs(angle - equivalent) < EPS ? ' · same position as input' : '');
       addItem(relatedList, angle, detail, Math.abs(angle - equivalent) < EPS);
     });
+    renderExactAngles(raw, candidates);
     if (candidates.length === 1) {
       const note = document.createElement('div');
       note.className = 'angle-relation-note';
