@@ -95,16 +95,21 @@
     const sinCurrent = exactValueFor(raw, 'sin');
     const cosCurrent = exactValueFor(raw, 'cos');
     let sinCount = 0, cosCount = 0;
-    unique.forEach(angle => {
+    unique.forEach((angle, index) => {
       if (!isStandardExactAngle(angle)) return;
+      const isCoterminal = index >= related.filter(a => Math.abs(a - normalize(raw)) > EPS).length;
+      const category = isCoterminal ? 'Coterminal angle' : 'Related angle';
       const sinVal = exactValueFor(angle, 'sin');
       const cosVal = exactValueFor(angle, 'cos');
+      // Sine lists all related/coterminal special angles, displaying the real sign.
       if (sinVal !== null) {
-        addExactAngle(exactSinList, angle, 'sin', sinVal === sinCurrent ? 'Same exact value as input' : 'Exact value; sign shown');
+        addExactAngle(exactSinList, angle, 'sin', category + (sinVal === sinCurrent ? ' · same signed value as input' : ' · sign shown'));
         sinCount++;
       }
-      if (cosVal !== null) {
-        addExactAngle(exactCosList, angle, 'cos', cosVal === cosCurrent ? 'Same exact value as input' : 'Exact value; sign shown');
+      // For cosine, only list angles whose signed exact value matches the input.
+      // This is why, for an input of 135°, related angle 45° is omitted but 225° is included.
+      if (cosVal !== null && cosVal === cosCurrent) {
+        addExactAngle(exactCosList, angle, 'cos', category + ' · same signed value as input');
         cosCount++;
       }
     });
