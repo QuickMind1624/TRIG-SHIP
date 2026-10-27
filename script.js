@@ -2683,6 +2683,8 @@ const EXACT_DERIVED_OVERRIDES = {
         cosec:{text:"2",kind:"text", alternate:{text:"2/1",kind:"text"}}
     },
     45: {
+        sin:{num:"√2",den:"2",kind:"fraction",alternate:{text:"1/√2",kind:"text"}},
+        cos:{num:"√2",den:"2",kind:"fraction",alternate:{text:"1/√2",kind:"text"}},
         tan:{text:"1",kind:"text"}, cot:{text:"1",kind:"text"}, sec:{text:"√2",kind:"text", alternate:{text:"2/√2",kind:"text"}}, cosec:{text:"√2",kind:"text", alternate:{text:"2/√2",kind:"text"}}
     },
     54: {
