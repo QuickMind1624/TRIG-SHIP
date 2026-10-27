@@ -5485,3 +5485,181 @@ function showCircleZoomControls(button) {
   if (hideButton) hideButton.hidden = false;
   if (showButton) showButton.hidden = true;
 }
+
+
+/* =====================================================
+   TRIGOLAB DEGREE ↔ RADIAN CONVERTER
+   Binds the converter controls already present in index.html.
+   Supports decimal radians and common π forms (π/2, 3π/4, 2*pi, etc.).
+   ===================================================== */
+(function initTrigoLabRadianConverter() {
+  'use strict';
+
+  function formatNumber(value, digits) {
+    if (!Number.isFinite(value)) return 'Invalid input';
+    if (Math.abs(value) < 1e-12) return '0';
+    return value.toFixed(digits == null ? 9 : digits)
+      .replace(/(?:\.0+|(?:(\.\d*?)0+))$/, '$1');
+  }
+
+  function gcd(a, b) {
+    a = Math.abs(a);
+    b = Math.abs(b);
+    while (b) {
+      const remainder = a % b;
+      a = b;
+      b = remainder;
+    }
+    return a || 1;
+  }
+
+  function approximateFraction(value) {
+    if (!Number.isFinite(value)) return null;
+    if (Math.abs(value) < 1e-12) return { n: 0, d: 1 };
+
+    const sign = value < 0 ? -1 : 1;
+    let x = Math.abs(value);
+    let h0 = 0, h1 = 1, k0 = 1, k1 = 0;
+    const maxDenominator = 1000000;
+
+    for (let i = 0; i < 32; i++) {
+      const a = Math.floor(x);
+      const h2 = a * h1 + h0;
+      const k2 = a * k1 + k0;
+      if (k2 > maxDenominator) break;
+
+      h0 = h1; h1 = h2;
+      k0 = k1; k1 = k2;
+
+      if (Math.abs(h1 / k1 - Math.abs(value)) < 1e-10) {
+        return { n: sign * h1, d: k1 };
+      }
+
+      const remainder = x - a;
+      if (remainder < 1e-14) break;
+      x = 1 / remainder;
+    }
+
+    const divisor = gcd(h1, k1);
+    return { n: sign * (h1 / divisor), d: k1 / divisor };
+  }
+
+  function formatPiMultiple(value) {
+    const fraction = approximateFraction(value / 180);
+    if (!fraction || fraction.n === 0) return '0';
+
+    const n = fraction.n;
+    const d = fraction.d;
+    const absN = Math.abs(n);
+    const sign = n < 0 ? '−' : '';
+
+    if (d === 1) {
+      return sign + (absN === 1 ? 'π' : absN + 'π');
+    }
+    return sign + (absN === 1 ? 'π' : absN + 'π') + '/' + d;
+  }
+
+  function parseRadianInput(raw) {
+    let value = String(raw == null ? '' : raw)
+      .trim()
+      .toLowerCase()
+      .replace(/π/g, 'pi')
+      .replace(/[−–]/g, '-')
+      .replace(/\s+/g, '');
+
+    if (!value) return NaN;
+
+    // π, -π/2, 3π/4, 2pi, 2*pi, and decimal coefficients.
+    const piMatch = value.match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+)?)\*?pi(?:\/([+-]?(?:\d+(?:\.\d*)?|\.\d+)))?$/);
+    if (piMatch) {
+      let coefficient = piMatch[1];
+      if (coefficient === '' || coefficient === '+') coefficient = '1';
+      if (coefficient === '-') coefficient = '-1';
+
+      const numerator = Number(coefficient);
+      const denominator = piMatch[2] === undefined ? 1 : Number(piMatch[2]);
+      if (!Number.isFinite(numerator) || !Number.isFinite(denominator) || denominator === 0) return NaN;
+      return numerator * Math.PI / denominator;
+    }
+
+    // Also accept a plain numeric fraction such as 3/2.
+    const fractionMatch = value.match(/^([+-]?(?:\d+(?:\.\d*)?|\.\d+))\/([+-]?(?:\d+(?:\.\d*)?|\.\d+))$/);
+    if (fractionMatch) {
+      const numerator = Number(fractionMatch[1]);
+      const denominator = Number(fractionMatch[2]);
+      if (!Number.isFinite(numerator) || !Number.isFinite(denominator) || denominator === 0) return NaN;
+      return numerator / denominator;
+    }
+
+    const numeric = Number(value);
+    return Number.isFinite(numeric) ? numeric : NaN;
+  }
+
+  function init() {
+    const degreeInput = document.getElementById('radDegreeInput');
+    const degreeButton = document.getElementById('radDegreeConvert');
+    const degreeExact = document.getElementById('radDegreeExact');
+    const degreeDecimal = document.getElementById('radDegreeDecimal');
+
+    const radianInput = document.getElementById('radRadianInput');
+    const radianButton = document.getElementById('radRadianConvert');
+    const radianDegree = document.getElementById('radRadianDegree');
+    const radianDecimal = document.getElementById('radRadianDecimal');
+
+    // The script is shared with pages that do not contain TrigoLab's converter.
+    if (!degreeInput || !degreeButton || !degreeExact || !degreeDecimal ||
+        !radianInput || !radianButton || !radianDegree || !radianDecimal) return;
+
+    function convertDegrees() {
+      const raw = degreeInput.value.trim();
+      const degrees = raw === '' ? NaN : Number(raw);
+
+      if (!Number.isFinite(degrees)) {
+        degreeExact.textContent = 'Invalid input';
+        degreeDecimal.textContent = 'Enter a valid degree number';
+        return;
+      }
+
+      const radians = degrees * Math.PI / 180;
+      degreeExact.textContent = formatPiMultiple(degrees);
+      degreeDecimal.textContent = formatNumber(radians);
+    }
+
+    function convertRadians() {
+      const radians = parseRadianInput(radianInput.value);
+
+      if (!Number.isFinite(radians)) {
+        radianDegree.textContent = 'Invalid input';
+        radianDecimal.textContent = 'Use a number or π form, e.g. π/2';
+        return;
+      }
+
+      const degrees = radians * 180 / Math.PI;
+      radianDegree.textContent = formatNumber(degrees) + '°';
+      radianDecimal.textContent = formatNumber(radians);
+    }
+
+    degreeButton.addEventListener('click', convertDegrees);
+    radianButton.addEventListener('click', convertRadians);
+
+    degreeInput.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') convertDegrees();
+    });
+    radianInput.addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') convertRadians();
+    });
+
+    // Keep results synchronized while the user edits either field.
+    degreeInput.addEventListener('input', convertDegrees);
+    radianInput.addEventListener('input', convertRadians);
+
+    convertDegrees();
+    convertRadians();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init, { once: true });
+  } else {
+    init();
+  }
+})();
