@@ -3967,3 +3967,46 @@ body.theme-white .exact-value-source { color: #5f6368; }
 @media (max-width:640px){
   .other-values-derivation-link{width:100%;min-width:0;}
 }
+
+
+/* TrigoLab radian expression keypad */
+.rad-calculator-help{
+  margin:8px 0 4px;
+  color:#9da7b5;
+  font-size:.88rem;
+  line-height:1.5;
+}
+.rad-symbol-keyboard{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:7px;
+  margin:10px 0 4px;
+}
+.rad-symbol-keyboard button{
+  min-width:0;
+  min-height:42px;
+  padding:8px 5px;
+  border:1px solid #344054;
+  border-radius:9px;
+  background:#111b29;
+  color:#f1f5f9;
+  font-size:1rem;
+  font-weight:700;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+.rad-symbol-keyboard button:hover,
+.rad-symbol-keyboard button:focus-visible{
+  border-color:#61dafb;
+  background:#172a3b;
+}
+.rad-symbol-keyboard button:active{transform:translateY(1px)}
+.rad-symbol-keyboard .rad-key-equals{
+  grid-column:span 2;
+  background:#0d526b;
+  border-color:#61dafb;
+}
+@media(max-width:420px){
+  .rad-symbol-keyboard{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .rad-symbol-keyboard .rad-key-equals{grid-column:span 2}
+}
