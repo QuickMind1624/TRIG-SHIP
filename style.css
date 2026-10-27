@@ -4010,3 +4010,28 @@ body.theme-white .exact-value-source { color: #5f6368; }
   .rad-symbol-keyboard{grid-template-columns:repeat(4,minmax(0,1fr))}
   .rad-symbol-keyboard .rad-key-equals{grid-column:span 2}
 }
+
+
+/* Any Angle — compact, hideable related/coterminal angle explorer */
+.angle-relations-dock{display:flex;flex-direction:column;align-items:flex-end;gap:8px;margin-top:16px;width:100%}
+.angle-relations-toggle{display:inline-flex;align-items:center;justify-content:center;gap:9px;max-width:100%;padding:9px 12px;border:1px solid #61dafb;border-radius:9px;background:transparent;color:inherit;font-size:.88rem;font-weight:750;cursor:pointer;touch-action:manipulation}
+.angle-relations-toggle:hover,.angle-relations-toggle:focus-visible{outline:2px solid #61dafb;outline-offset:2px}
+.angle-relations-toggle span{font-size:1rem;transition:transform .18s ease}
+.angle-relations-toggle[aria-expanded="true"] span{transform:rotate(180deg)}
+.angle-relations-panel{width:min(100%,520px);padding:13px;border:1px solid rgba(128,145,165,.45);border-radius:12px;background:rgba(128,145,165,.07);box-sizing:border-box}
+.angle-relations-panel[hidden]{display:none!important}
+.angle-relations-heading h4{margin:0 0 4px;font-size:1rem}
+.angle-relations-heading p{margin:0 0 12px;font-size:.8rem;opacity:.76}
+.angle-relations-group+.angle-relations-group{margin-top:12px;padding-top:10px;border-top:1px solid rgba(128,145,165,.35)}
+.angle-relations-group h5{margin:0 0 7px;font-size:.88rem}
+.angle-relations-group h5 span{font-size:.78rem;font-weight:500;opacity:.75}
+.angle-relations-summary{font-size:.86rem;line-height:1.6;overflow-wrap:anywhere}
+.angle-relations-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.angle-relation-item{display:flex;flex-direction:column;gap:3px;min-width:0;padding:8px 9px;border:1px solid rgba(128,145,165,.32);border-radius:8px;font-size:.84rem;overflow-wrap:anywhere}
+.angle-relation-item strong{font-size:.92rem}
+.angle-relation-item small{font-size:.75rem;opacity:.78}
+.angle-relation-item.is-entered{border-color:#61dafb}
+.angle-relation-note{font-size:.8rem;opacity:.8}
+body.theme-white .angle-relations-panel{background:#f8fafc;border-color:#cbd5e1}
+body.theme-black .angle-relations-panel{background:#101720;border-color:#455163}
+@media(max-width:520px){.angle-relations-panel{padding:10px}.angle-relations-list{grid-template-columns:1fr}.angle-relations-toggle{font-size:.82rem}}
