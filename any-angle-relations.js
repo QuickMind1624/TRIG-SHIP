@@ -87,7 +87,7 @@
     const coterminals = [raw - 360, raw, raw + 360];
     coterminals.forEach((angle, index) => {
       const isEntered = index === 1;
-      addItem(coterminalList, angle, (isEntered ? 'Your entered angle' : 'Same terminal side · ' + quadrant(angle)), isEntered);
+      addItem(coterminalList, angle, (isEntered ? 'Your entered angle' : 'Same terminal side') + ' · ' + quadrant(angle), isEntered);
     });
   }
 
