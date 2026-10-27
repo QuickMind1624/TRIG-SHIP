@@ -4035,3 +4035,19 @@ body.theme-white .exact-value-source { color: #5f6368; }
 body.theme-white .angle-relations-panel{background:#f8fafc;border-color:#cbd5e1}
 body.theme-black .angle-relations-panel{background:#101720;border-color:#455163}
 @media(max-width:520px){.angle-relations-panel{padding:10px}.angle-relations-list{grid-template-columns:1fr}.angle-relations-toggle{font-size:.82rem}}
+
+
+/* Exact sin/cos angle guide sits beside related/coterminal lists on wide screens. */
+.angle-relations-content{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(190px,.85fr);gap:14px;align-items:start}
+.angle-relations-main{min-width:0}
+.angle-exact-trig{min-width:0;padding:11px;border:1px solid rgba(97,218,251,.5);border-radius:10px;background:rgba(97,218,251,.055)}
+.angle-exact-trig h5{margin:0 0 5px;font-size:.9rem}
+.angle-exact-trig>p{margin:0 0 10px;font-size:.76rem;line-height:1.4;opacity:.76}
+.angle-exact-function+.angle-exact-function{margin-top:10px;padding-top:9px;border-top:1px solid rgba(128,145,165,.35)}
+.angle-exact-function h6{margin:0 0 6px;font-size:.84rem}
+.angle-exact-list{display:flex;flex-direction:column;gap:6px}
+.angle-exact-item{display:flex;flex-direction:column;gap:3px;padding:7px;border:1px solid rgba(128,145,165,.3);border-radius:7px;font-size:.78rem;overflow-wrap:anywhere}
+.angle-exact-item strong{font-size:.86rem}
+.angle-exact-item span{font-weight:700}
+.angle-exact-item small{font-size:.7rem;opacity:.75}
+@media(max-width:760px){.angle-relations-content{grid-template-columns:1fr}.angle-exact-trig{order:2}}
